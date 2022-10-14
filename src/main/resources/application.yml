@@ -1,0 +1,35 @@
+server:
+  port: ${SERVER_PORT}
+
+spring:
+  kafka:
+    bootstrap-servers: ${BOOTSTRAP_SERVER_URL}
+    listener:
+      concurrency: ${CONCURRENT_LISTENER_INSTANCES}
+
+consumer:
+  topic: ${TOPIC}
+  group_id: ${GROUP_ID}
+  max_attempts: ${MAX_ATTEMPTS}
+  backoff_delay: ${BACKOFF_DELAY}
+
+error_consumer:
+  topic: ${ERROR_TOPIC}
+  group_id: ${ERROR_GROUP_ID}
+  enabled: ${IS_ERROR_CONSUMER}
+  dlt: ${RETRY_TOPIC}
+
+logger:
+  namespace: company-exemptions-delta-consumer
+
+management:
+  endpoints:
+    enabled-by-default: false
+    web:
+      base-path: /company-exemptions-delta-consumer
+      path-mapping:
+        health: healthcheck
+  endpoint:
+    health:
+      show-details: never
+      enabled: true
