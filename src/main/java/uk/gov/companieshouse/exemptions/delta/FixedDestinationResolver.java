@@ -29,10 +29,6 @@ public class FixedDestinationResolver {
     }
 
     public TopicPartition resolve(ConsumerRecord<?, ?> consumerRecord, Exception exception) {
-        if (consumerRecord.offset() >= constraint.getOffsetConstraint()) {
-            LOGGER.info("Maximum offset exceeded; stopping consumer...");
-            this.registry.getListenerContainer(this.container).pause();
-        }
         return new TopicPartition(this.topic, 0);
     }
 }

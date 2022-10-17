@@ -27,6 +27,7 @@ public class TestConfig {
             put(ConsumerConfig.BOOTSTRAP_SERVERS_CONFIG, bootstrapServers);
             put(ConsumerConfig.KEY_DESERIALIZER_CLASS_CONFIG, StringDeserializer.class);
             put(ConsumerConfig.VALUE_DESERIALIZER_CLASS_CONFIG, StringDeserializer.class);
+            put(ConsumerConfig.ENABLE_AUTO_COMMIT_CONFIG, "false");
         }}, new StringDeserializer(), new StringDeserializer());
     }
 
