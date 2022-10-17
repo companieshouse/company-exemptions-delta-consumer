@@ -32,3 +32,6 @@ hs_err_pid*
 
 # Mac files
 .DS_Store
+
+# Maven
+.mvn/

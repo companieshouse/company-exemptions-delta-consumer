@@ -9,10 +9,6 @@ import org.apache.kafka.common.serialization.StringSerializer;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.test.context.TestConfiguration;
 import org.springframework.context.annotation.Bean;
-import org.springframework.context.annotation.Configuration;
-import org.springframework.context.annotation.Profile;
-import org.springframework.kafka.core.ConsumerFactory;
-import org.springframework.kafka.core.DefaultKafkaConsumerFactory;
 
 import java.util.HashMap;
 import java.util.UUID;
@@ -20,16 +16,6 @@ import java.util.concurrent.CountDownLatch;
 
 @TestConfiguration
 public class TestConfig {
-
-    @Bean
-    public ConsumerFactory<String, String> consumerFactory(@Value("${spring.kafka.bootstrap-servers}") String bootstrapServers) {
-        return new DefaultKafkaConsumerFactory<>(new HashMap<String, Object>() {{
-            put(ConsumerConfig.BOOTSTRAP_SERVERS_CONFIG, bootstrapServers);
-            put(ConsumerConfig.KEY_DESERIALIZER_CLASS_CONFIG, StringDeserializer.class);
-            put(ConsumerConfig.VALUE_DESERIALIZER_CLASS_CONFIG, StringDeserializer.class);
-            put(ConsumerConfig.ENABLE_AUTO_COMMIT_CONFIG, "false");
-        }}, new StringDeserializer(), new StringDeserializer());
-    }
 
     @Bean
     CountDownLatch latch(@Value("${steps}") int steps) {
