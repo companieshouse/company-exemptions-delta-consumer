@@ -1,0 +1,5 @@
+app_name: company-exemptions-delta-consumer
+group: api
+weight: 9998
+routes:
+    1: ^/company-exemptions-delta-consumer/healthcheck
