@@ -21,9 +21,14 @@ import org.springframework.kafka.listener.ContainerProperties;
 import org.springframework.kafka.listener.DeadLetterPublishingRecoverer;
 import org.springframework.kafka.listener.DefaultErrorHandler;
 import org.springframework.util.backoff.FixedBackOff;
+import uk.gov.companieshouse.api.InternalApiClient;
 import uk.gov.companieshouse.delta.ChsDelta;
+import uk.gov.companieshouse.logging.Logger;
+import uk.gov.companieshouse.logging.LoggerFactory;
+import uk.gov.companieshouse.sdk.manager.ApiSdkManager;
 
 import java.util.HashMap;
+import java.util.function.Supplier;
 
 @Configuration
 @EnableKafka
@@ -77,5 +82,15 @@ public class Config {
     @Bean
     public CommonErrorHandler errorConsumerErrorHandler(KafkaTemplate<String, ChsDelta> kafkaTemplate, FixedDestinationResolver fixedDestinationResolver) {
         return new DefaultErrorHandler(new DeadLetterPublishingRecoverer(kafkaTemplate, fixedDestinationResolver::resolve), new FixedBackOff(100, 0));
+    }
+
+    @Bean
+    public Supplier<InternalApiClient> internalApiClientFactory() {
+        return ApiSdkManager::getPrivateSDK;
+    }
+
+    @Bean
+    public Logger logger() {
+        return LoggerFactory.getLogger(Application.NAMESPACE);
     }
 }

@@ -55,8 +55,7 @@ public class ErrorConsumer {
             this.registry.getListenerContainer(this.container).pause();
         } else {
             try {
-                LOGGER.info("Consumed message from: " + topic);
-                router.route(message);
+                router.route(message.getPayload());
             } finally {
                 acknowledgment.acknowledge();
             }

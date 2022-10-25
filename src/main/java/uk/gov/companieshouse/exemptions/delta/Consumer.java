@@ -42,8 +42,6 @@ public class Consumer implements ConsumerSeekAware {
             include = RetryableException.class
     )
     public void consume(Message<ChsDelta> offset) {
-		String receivedTopic = (String)offset.getHeaders().get(KafkaHeaders.RECEIVED_TOPIC);
-		LOGGER.info("Consumed message from: " + receivedTopic);
-        router.route(offset);
+        router.route(offset.getPayload());
     }
 }
