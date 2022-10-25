@@ -11,6 +11,7 @@ import org.springframework.kafka.support.Acknowledgment;
 import org.springframework.kafka.support.KafkaHeaders;
 import org.springframework.messaging.Message;
 import org.springframework.stereotype.Component;
+import uk.gov.companieshouse.delta.ChsDelta;
 
 import java.util.Collections;
 
@@ -19,14 +20,19 @@ public class ErrorConsumer {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(ErrorConsumer.class);
 
-    private KafkaListenerEndpointRegistry registry;
-    private OffsetConstraint offsetConstraint;
-    @Value("${error_consumer.group_id}")
-    private String container;
+    private final KafkaListenerEndpointRegistry registry;
+    private final OffsetConstraint offsetConstraint;
+    private final ServiceRouter router;
+    private final String container;
 
-    public ErrorConsumer(KafkaListenerEndpointRegistry registry, OffsetConstraint offsetConstraint) {
+    public ErrorConsumer(KafkaListenerEndpointRegistry registry,
+                         OffsetConstraint offsetConstraint,
+                         ServiceRouter router,
+                         @Value("${error_consumer.group_id}") String container) {
         this.registry = registry;
         this.offsetConstraint = offsetConstraint;
+        this.router = router;
+        this.container = container;
     }
 
     @KafkaListener(
@@ -36,7 +42,7 @@ public class ErrorConsumer {
             groupId = "${error_consumer.group_id}",
             autoStartup = "${error_consumer.enabled}"
     )
-    public void consume(Message<String> message, Acknowledgment acknowledgment) {
+    public void consume(Message<ChsDelta> message, Acknowledgment acknowledgment) {
         KafkaConsumer<?, ?> consumer = (KafkaConsumer<?, ?>)message.getHeaders().get(KafkaHeaders.CONSUMER);
         String topic = (String)message.getHeaders().get(KafkaHeaders.RECEIVED_TOPIC);
         Integer partition = (Integer)message.getHeaders().get(KafkaHeaders.RECEIVED_PARTITION_ID);
@@ -50,7 +56,7 @@ public class ErrorConsumer {
         } else {
             try {
                 LOGGER.info("Consumed message from: " + topic);
-                throw new UnsupportedOperationException("Not implemented");
+                router.route(message);
             } finally {
                 acknowledgment.acknowledge();
             }

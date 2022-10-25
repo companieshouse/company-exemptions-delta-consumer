@@ -4,20 +4,20 @@ server:
 spring:
   kafka:
     bootstrap-servers: ${BOOTSTRAP_SERVER_URL}
-    listener:
-      concurrency: ${CONCURRENT_LISTENER_INSTANCES}
 
 consumer:
   topic: ${TOPIC}
   group_id: ${GROUP_ID}
   max_attempts: ${MAX_ATTEMPTS}
   backoff_delay: ${BACKOFF_DELAY}
+  concurrency: ${CONCURRENT_LISTENER_INSTANCES}
 
 error_consumer:
   topic: ${ERROR_TOPIC}
   group_id: ${ERROR_GROUP_ID}
   enabled: ${IS_ERROR_CONSUMER}
   dlt: ${RETRY_TOPIC}
+  concurrency: ${CONCURRENT_ERROR_LISTENER_INSTANCES}
 
 logger:
   namespace: company-exemptions-delta-consumer

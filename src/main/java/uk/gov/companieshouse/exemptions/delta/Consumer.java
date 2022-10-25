@@ -11,11 +11,18 @@ import org.springframework.kafka.support.KafkaHeaders;
 import org.springframework.messaging.Message;
 import org.springframework.retry.annotation.Backoff;
 import org.springframework.stereotype.Component;
+import uk.gov.companieshouse.delta.ChsDelta;
 
 @Component
 public class Consumer implements ConsumerSeekAware {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(Consumer.class);
+
+    private final ServiceRouter router;
+
+    public Consumer(ServiceRouter router) {
+        this.router = router;
+    }
 
     @KafkaListener(
             id = "${consumer.group_id}",
@@ -31,11 +38,12 @@ public class Consumer implements ConsumerSeekAware {
             retryTopicSuffix = "-${consumer.group_id}-retry",
             dltTopicSuffix = "-${consumer.group_id}-error",
             dltStrategy = DltStrategy.FAIL_ON_ERROR,
-            fixedDelayTopicStrategy = FixedDelayStrategy.SINGLE_TOPIC
+            fixedDelayTopicStrategy = FixedDelayStrategy.SINGLE_TOPIC,
+            include = RetryableException.class
     )
-    public void consume(Message<String> offset) {
+    public void consume(Message<ChsDelta> offset) {
 		String receivedTopic = (String)offset.getHeaders().get(KafkaHeaders.RECEIVED_TOPIC);
 		LOGGER.info("Consumed message from: " + receivedTopic);
-        throw new UnsupportedOperationException("Not implemented");
+        router.route(offset);
     }
 }

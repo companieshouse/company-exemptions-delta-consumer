@@ -17,8 +17,13 @@ public class ErrorConsumerAspect {
         this.latch = latch;
     }
 
-    @After("execution(* uk.gov.companieshouse.exemptions.delta.FixedDestinationResolver.resolve(..))")
+    @After("execution(* uk.gov.companieshouse.exemptions.delta.ErrorConsumer.consume(..))")
     void afterConsume(JoinPoint joinPoint) {
+        latch.countDown();
+    }
+
+    @After("execution(* uk.gov.companieshouse.exemptions.delta.FixedDestinationResolver.resolve(..))")
+    void afterHandleError(JoinPoint joinPoint) {
         latch.countDown();
     }
 }
