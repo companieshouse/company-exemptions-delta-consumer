@@ -25,7 +25,7 @@ public class OrchestratorTest {
     private ContentFilter contentFilter;
 
     @Mock
-    private RequestMapper mapper;
+    private UpsertRequestMapper mapper;
 
     @Mock
     private ServiceParameters parameters;

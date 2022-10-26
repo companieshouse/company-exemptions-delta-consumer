@@ -16,12 +16,16 @@ public class ChsDeltaSerialiser implements Serializer<ChsDelta> {
     public byte[] serialize(String topic, ChsDelta data) {
         ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
         Encoder encoder = EncoderFactory.get().directBinaryEncoder(outputStream, null);
-        DatumWriter<ChsDelta> writer = new ReflectDatumWriter<>(ChsDelta.class);
+        DatumWriter<ChsDelta> writer = getDatumWriter();
         try {
             writer.write(data, encoder);
         } catch (IOException e) {
-            throw new RuntimeException(e);
+            throw new NonRetryableException("Error serialising delta", e);
         }
         return outputStream.toByteArray();
+    }
+
+    DatumWriter<ChsDelta> getDatumWriter() {
+        return new ReflectDatumWriter<>(ChsDelta.class);
     }
 }

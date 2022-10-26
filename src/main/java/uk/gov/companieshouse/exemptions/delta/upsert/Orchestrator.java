@@ -9,10 +9,10 @@ import uk.gov.companieshouse.exemptions.delta.ServiceParameters;
 class Orchestrator implements Service {
 
     private final ContentFilter contentFilter;
-    private final RequestMapper mapper;
+    private final UpsertRequestMapper mapper;
     private final Client client;
 
-    Orchestrator(ContentFilter contentFilter, RequestMapper mapper, Client client) {
+    Orchestrator(ContentFilter contentFilter, UpsertRequestMapper mapper, Client client) {
         this.contentFilter = contentFilter;
         this.mapper = mapper;
         this.client = client;

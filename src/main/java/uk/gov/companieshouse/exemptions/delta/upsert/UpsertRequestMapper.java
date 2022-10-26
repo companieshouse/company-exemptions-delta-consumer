@@ -14,7 +14,7 @@ import java.time.ZonedDateTime;
 import java.time.format.DateTimeFormatter;
 
 @Mapper(componentModel = MappingConstants.ComponentModel.SPRING)
-interface RequestMapper {
+interface UpsertRequestMapper {
 
     DateTimeFormatter EXEMPTION_DATE_PATTERN = DateTimeFormatter.ofPattern("yyyyMMdd");
     DateTimeFormatter DELTA_TIME_PATTERN = DateTimeFormatter.ofPattern("yyyyMMddHHmmssSSSSSS")

@@ -18,11 +18,11 @@ import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static uk.gov.companieshouse.api.exemptions.DiclosureTransparencyRulesChapterFiveAppliesItem.ExemptionTypeEnum.DISCLOSURE_TRANSPARENCY_RULES_CHAPTER_FIVE_APPLIES;
 
-@SpringBootTest(classes = RequestMapperImpl.class)
-public class RequestMapperTest {
+@SpringBootTest(classes = UpsertRequestMapperImpl.class)
+public class UpsertRequestMapperTest {
 
     @Autowired
-    private RequestMapper requestMapper;
+    private UpsertRequestMapper requestMapper;
 
     @Test
     void testRequestMapper() {
