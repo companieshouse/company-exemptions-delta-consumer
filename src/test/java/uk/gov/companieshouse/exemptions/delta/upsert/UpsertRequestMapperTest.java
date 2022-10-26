@@ -1,59 +1,59 @@
 package uk.gov.companieshouse.exemptions.delta.upsert;
 
-import org.junit.jupiter.api.Test;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.introspect.JacksonAnnotationIntrospector;
+import com.fasterxml.jackson.databind.util.StdDateFormat;
+import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
+import org.apache.commons.io.IOUtils;
+import org.json.JSONException;
+import org.junit.jupiter.api.DisplayName;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.Arguments;
+import org.junit.jupiter.params.provider.MethodSource;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
-import uk.gov.companieshouse.api.delta.ExemptionDates;
-import uk.gov.companieshouse.api.delta.PscExemption;
 import uk.gov.companieshouse.api.delta.PscExemptionDelta;
-import uk.gov.companieshouse.api.delta.PscExemptionDeltaExemption;
 
-import java.time.LocalDate;
-import java.time.OffsetDateTime;
-import java.time.ZoneOffset;
-import java.util.Arrays;
-import java.util.Collections;
+import java.io.IOException;
+import java.nio.charset.StandardCharsets;
+import java.util.stream.Stream;
 
-import static org.hamcrest.CoreMatchers.equalTo;
-import static org.hamcrest.CoreMatchers.is;
-import static org.hamcrest.MatcherAssert.assertThat;
-import static uk.gov.companieshouse.api.exemptions.DiclosureTransparencyRulesChapterFiveAppliesItem.ExemptionTypeEnum.DISCLOSURE_TRANSPARENCY_RULES_CHAPTER_FIVE_APPLIES;
+import static org.skyscreamer.jsonassert.JSONAssert.assertEquals;
 
 @SpringBootTest(classes = UpsertRequestMapperImpl.class)
+@DisplayName("Upsert request mapper")
 public class UpsertRequestMapperTest {
 
     @Autowired
     private UpsertRequestMapper requestMapper;
 
-    @Test
-    void testRequestMapper() {
+    @ParameterizedTest(name = "{1}")
+    @MethodSource("examples")
+    @DisplayName("Map a PscExemptionDelta to a Request")
+    void testRequestMapper(String feature, String description) throws IOException, JSONException {
         // given
-        PscExemptionDeltaExemption exemptions = new PscExemptionDeltaExemption();
-        PscExemptionDelta delta = new PscExemptionDelta();
-        PscExemption exemption = new PscExemption();
-        ExemptionDates dates = new ExemptionDates();
-        ExemptionDates emptyDates = new ExemptionDates();
-        ExemptionDates nullDates = new ExemptionDates();
-        delta.setExemption(exemptions);
-        delta.setDeltaAt("20200101000000000000");
-        delta.setCompanyNumber("12345678");
-        exemptions.setDisclosureTransparencyRulesChapterFiveApplies(exemption);
-        exemption.setItems(Arrays.asList(dates, emptyDates, nullDates));
-        dates.setExemptFrom("20200101");
-        dates.setExemptTo("20211231");
-        emptyDates.setExemptFrom("20220101");
-        emptyDates.setExemptTo("");
-        nullDates.setExemptFrom("20220201");
-        nullDates.setExemptTo(null);
+        String input = IOUtils.resourceToString("/examples/" + feature + "/input.json", StandardCharsets.UTF_8);
+        String expected = IOUtils.resourceToString("/examples/" + feature + "/output.json", StandardCharsets.UTF_8);
+        ObjectMapper mapper = new ObjectMapper()
+                .setAnnotationIntrospector(new JacksonAnnotationIntrospector())
+                .registerModule(new JavaTimeModule())
+                .setDateFormat(new StdDateFormat());
+        PscExemptionDelta delta = mapper.readValue(input, PscExemptionDelta.class);
 
         // when
         Request request = requestMapper.mapDelta(delta);
+        String actual = mapper.writeValueAsString(request.getBody());
 
         // then
-        assertThat(request.getPath(), is(equalTo("/company-exemptions/12345678/internal")));
-        assertThat(request.getBody().getInternalData().getDeltaAt(), is(equalTo(OffsetDateTime.of(2020, 1, 1, 0, 0, 0, 0, ZoneOffset.UTC))));
-        assertThat(request.getBody().getExternalData().getExemptions().getDisclosureTransparencyRulesChapterFiveApplies().getExemptionType(), is(DISCLOSURE_TRANSPARENCY_RULES_CHAPTER_FIVE_APPLIES));
-        assertThat(request.getBody().getExternalData().getExemptions().getDisclosureTransparencyRulesChapterFiveApplies().getItems().get(0).getExemptFrom(), is(LocalDate.of(2020, 1, 1)));
-        assertThat(request.getBody().getExternalData().getExemptions().getDisclosureTransparencyRulesChapterFiveApplies().getItems().get(0).getExemptTo(), is(LocalDate.of(2021, 12, 31)));
+        assertEquals(expected, actual, false);
+    }
+
+    static Stream<Arguments> examples() {
+        return Stream.of(
+                Arguments.of("all_exemption_types", "Map an exemption delta containing all exemption types"),
+                Arguments.of("empty_exemption_dates", "Map an exemption delta containing empty exemption dates"),
+                Arguments.of("empty_items", "Map an exemption delta containing empty items arrays"),
+                Arguments.of("no_exemption_types", "Map an exemption delta containing no exemption types")
+        );
     }
 }
