@@ -11,6 +11,7 @@ import uk.gov.companieshouse.api.delta.PscExemptionDeltaExemption;
 import java.time.LocalDate;
 import java.time.OffsetDateTime;
 import java.time.ZoneOffset;
+import java.util.Arrays;
 import java.util.Collections;
 
 import static org.hamcrest.CoreMatchers.equalTo;
@@ -31,13 +32,19 @@ public class UpsertRequestMapperTest {
         PscExemptionDelta delta = new PscExemptionDelta();
         PscExemption exemption = new PscExemption();
         ExemptionDates dates = new ExemptionDates();
+        ExemptionDates emptyDates = new ExemptionDates();
+        ExemptionDates nullDates = new ExemptionDates();
         delta.setExemption(exemptions);
         delta.setDeltaAt("20200101000000000000");
         delta.setCompanyNumber("12345678");
         exemptions.setDisclosureTransparencyRulesChapterFiveApplies(exemption);
-        exemption.setItems(Collections.singletonList(dates));
+        exemption.setItems(Arrays.asList(dates, emptyDates, nullDates));
         dates.setExemptFrom("20200101");
         dates.setExemptTo("20211231");
+        emptyDates.setExemptFrom("20220101");
+        emptyDates.setExemptTo("");
+        nullDates.setExemptFrom("20220201");
+        nullDates.setExemptTo(null);
 
         // when
         Request request = requestMapper.mapDelta(delta);

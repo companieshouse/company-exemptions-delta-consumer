@@ -31,7 +31,7 @@ interface UpsertRequestMapper {
     Request mapDelta(PscExemptionDelta delta);
 
     default LocalDate stringToLocalDate(String dateString) {
-        if (dateString == null) {
+        if (dateString == null || dateString.isEmpty()) {
             return null;
         }
         return LocalDate.parse(dateString, EXEMPTION_DATE_PATTERN);
