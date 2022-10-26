@@ -11,7 +11,7 @@ import java.util.concurrent.CountDownLatch;
 @Component
 public class ErrorConsumerAspect {
 
-    private CountDownLatch latch;
+    private final CountDownLatch latch;
 
     public ErrorConsumerAspect(CountDownLatch latch) {
         this.latch = latch;

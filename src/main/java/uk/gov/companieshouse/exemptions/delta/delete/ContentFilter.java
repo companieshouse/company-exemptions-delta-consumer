@@ -8,7 +8,7 @@ import uk.gov.companieshouse.exemptions.delta.NonRetryableException;
 
 public class ContentFilter {
 
-    private ObjectMapper objectMapper;
+    private final ObjectMapper objectMapper;
 
     public ContentFilter(ObjectMapper objectMapper) {
         this.objectMapper = objectMapper;

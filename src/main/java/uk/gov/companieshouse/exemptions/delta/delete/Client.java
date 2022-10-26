@@ -10,7 +10,7 @@ import java.util.function.Supplier;
 
 public class Client {
 
-    private Supplier<InternalApiClient> internalApiClientFactory;
+    private final Supplier<InternalApiClient> internalApiClientFactory;
 
     public Client(Supplier<InternalApiClient> internalApiClientFactory) {
         this.internalApiClientFactory = internalApiClientFactory;

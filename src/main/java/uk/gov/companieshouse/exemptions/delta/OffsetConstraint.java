@@ -6,6 +6,7 @@ import javax.annotation.PreDestroy;
 
 @Component
 public class OffsetConstraint {
+
     private static final ThreadLocal<Long> threadLocal = new ThreadLocal<>();
 
     public void setOffsetConstraint(Long offsetConstraint) {
