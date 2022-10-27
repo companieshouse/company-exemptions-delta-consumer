@@ -8,7 +8,7 @@ import uk.gov.companieshouse.exemptions.delta.ServiceParameters;
 /**
  * Orchestrates all steps required to upsert a company exemptions resource.
  */
-@Component
+@Component("upsertService")
 class UpsertOrchestrator implements Service {
 
     private final UpsertContentFilter contentFilter;
