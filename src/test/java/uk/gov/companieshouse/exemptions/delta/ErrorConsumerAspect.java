@@ -11,14 +11,19 @@ import java.util.concurrent.CountDownLatch;
 @Component
 public class ErrorConsumerAspect {
 
-    private CountDownLatch latch;
+    private final CountDownLatch latch;
 
     public ErrorConsumerAspect(CountDownLatch latch) {
         this.latch = latch;
     }
 
-    @After("execution(* uk.gov.companieshouse.exemptions.delta.FixedDestinationResolver.resolve(..))")
+    @After("execution(* uk.gov.companieshouse.exemptions.delta.ErrorConsumer.consume(..))")
     void afterConsume(JoinPoint joinPoint) {
+        latch.countDown();
+    }
+
+    @After("execution(* uk.gov.companieshouse.exemptions.delta.FixedDestinationResolver.resolve(..))")
+    void afterHandleError(JoinPoint joinPoint) {
         latch.countDown();
     }
 }

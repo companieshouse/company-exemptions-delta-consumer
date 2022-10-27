@@ -7,28 +7,52 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.kafka.annotation.KafkaListener;
 import org.springframework.kafka.config.KafkaListenerEndpointRegistry;
+import org.springframework.kafka.listener.MessageListenerContainer;
 import org.springframework.kafka.support.Acknowledgment;
 import org.springframework.kafka.support.KafkaHeaders;
 import org.springframework.messaging.Message;
 import org.springframework.stereotype.Component;
+import uk.gov.companieshouse.delta.ChsDelta;
 
 import java.util.Collections;
 
+/**
+ * Consumes messages from the configured error Kafka topic.
+ */
 @Component
 public class ErrorConsumer {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(ErrorConsumer.class);
 
-    private KafkaListenerEndpointRegistry registry;
-    private OffsetConstraint offsetConstraint;
-    @Value("${error_consumer.group_id}")
-    private String container;
+    private final KafkaListenerEndpointRegistry registry;
+    private final OffsetConstraint offsetConstraint;
+    private final ServiceRouter router;
+    private final String container;
 
-    public ErrorConsumer(KafkaListenerEndpointRegistry registry, OffsetConstraint offsetConstraint) {
+    public ErrorConsumer(KafkaListenerEndpointRegistry registry,
+                         OffsetConstraint offsetConstraint,
+                         ServiceRouter router,
+                         @Value("${error_consumer.group_id}") String container) {
         this.registry = registry;
         this.offsetConstraint = offsetConstraint;
+        this.router = router;
+        this.container = container;
     }
 
+    /**
+     * Consume a message from the configured error Kafka topic.<br>
+     * <br>
+     * On consuming the first message, the consumer retrieves and stores the final offset number of the topic. If this
+     * offset number is exceeded, the consumer will be {@link MessageListenerContainer#pause() paused}.<br>
+     * <br>
+     * An {@link Acknowledgment#acknowledge() acknowledgement} is issued after the meessage is consumed; this is done
+     * to prevent the offset immediately after the final offset that was calculated from being processed.
+     *
+     * @param message A message containing a {@link ChsDelta delta} containing an
+     * {@link uk.gov.companieshouse.api.delta.PscExemptionDelta exemption delta} or an
+     * {@link uk.gov.companieshouse.api.delta.PscExemptionDeleteDelta exemption delete delta}.
+     * @param acknowledgment An {@link Acknowledgment acknowledgement handler}.
+     */
     @KafkaListener(
             id = "${error_consumer.group_id}",
             containerFactory = "kafkaErrorListenerContainerFactory",
@@ -36,7 +60,7 @@ public class ErrorConsumer {
             groupId = "${error_consumer.group_id}",
             autoStartup = "${error_consumer.enabled}"
     )
-    public void consume(Message<String> message, Acknowledgment acknowledgment) {
+    public void consume(Message<ChsDelta> message, Acknowledgment acknowledgment) {
         KafkaConsumer<?, ?> consumer = (KafkaConsumer<?, ?>)message.getHeaders().get(KafkaHeaders.CONSUMER);
         String topic = (String)message.getHeaders().get(KafkaHeaders.RECEIVED_TOPIC);
         Integer partition = (Integer)message.getHeaders().get(KafkaHeaders.RECEIVED_PARTITION_ID);
@@ -49,8 +73,7 @@ public class ErrorConsumer {
             this.registry.getListenerContainer(this.container).pause();
         } else {
             try {
-                LOGGER.info("Consumed message from: " + topic);
-                throw new UnsupportedOperationException("Not implemented");
+                router.route(message.getPayload());
             } finally {
                 acknowledgment.acknowledge();
             }

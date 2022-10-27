@@ -1,0 +1,44 @@
+{
+  "external_data": {
+    "exemptions": {
+      "psc_exempt_as_trading_on_regulated_market": {
+        "exemption_type": "psc-exempt-as-trading-on-regulated-market",
+        "items": [
+          {
+          }
+        ]
+      },
+      "psc_exempt_as_shares_admitted_on_market": {
+        "exemption_type": "psc-exempt-as-shares-admitted-on-market",
+        "items": [
+          {
+          }
+        ]
+      },
+      "psc_exempt_as_trading_on_uk_regulated_market": {
+        "exemption_type": "psc-exempt-as-trading-on-uk-regulated-market",
+        "items": [
+          {
+          }
+        ]
+      },
+      "psc_exempt_as_trading_on_eu_regulated_market": {
+        "exemption_type": "psc-exempt-as-trading-on-eu-regulated-market",
+        "items": [
+          {
+          }
+        ]
+      },
+      "disclosure_transparency_rules_chapter_five_applies": {
+        "exemption_type": "disclosure-transparency-rules-chapter-five-applies",
+        "items": [
+          {
+          }
+        ]
+      }
+    }
+  },
+  "internal_data": {
+    "delta_at": "2020-01-01T00:00:00Z"
+  }
+}

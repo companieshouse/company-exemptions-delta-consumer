@@ -1,0 +1,51 @@
+{
+  "company_number": "12345678",
+  "exemption": {
+    "psc_exempt_as_trading_on_regulated_market": {
+      "description": "Non-UK EEA state market",
+      "items": [
+        {
+          "exempt_from": "20170101",
+          "exempt_to": "20180101"
+        }
+      ]
+    },
+    "psc_exempt_as_shares_admitted_on_market": {
+      "description": "Schedule 1 Register market",
+      "items": [
+        {
+          "exempt_from": "20180101",
+          "exempt_to": "20190101"
+        }
+      ]
+    },
+    "psc_exempt_as_trading_on_uk_regulated_market": {
+      "description": "UK EEA state market",
+      "items": [
+        {
+          "exempt_from": "20190101",
+          "exempt_to": "20200101"
+        }
+      ]
+    },
+    "psc_exempt_as_trading_on_eu_regulated_market": {
+      "description": "EU state market",
+      "items": [
+        {
+          "exempt_from": "20200101",
+          "exempt_to": "20210101"
+        }
+      ]
+    },
+    "disclosure_transparency_rules_chapter_five_applies": {
+      "description": "DTR-5",
+      "items": [
+        {
+          "exempt_from": "20210101",
+          "exempt_to": "20220101"
+        }
+      ]
+    }
+  },
+  "delta_at": "20200101000000000000"
+}

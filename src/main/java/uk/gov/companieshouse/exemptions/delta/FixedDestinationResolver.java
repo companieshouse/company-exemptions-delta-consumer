@@ -5,6 +5,9 @@ import org.apache.kafka.common.TopicPartition;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 
+/**
+ * Used to route a message to a dead-letter topic.
+ */
 @Component
 public class FixedDestinationResolver {
 
