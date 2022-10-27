@@ -41,13 +41,13 @@ public class ClientTest {
     void testUpsert() throws ApiErrorResponseException, URIValidationException {
         // given
         InternalExemptionsApi body = new InternalExemptionsApi();
-        Request request = new Request();
+        UpsertRequest request = new UpsertRequest();
         request.setPath("/company-exemptions/12345678/internal");
         request.setBody(body);
         when(internalApiClient.privateDeltaCompanyAppointmentResourceHandler()).thenReturn(deltaResourceHandler);
         when(deltaResourceHandler.upsertCompanyExemptionsResource(anyString(), any())).thenReturn(exemptionsUpsertHandler);
         when(exemptionsUpsertHandler.execute()).thenReturn(new ApiResponse<>(200, Collections.emptyMap()));
-        Client client = new Client(() -> internalApiClient);
+        UpsertClient client = new UpsertClient(() -> internalApiClient);
 
         // when
         client.upsert(request);
@@ -61,13 +61,13 @@ public class ClientTest {
     void testThrowNonRetryableExceptionIfClientErrorReturned() throws ApiErrorResponseException, URIValidationException {
         // given
         InternalExemptionsApi body = new InternalExemptionsApi();
-        Request request = new Request();
+        UpsertRequest request = new UpsertRequest();
         request.setPath("/company-exemptions/12345678/internal");
         request.setBody(body);
         when(internalApiClient.privateDeltaCompanyAppointmentResourceHandler()).thenReturn(deltaResourceHandler);
         when(deltaResourceHandler.upsertCompanyExemptionsResource(anyString(), any())).thenReturn(exemptionsUpsertHandler);
         when(exemptionsUpsertHandler.execute()).thenThrow(new ApiErrorResponseException(new HttpResponseException.Builder(404, "Not found", new HttpHeaders())));
-        Client client = new Client(() -> internalApiClient);
+        UpsertClient client = new UpsertClient(() -> internalApiClient);
 
         // when
         Executable actual = () -> client.upsert(request);
@@ -82,13 +82,13 @@ public class ClientTest {
     void testThrowRetryableExceptionIfServerErrorReturned() throws ApiErrorResponseException, URIValidationException {
         // given
         InternalExemptionsApi body = new InternalExemptionsApi();
-        Request request = new Request();
+        UpsertRequest request = new UpsertRequest();
         request.setPath("/company-exemptions/12345678/internal");
         request.setBody(body);
         when(internalApiClient.privateDeltaCompanyAppointmentResourceHandler()).thenReturn(deltaResourceHandler);
         when(deltaResourceHandler.upsertCompanyExemptionsResource(anyString(), any())).thenReturn(exemptionsUpsertHandler);
         when(exemptionsUpsertHandler.execute()).thenThrow(new ApiErrorResponseException(new HttpResponseException.Builder(500, "Internal server error", new HttpHeaders())));
-        Client client = new Client(() -> internalApiClient);
+        UpsertClient client = new UpsertClient(() -> internalApiClient);
 
         // when
         Executable actual = () -> client.upsert(request);
@@ -103,13 +103,13 @@ public class ClientTest {
     void testThrowNonRetryableExceptionIfPathInvalid() throws ApiErrorResponseException, URIValidationException {
         // given
         InternalExemptionsApi body = new InternalExemptionsApi();
-        Request request = new Request();
+        UpsertRequest request = new UpsertRequest();
         request.setPath("/invalid/path");
         request.setBody(body);
         when(internalApiClient.privateDeltaCompanyAppointmentResourceHandler()).thenReturn(deltaResourceHandler);
         when(deltaResourceHandler.upsertCompanyExemptionsResource(anyString(), any())).thenReturn(exemptionsUpsertHandler);
         when(exemptionsUpsertHandler.execute()).thenThrow(new URIValidationException("Invalid URI"));
-        Client client = new Client(() -> internalApiClient);
+        UpsertClient client = new UpsertClient(() -> internalApiClient);
 
         // when
         Executable actual = () -> client.upsert(request);

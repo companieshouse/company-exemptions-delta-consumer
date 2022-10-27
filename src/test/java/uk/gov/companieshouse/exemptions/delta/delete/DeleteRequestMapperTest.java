@@ -23,9 +23,9 @@ public class DeleteRequestMapperTest {
         delta.setCompanyNumber("12345678");
 
         // when
-        Request request = requestMapper.mapDelta(delta);
+        DeleteRequest request = requestMapper.mapDelta(delta);
 
         // then
-        assertThat(request, is(equalTo(new Request("/company-exemptions/12345678/internal"))));
+        assertThat(request, is(equalTo(new DeleteRequest("/company-exemptions/12345678/internal"))));
     }
 }

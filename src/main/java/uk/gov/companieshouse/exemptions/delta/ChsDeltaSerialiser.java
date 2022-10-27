@@ -10,8 +10,18 @@ import uk.gov.companieshouse.delta.ChsDelta;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 
+/**
+ * Serialises a {@link ChsDelta delta} as a byte array (e.g. if the message has to be republished to the retry/error topics).
+ */
 public class ChsDeltaSerialiser implements Serializer<ChsDelta> {
 
+    /**
+     * Serialise a {@link ChsDelta delta} as a byte array.
+     *
+     * @param topic The topic to which the message will be published.
+     * @param data A {@link ChsDelta delta} that will be serialised.
+     * @return A byte array representing a serialised delta.
+     */
     @Override
     public byte[] serialize(String topic, ChsDelta data) {
         ByteArrayOutputStream outputStream = new ByteArrayOutputStream();

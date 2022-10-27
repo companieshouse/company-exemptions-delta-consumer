@@ -13,6 +13,18 @@ import uk.gov.companieshouse.logging.Logger;
 import java.util.HashMap;
 import java.util.Map;
 
+/**
+ * Logs message details before and after it has been processed by
+ * the {@link Consumer main consumer} or {@link ErrorConsumer error consumer}.<br>
+ * <br>
+ * Details that will be logged will include:
+ * <ul>
+ *     <li>The context ID of the message</li>
+ *     <li>The topic the message was consumed from</li>
+ *     <li>The partition of the topic the message was consumed from</li>
+ *     <li>The offset number of the message</li>
+ * </ul>
+ */
 @Component
 @Aspect
 public class MessageLoggingAspect {

@@ -21,7 +21,7 @@ public class ContentFilterTest {
         // given
         ChsDelta delta = new ChsDelta("{\"action\": \"DELETE\", \"company_number\": \"12345678\"}",
                 0, "context_id", true);
-        ContentFilter filter = new ContentFilter(new ObjectMapper());
+        DeleteContentFilter filter = new DeleteContentFilter(new ObjectMapper());
 
         // when
         PscExemptionDeleteDelta data = filter.filter(delta);
@@ -35,7 +35,7 @@ public class ContentFilterTest {
         // given
         ChsDelta delta = new ChsDelta("{[",
                 0, "context_id", true);
-        ContentFilter filter = new ContentFilter(new ObjectMapper());
+        DeleteContentFilter filter = new DeleteContentFilter(new ObjectMapper());
 
         // when
         Executable actual = () -> filter.filter(delta);

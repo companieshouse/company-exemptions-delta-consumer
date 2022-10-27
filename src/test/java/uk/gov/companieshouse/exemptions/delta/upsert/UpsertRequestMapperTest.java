@@ -29,7 +29,7 @@ public class UpsertRequestMapperTest {
 
     @ParameterizedTest(name = "{1}")
     @MethodSource("examples")
-    @DisplayName("Map a PscExemptionDelta to a Request")
+    @DisplayName("Map a PscExemptionDelta to a DeleteRequest")
     void testRequestMapper(String feature, String description) throws IOException, JSONException {
         // given
         String input = IOUtils.resourceToString("/examples/" + feature + "/input.json", StandardCharsets.UTF_8);
@@ -41,7 +41,7 @@ public class UpsertRequestMapperTest {
         PscExemptionDelta delta = mapper.readValue(input, PscExemptionDelta.class);
 
         // when
-        Request request = requestMapper.mapDelta(delta);
+        UpsertRequest request = requestMapper.mapDelta(delta);
         String actual = mapper.writeValueAsString(request.getBody());
 
         // then

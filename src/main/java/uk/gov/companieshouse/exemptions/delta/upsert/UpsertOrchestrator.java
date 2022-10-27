@@ -5,14 +5,17 @@ import uk.gov.companieshouse.api.delta.PscExemptionDelta;
 import uk.gov.companieshouse.exemptions.delta.Service;
 import uk.gov.companieshouse.exemptions.delta.ServiceParameters;
 
+/**
+ * Orchestrates all steps required to upsert a company exemptions resource.
+ */
 @Component
-class Orchestrator implements Service {
+class UpsertOrchestrator implements Service {
 
-    private final ContentFilter contentFilter;
+    private final UpsertContentFilter contentFilter;
     private final UpsertRequestMapper mapper;
-    private final Client client;
+    private final UpsertClient client;
 
-    Orchestrator(ContentFilter contentFilter, UpsertRequestMapper mapper, Client client) {
+    UpsertOrchestrator(UpsertContentFilter contentFilter, UpsertRequestMapper mapper, UpsertClient client) {
         this.contentFilter = contentFilter;
         this.mapper = mapper;
         this.client = client;
@@ -21,7 +24,7 @@ class Orchestrator implements Service {
     @Override
     public void processMessage(ServiceParameters parameters) {
         PscExemptionDelta delta = contentFilter.filter(parameters.getDelta());
-        Request request = mapper.mapDelta(delta);
+        UpsertRequest request = mapper.mapDelta(delta);
         client.upsert(request);
     }
 }

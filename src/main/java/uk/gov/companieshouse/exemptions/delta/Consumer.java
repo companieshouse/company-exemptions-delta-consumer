@@ -10,6 +10,9 @@ import org.springframework.retry.annotation.Backoff;
 import org.springframework.stereotype.Component;
 import uk.gov.companieshouse.delta.ChsDelta;
 
+/**
+ * Consumes messages from the configured main Kafka topic.
+ */
 @Component
 public class Consumer implements ConsumerSeekAware {
 
@@ -19,6 +22,13 @@ public class Consumer implements ConsumerSeekAware {
         this.router = router;
     }
 
+    /**
+     * Consume a message from the main Kafka topic.
+     *
+     * @param message A message containing a {@link ChsDelta delta} containing an
+     * {@link uk.gov.companieshouse.api.delta.PscExemptionDelta exemption delta} or an
+     * {@link uk.gov.companieshouse.api.delta.PscExemptionDeleteDelta exemption delete delta}.
+     */
     @KafkaListener(
             id = "${consumer.group_id}",
             containerFactory = "kafkaListenerContainerFactory",
@@ -36,7 +46,7 @@ public class Consumer implements ConsumerSeekAware {
             fixedDelayTopicStrategy = FixedDelayStrategy.SINGLE_TOPIC,
             include = RetryableException.class
     )
-    public void consume(Message<ChsDelta> offset) {
-        router.route(offset.getPayload());
+    public void consume(Message<ChsDelta> message) {
+        router.route(message.getPayload());
     }
 }

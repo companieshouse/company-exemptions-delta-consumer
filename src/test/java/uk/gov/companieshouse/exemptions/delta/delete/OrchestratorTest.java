@@ -17,7 +17,7 @@ import static org.mockito.Mockito.when;
 public class OrchestratorTest {
 
     @InjectMocks
-    private Orchestrator orchestrator;
+    private DeleteOrchestrator orchestrator;
 
     @Mock
     private ServiceParameters parameters;
@@ -26,19 +26,19 @@ public class OrchestratorTest {
     private ChsDelta delta;
 
     @Mock
-    private ContentFilter filter;
+    private DeleteContentFilter filter;
 
     @Mock
     private PscExemptionDeleteDelta deleteDelta;
 
     @Mock
-    private Request request;
+    private DeleteRequest request;
 
     @Mock
     private DeleteRequestMapper requestMapper;
 
     @Mock
-    private Client client;
+    private DeleteClient client;
 
     @Test
     void testProcessMessageDeletesCompanyExemptionsResource() {

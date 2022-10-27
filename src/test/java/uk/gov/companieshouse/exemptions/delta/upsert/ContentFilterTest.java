@@ -19,7 +19,7 @@ class ContentFilterTest {
     @Test
     void testExtractPscExemptionFromChsDelta() {
         // given
-        ContentFilter filter = new ContentFilter(new ObjectMapper());
+        UpsertContentFilter filter = new UpsertContentFilter(new ObjectMapper());
 
         // when
         PscExemptionDelta actual = filter.filter(new ChsDelta("{}", 0, "context_id", false));
@@ -31,7 +31,7 @@ class ContentFilterTest {
     @Test
     void testThrowNonRetryableExceptionIfJsonMalformed() {
         // given
-        ContentFilter filter = new ContentFilter(new ObjectMapper());
+        UpsertContentFilter filter = new UpsertContentFilter(new ObjectMapper());
 
         // when
         Executable actual = () -> filter.filter(new ChsDelta("invalid", 0, "context_id", false));

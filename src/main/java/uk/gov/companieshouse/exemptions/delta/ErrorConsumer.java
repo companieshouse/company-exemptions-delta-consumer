@@ -7,6 +7,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.kafka.annotation.KafkaListener;
 import org.springframework.kafka.config.KafkaListenerEndpointRegistry;
+import org.springframework.kafka.listener.MessageListenerContainer;
 import org.springframework.kafka.support.Acknowledgment;
 import org.springframework.kafka.support.KafkaHeaders;
 import org.springframework.messaging.Message;
@@ -15,6 +16,9 @@ import uk.gov.companieshouse.delta.ChsDelta;
 
 import java.util.Collections;
 
+/**
+ * Consumes messages from the configured error Kafka topic.
+ */
 @Component
 public class ErrorConsumer {
 
@@ -35,6 +39,20 @@ public class ErrorConsumer {
         this.container = container;
     }
 
+    /**
+     * Consume a message from the configured error Kafka topic.<br>
+     * <br>
+     * On consuming the first message, the consumer retrieves and stores the final offset number of the topic. If this
+     * offset number is exceeded, the consumer will be {@link MessageListenerContainer#pause() paused}.<br>
+     * <br>
+     * An {@link Acknowledgment#acknowledge() acknowledgement} is issued after the meessage is consumed; this is done
+     * to prevent the offset immediately after the final offset that was calculated from being processed.
+     *
+     * @param message A message containing a {@link ChsDelta delta} containing an
+     * {@link uk.gov.companieshouse.api.delta.PscExemptionDelta exemption delta} or an
+     * {@link uk.gov.companieshouse.api.delta.PscExemptionDeleteDelta exemption delete delta}.
+     * @param acknowledgment An {@link Acknowledgment acknowledgement handler}.
+     */
     @KafkaListener(
             id = "${error_consumer.group_id}",
             containerFactory = "kafkaErrorListenerContainerFactory",

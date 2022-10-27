@@ -13,6 +13,10 @@ import java.time.ZoneId;
 import java.time.ZonedDateTime;
 import java.time.format.DateTimeFormatter;
 
+/**
+ * Maps an {@link PscExemptionDelta exemption delta} to a {@link UpsertRequest request object} containing parameters required
+ * to upsert a company exemption resource.
+ */
 @Mapper(componentModel = MappingConstants.ComponentModel.SPRING)
 interface UpsertRequestMapper {
 
@@ -20,6 +24,12 @@ interface UpsertRequestMapper {
     DateTimeFormatter DELTA_TIME_PATTERN = DateTimeFormatter.ofPattern("yyyyMMddHHmmssSSSSSS")
             .withZone(ZoneId.of("Z"));
 
+    /**
+     * Map an {@link PscExemptionDelta exemption delta} to a {@link UpsertRequest request object}.
+     *
+     * @param delta The {@link PscExemptionDelta exemption delta} that will be mapped.
+     * @return A {@link UpsertRequest request object} containing parameters required to upsert a company exemption resource.
+     */
     @Mapping(source = "exemption", target = "body.externalData.exemptions")
     @Mapping(constant = "PSC_EXEMPT_AS_TRADING_ON_REGULATED_MARKET", target = "body.externalData.exemptions.pscExemptAsTradingOnRegulatedMarket.exemptionType")
     @Mapping(constant = "PSC_EXEMPT_AS_SHARES_ADMITTED_ON_MARKET", target = "body.externalData.exemptions.pscExemptAsSharesAdmittedOnMarket.exemptionType")
@@ -28,7 +38,7 @@ interface UpsertRequestMapper {
     @Mapping(constant = "DISCLOSURE_TRANSPARENCY_RULES_CHAPTER_FIVE_APPLIES", target = "body.externalData.exemptions.disclosureTransparencyRulesChapterFiveApplies.exemptionType")
     @Mapping(target = "path", ignore = true)
     @Mapping(target = "body.internalData.deltaAt", ignore = true)
-    Request mapDelta(PscExemptionDelta delta);
+    UpsertRequest mapDelta(PscExemptionDelta delta);
 
     default LocalDate stringToLocalDate(String dateString) {
         if (dateString == null || dateString.isEmpty()) {
@@ -38,7 +48,7 @@ interface UpsertRequestMapper {
     }
 
     @AfterMapping
-    default void mapPath(@MappingTarget Request request, PscExemptionDelta delta) {
+    default void mapPath(@MappingTarget UpsertRequest request, PscExemptionDelta delta) {
         request.setPath(String.format("/company-exemptions/%s/internal", delta.getCompanyNumber()));
     }
 

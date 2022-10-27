@@ -43,8 +43,8 @@ public class ClientTest {
         // given
         when(internalApiClient.privateDeltaCompanyAppointmentResourceHandler()).thenReturn(resourceHandler);
         when(resourceHandler.deleteCompanyExemptionsResource(any())).thenReturn(deleteHandler);
-        Request request = new Request(REQUEST_PATH);
-        Client client = new Client(() -> internalApiClient);
+        DeleteRequest request = new DeleteRequest(REQUEST_PATH);
+        DeleteClient client = new DeleteClient(() -> internalApiClient);
 
         // when
         client.delete(request);
@@ -60,15 +60,15 @@ public class ClientTest {
         when(internalApiClient.privateDeltaCompanyAppointmentResourceHandler()).thenReturn(resourceHandler);
         when(resourceHandler.deleteCompanyExemptionsResource(any())).thenReturn(deleteHandler);
         when(deleteHandler.execute()).thenThrow(new ApiErrorResponseException(new HttpResponseException.Builder(400, "Bad request", new HttpHeaders())));
-        Request request = new Request(REQUEST_PATH);
-        Client client = new Client(() -> internalApiClient);
+        DeleteRequest request = new DeleteRequest(REQUEST_PATH);
+        DeleteClient client = new DeleteClient(() -> internalApiClient);
 
         // when
         Executable actual = () -> client.delete(request);
 
         // then
         NonRetryableException exception = assertThrows(NonRetryableException.class, actual);
-        assertThat(exception.getMessage(), is(equalTo("Client error returned when deleting delta")));
+        assertThat(exception.getMessage(), is(equalTo("DeleteClient error returned when deleting delta")));
         assertThat(exception.getCause(), is(instanceOf(ApiErrorResponseException.class)));
     }
 
@@ -78,8 +78,8 @@ public class ClientTest {
         when(internalApiClient.privateDeltaCompanyAppointmentResourceHandler()).thenReturn(resourceHandler);
         when(resourceHandler.deleteCompanyExemptionsResource(any())).thenReturn(deleteHandler);
         when(deleteHandler.execute()).thenThrow(URIValidationException.class);
-        Request request = new Request("invalid");
-        Client client = new Client(() -> internalApiClient);
+        DeleteRequest request = new DeleteRequest("invalid");
+        DeleteClient client = new DeleteClient(() -> internalApiClient);
 
         // when
         Executable actual = () -> client.delete(request);
@@ -96,8 +96,8 @@ public class ClientTest {
         when(internalApiClient.privateDeltaCompanyAppointmentResourceHandler()).thenReturn(resourceHandler);
         when(resourceHandler.deleteCompanyExemptionsResource(any())).thenReturn(deleteHandler);
         when(deleteHandler.execute()).thenThrow(new ApiErrorResponseException(new HttpResponseException.Builder(503, "Service unavailable", new HttpHeaders())));
-        Request request = new Request(REQUEST_PATH);
-        Client client = new Client(() -> internalApiClient);
+        DeleteRequest request = new DeleteRequest(REQUEST_PATH);
+        DeleteClient client = new DeleteClient(() -> internalApiClient);
 
         // when
         Executable actual = () -> client.delete(request);

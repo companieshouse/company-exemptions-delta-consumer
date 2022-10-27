@@ -4,6 +4,9 @@ import uk.gov.companieshouse.delta.ChsDelta;
 
 import java.util.Objects;
 
+/**
+ * Contains all parameters required by {@link Service service implementations}.
+ */
 public class ServiceParameters {
 
     private final ChsDelta delta;

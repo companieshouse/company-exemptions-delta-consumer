@@ -9,16 +9,25 @@ import uk.gov.companieshouse.exemptions.delta.RetryableException;
 
 import java.util.function.Supplier;
 
+/**
+ * Upserts a company exemptions resource via a REST HTTP request.
+ */
 @Component
-class Client {
+class UpsertClient {
 
     private final Supplier<InternalApiClient> internalApiClientFactory;
 
-    Client(Supplier<InternalApiClient> internalApiClientFactory) {
+    UpsertClient(Supplier<InternalApiClient> internalApiClientFactory) {
         this.internalApiClientFactory = internalApiClientFactory;
     }
 
-    void upsert(Request request) {
+    /**
+     * Upsert a company exemptions resource via a REST HTTP request.
+     *
+     * @param request A {@link UpsertRequest request object} containing data that will be upserted and the path to which
+     *                it will be sent.
+     */
+    void upsert(UpsertRequest request) {
         InternalApiClient client = internalApiClientFactory.get();
         try {
             client.privateDeltaCompanyAppointmentResourceHandler()
@@ -28,7 +37,7 @@ class Client {
             if(e.getStatusCode() / 100 == 5) {
                 throw new RetryableException("Server error returned when upserting delta", e);
             } else {
-                throw new NonRetryableException("Client error returned when upserting delta", e);
+                throw new NonRetryableException("UpsertClient error returned when upserting delta", e);
             }
         } catch (URIValidationException e) {
             throw new NonRetryableException("Invalid path specified", e);

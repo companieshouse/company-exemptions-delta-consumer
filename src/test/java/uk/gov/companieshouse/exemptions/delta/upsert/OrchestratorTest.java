@@ -16,13 +16,13 @@ import static org.mockito.Mockito.when;
 public class OrchestratorTest {
 
     @InjectMocks
-    private Orchestrator upsertService;
+    private UpsertOrchestrator upsertService;
 
     @Mock
-    private Client upsertClient;
+    private UpsertClient upsertClient;
 
     @Mock
-    private ContentFilter contentFilter;
+    private UpsertContentFilter contentFilter;
 
     @Mock
     private UpsertRequestMapper mapper;
@@ -37,7 +37,7 @@ public class OrchestratorTest {
     private PscExemptionDelta data;
 
     @Mock
-    private Request upsertRequest;
+    private UpsertRequest upsertRequest;
 
     @Test
     void testProcessMessageUpsertsCompanyExemptionsResource() {

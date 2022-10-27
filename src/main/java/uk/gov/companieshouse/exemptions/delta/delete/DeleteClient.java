@@ -1,5 +1,6 @@
 package uk.gov.companieshouse.exemptions.delta.delete;
 
+import org.springframework.stereotype.Component;
 import uk.gov.companieshouse.api.InternalApiClient;
 import uk.gov.companieshouse.api.error.ApiErrorResponseException;
 import uk.gov.companieshouse.api.handler.exception.URIValidationException;
@@ -8,15 +9,25 @@ import uk.gov.companieshouse.exemptions.delta.RetryableException;
 
 import java.util.function.Supplier;
 
-public class Client {
+/**
+ * Deletes a company exemptions resource via a REST HTTP request.
+ */
+@Component
+class DeleteClient {
 
     private final Supplier<InternalApiClient> internalApiClientFactory;
 
-    public Client(Supplier<InternalApiClient> internalApiClientFactory) {
+    DeleteClient(Supplier<InternalApiClient> internalApiClientFactory) {
         this.internalApiClientFactory = internalApiClientFactory;
     }
 
-    public void delete(Request request) {
+    /**
+     * Delete a company exemptions resource via a REST HTTP request.
+     *
+     * @param request A {@link DeleteRequest request object} containing data that will be upserted and the path to which
+     *                it will be sent.
+     */
+    void delete(DeleteRequest request) {
         try {
             InternalApiClient client = internalApiClientFactory.get();
             client.privateDeltaCompanyAppointmentResourceHandler()
@@ -26,7 +37,7 @@ public class Client {
             if (e.getStatusCode() / 100 == 5) {
                 throw new RetryableException("Server error returned when deleting delta", e);
             } else {
-                throw new NonRetryableException("Client error returned when deleting delta", e);
+                throw new NonRetryableException("DeleteClient error returned when deleting delta", e);
             }
         } catch (URIValidationException e) {
             throw new NonRetryableException("Invalid path specified", e);
