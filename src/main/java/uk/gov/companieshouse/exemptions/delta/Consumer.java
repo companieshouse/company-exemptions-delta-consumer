@@ -17,9 +17,11 @@ import uk.gov.companieshouse.delta.ChsDelta;
 public class Consumer implements ConsumerSeekAware {
 
     private final ServiceRouter router;
+    private final MessageFlags messageFlags;
 
-    public Consumer(ServiceRouter router) {
+    public Consumer(ServiceRouter router, MessageFlags messageFlags) {
         this.router = router;
+        this.messageFlags = messageFlags;
     }
 
     /**
@@ -47,6 +49,11 @@ public class Consumer implements ConsumerSeekAware {
             include = RetryableException.class
     )
     public void consume(Message<ChsDelta> message) {
-        router.route(message.getPayload());
+        try {
+            router.route(message.getPayload());
+        } catch (RetryableException e) {
+            messageFlags.setRetryable(true);
+            throw e;
+        }
     }
 }

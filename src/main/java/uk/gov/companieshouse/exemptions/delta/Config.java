@@ -46,12 +46,17 @@ public class Config {
     }
 
     @Bean
-    public ProducerFactory<String, ChsDelta> producerFactory(@Value("${spring.kafka.bootstrap-servers}") String bootstrapServers) {
+    public ProducerFactory<String, ChsDelta> producerFactory(@Value("${spring.kafka.bootstrap-servers}") String bootstrapServers,
+                                                             MessageFlags messageFlags,
+                                                             @Value("${invalid_message_topic}") String invalidMessageTopic) {
         return new DefaultKafkaProducerFactory<>(new HashMap<>() {{
             put(ProducerConfig.BOOTSTRAP_SERVERS_CONFIG, bootstrapServers);
             put(ProducerConfig.ACKS_CONFIG, "all");
             put(ProducerConfig.KEY_SERIALIZER_CLASS_CONFIG, StringSerializer.class);
             put(ProducerConfig.VALUE_SERIALIZER_CLASS_CONFIG, ChsDeltaSerialiser.class);
+            put(ProducerConfig.INTERCEPTOR_CLASSES_CONFIG, InvalidMessageRouter.class.getName());
+            put("message.flags", messageFlags);
+            put("invalid.message.topic", invalidMessageTopic);
         }}, new StringSerializer(), new ChsDeltaSerialiser());
     }
 

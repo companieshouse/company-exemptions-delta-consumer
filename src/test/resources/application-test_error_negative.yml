@@ -21,6 +21,8 @@ error_consumer:
   dlt: echo-echo-consumer-retry
   concurrency: 1
 
+invalid_message_topic: echo-echo-consumer-invalid
+
 logger:
   namespace: archetype-client
 
