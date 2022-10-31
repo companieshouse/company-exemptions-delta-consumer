@@ -36,14 +36,14 @@ import static org.mockito.Mockito.verify;
 @SpringBootTest(classes = Application.class)
 @DirtiesContext(classMode = DirtiesContext.ClassMode.AFTER_CLASS)
 @EmbeddedKafka(
-        topics = {"echo-echo-consumer-retry",  "echo-echo-consumer-error"},
+        topics = {"echo", "echo-echo-consumer-retry",  "echo-echo-consumer-error", "echo-echo-consumer-invalid"},
         controlledShutdown = true,
         partitions = 1
 )
 @TestPropertySource(locations = "classpath:application-test_error_negative.yml")
 @Import(TestConfig.class)
 @ActiveProfiles("test_error_negative")
-public class ErrorConsumerNegativeTest {
+public class ErrorConsumerRetryableExceptionTest {
 
     @Autowired
     private EmbeddedKafkaBroker embeddedKafkaBroker;
@@ -77,8 +77,11 @@ public class ErrorConsumerNegativeTest {
         }
 
         //then
-        ConsumerRecords<String, byte[]> records = KafkaTestUtils.getRecords(testConsumer, 10000L, 2);
-        assertThat(records.count(), is(2));
+        ConsumerRecords<String, byte[]> consumerRecords = KafkaTestUtils.getRecords(testConsumer, 10000L, 2);
+        assertThat(TestUtils.noOfRecordsForTopic(consumerRecords, "echo"), is(0));
+        assertThat(TestUtils.noOfRecordsForTopic(consumerRecords, "echo-echo-consumer-retry"), is(1));
+        assertThat(TestUtils.noOfRecordsForTopic(consumerRecords, "echo-echo-consumer-error"), is(1));
+        assertThat(TestUtils.noOfRecordsForTopic(consumerRecords, "echo-echo-consumer-invalid"), is(0));
         verify(router).route(any());
     }
 }

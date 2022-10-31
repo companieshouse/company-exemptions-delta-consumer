@@ -19,6 +19,8 @@ error_consumer:
   dlt: ${RETRY_TOPIC}
   concurrency: ${CONCURRENT_ERROR_LISTENER_INSTANCES}
 
+invalid_message_topic: ${INVALID_MESSAGE_TOPIC}
+
 logger:
   namespace: company-exemptions-delta-consumer
 

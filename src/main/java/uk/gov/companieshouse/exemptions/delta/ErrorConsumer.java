@@ -28,15 +28,18 @@ public class ErrorConsumer {
     private final OffsetConstraint offsetConstraint;
     private final ServiceRouter router;
     private final String container;
+    private final MessageFlags messageFlags;
 
     public ErrorConsumer(KafkaListenerEndpointRegistry registry,
                          OffsetConstraint offsetConstraint,
                          ServiceRouter router,
-                         @Value("${error_consumer.group_id}") String container) {
+                         @Value("${error_consumer.group_id}") String container,
+                         MessageFlags messageFlags) {
         this.registry = registry;
         this.offsetConstraint = offsetConstraint;
         this.router = router;
         this.container = container;
+        this.messageFlags = messageFlags;
     }
 
     /**
@@ -74,6 +77,9 @@ public class ErrorConsumer {
         } else {
             try {
                 router.route(message.getPayload());
+            } catch (RetryableException e) {
+                messageFlags.setRetryable(true);
+                throw e;
             } finally {
                 acknowledgment.acknowledge();
             }
