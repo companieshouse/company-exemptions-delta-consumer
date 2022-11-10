@@ -18,6 +18,7 @@ import uk.gov.companieshouse.exemptions.delta.NonRetryableException;
 import uk.gov.companieshouse.exemptions.delta.RetryableException;
 
 import java.util.Collections;
+import uk.gov.companieshouse.logging.Logger;
 
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.ArgumentMatchers.any;
@@ -37,6 +38,9 @@ public class ClientTest {
     @Mock
     private PrivateCompanyExemptionsUpsert exemptionsUpsertHandler;
 
+    @Mock
+    private Logger logger;
+
     @Test
     void testUpsert() throws ApiErrorResponseException, URIValidationException {
         // given
@@ -47,7 +51,7 @@ public class ClientTest {
         when(internalApiClient.privateDeltaCompanyAppointmentResourceHandler()).thenReturn(deltaResourceHandler);
         when(deltaResourceHandler.upsertCompanyExemptionsResource(anyString(), any())).thenReturn(exemptionsUpsertHandler);
         when(exemptionsUpsertHandler.execute()).thenReturn(new ApiResponse<>(200, Collections.emptyMap()));
-        UpsertClient client = new UpsertClient(() -> internalApiClient);
+        UpsertClient client = new UpsertClient(() -> internalApiClient, logger);
 
         // when
         client.upsert(request);
@@ -67,7 +71,7 @@ public class ClientTest {
         when(internalApiClient.privateDeltaCompanyAppointmentResourceHandler()).thenReturn(deltaResourceHandler);
         when(deltaResourceHandler.upsertCompanyExemptionsResource(anyString(), any())).thenReturn(exemptionsUpsertHandler);
         when(exemptionsUpsertHandler.execute()).thenThrow(new ApiErrorResponseException(new HttpResponseException.Builder(404, "Not found", new HttpHeaders())));
-        UpsertClient client = new UpsertClient(() -> internalApiClient);
+        UpsertClient client = new UpsertClient(() -> internalApiClient, logger);
 
         // when
         Executable actual = () -> client.upsert(request);
@@ -88,7 +92,28 @@ public class ClientTest {
         when(internalApiClient.privateDeltaCompanyAppointmentResourceHandler()).thenReturn(deltaResourceHandler);
         when(deltaResourceHandler.upsertCompanyExemptionsResource(anyString(), any())).thenReturn(exemptionsUpsertHandler);
         when(exemptionsUpsertHandler.execute()).thenThrow(new ApiErrorResponseException(new HttpResponseException.Builder(500, "Internal server error", new HttpHeaders())));
-        UpsertClient client = new UpsertClient(() -> internalApiClient);
+        UpsertClient client = new UpsertClient(() -> internalApiClient, logger);
+
+        // when
+        Executable actual = () -> client.upsert(request);
+
+        // then
+        assertThrows(RetryableException.class, actual);
+        verify(deltaResourceHandler).upsertCompanyExemptionsResource("/company-exemptions/12345678/internal", body);
+        verify(exemptionsUpsertHandler).execute();
+    }
+
+    @Test
+    void testThrowRetryableExceptionIfIllegalArgumentExceptionIsCaught() throws ApiErrorResponseException, URIValidationException {
+        // given
+        InternalExemptionsApi body = new InternalExemptionsApi();
+        UpsertRequest request = new UpsertRequest();
+        request.setPath("/company-exemptions/12345678/internal");
+        request.setBody(body);
+        when(internalApiClient.privateDeltaCompanyAppointmentResourceHandler()).thenReturn(deltaResourceHandler);
+        when(deltaResourceHandler.upsertCompanyExemptionsResource(anyString(), any())).thenReturn(exemptionsUpsertHandler);
+        when(exemptionsUpsertHandler.execute()).thenThrow(new IllegalArgumentException("Internal server error"));
+        UpsertClient client = new UpsertClient(() -> internalApiClient, logger);
 
         // when
         Executable actual = () -> client.upsert(request);
@@ -109,7 +134,7 @@ public class ClientTest {
         when(internalApiClient.privateDeltaCompanyAppointmentResourceHandler()).thenReturn(deltaResourceHandler);
         when(deltaResourceHandler.upsertCompanyExemptionsResource(anyString(), any())).thenReturn(exemptionsUpsertHandler);
         when(exemptionsUpsertHandler.execute()).thenThrow(new URIValidationException("Invalid URI"));
-        UpsertClient client = new UpsertClient(() -> internalApiClient);
+        UpsertClient client = new UpsertClient(() -> internalApiClient, logger);
 
         // when
         Executable actual = () -> client.upsert(request);
