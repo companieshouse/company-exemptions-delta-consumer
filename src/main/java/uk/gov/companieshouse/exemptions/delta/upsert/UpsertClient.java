@@ -8,6 +8,7 @@ import uk.gov.companieshouse.exemptions.delta.NonRetryableException;
 import uk.gov.companieshouse.exemptions.delta.RetryableException;
 
 import java.util.function.Supplier;
+import uk.gov.companieshouse.logging.Logger;
 
 /**
  * Upserts a company exemptions resource via a REST HTTP request.
@@ -16,9 +17,11 @@ import java.util.function.Supplier;
 class UpsertClient {
 
     private final Supplier<InternalApiClient> internalApiClientFactory;
+    private final Logger logger;
 
-    UpsertClient(Supplier<InternalApiClient> internalApiClientFactory) {
+    UpsertClient(Supplier<InternalApiClient> internalApiClientFactory, Logger logger) {
         this.internalApiClientFactory = internalApiClientFactory;
+        this.logger = logger;
     }
 
     /**
@@ -35,11 +38,17 @@ class UpsertClient {
                     .execute();
         } catch (ApiErrorResponseException e) {
             if(e.getStatusCode() / 100 == 5) {
+                logger.error(String.format("Server error returned with status code: [%s] when upserting delta", e.getStatusCode()));
                 throw new RetryableException("Server error returned when upserting delta", e);
             } else {
+                logger.error(String.format("Upsert client error returned with status code: [%s] when upserting delta", e.getStatusCode()));
                 throw new NonRetryableException("UpsertClient error returned when upserting delta", e);
             }
+        } catch (IllegalArgumentException e) {
+            logger.error("Illegal argument exception caught when handling API response");
+            throw new RetryableException("Server error returned when upserting delta", e);
         } catch (URIValidationException e) {
+            logger.error("Invalid path specified when handling API request");
             throw new NonRetryableException("Invalid path specified", e);
         }
     }
