@@ -14,6 +14,8 @@ import static org.hamcrest.CoreMatchers.equalTo;
 import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.CoreMatchers.sameInstance;
 import static org.hamcrest.MatcherAssert.assertThat;
+import static org.mockito.Mockito.times;
+import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
 @ExtendWith(MockitoExtension.class)
@@ -42,6 +44,7 @@ public class InvalidMessageRouterTest {
         ProducerRecord<String, ChsDelta> actual = invalidMessageRouter.onSend(message);
 
         // then
+        verify(flags, times(0)).destroy();
         assertThat(actual, is(equalTo(new ProducerRecord<>("invalid", "key", delta))));
     }
 
@@ -55,6 +58,7 @@ public class InvalidMessageRouterTest {
         ProducerRecord<String, ChsDelta> actual = invalidMessageRouter.onSend(message);
 
         // then
+        verify(flags, times(1)).destroy();
         assertThat(actual, is(sameInstance(message)));
     }
 
