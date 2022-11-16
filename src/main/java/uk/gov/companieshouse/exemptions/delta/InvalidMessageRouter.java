@@ -1,19 +1,19 @@
 package uk.gov.companieshouse.exemptions.delta;
 
-import static java.lang.String.format;
-
 import org.apache.kafka.clients.producer.ProducerInterceptor;
 import org.apache.kafka.clients.producer.ProducerRecord;
 import org.apache.kafka.clients.producer.RecordMetadata;
 import uk.gov.companieshouse.delta.ChsDelta;
 
 import java.util.Map;
+import uk.gov.companieshouse.logging.Logger;
+import uk.gov.companieshouse.logging.LoggerFactory;
 
 public class InvalidMessageRouter implements ProducerInterceptor<String, ChsDelta> {
 
     private MessageFlags messageFlags;
     private String invalidMessageTopic;
-
+    private Logger LOGGER = LoggerFactory.getLogger(Application.NAMESPACE);
 
     @Override
     public ProducerRecord<String, ChsDelta> onSend(ProducerRecord<String, ChsDelta> record) {
@@ -21,8 +21,8 @@ public class InvalidMessageRouter implements ProducerInterceptor<String, ChsDelt
             messageFlags.destroy();
             return record;
         } else {
-            ProducerRecord invalidRecord = new ProducerRecord<>(this.invalidMessageTopic, record.partition(), record.key(), record.value(), record.headers());
-            LoggingConfig.getLogger().info(String.format("Moving record into topic: [%s]\nMessage content: %s",
+            ProducerRecord invalidRecord = new ProducerRecord<>(invalidMessageTopic, record.key(), record.value());
+            LOGGER.info(String.format("Moving record into topic: [%s]\nMessage content: %s",
                     invalidRecord.topic(), invalidRecord.value()));
             return invalidRecord;
         }
