@@ -27,8 +27,8 @@ class DeleteClient {
     /**
      * Delete a company exemptions resource via a REST HTTP request.
      *
-     * @param request A {@link DeleteRequest request object} containing data that will be upserted and the path to which
-     *                it will be sent.
+     * @param request A {@link DeleteRequest request object} containing the path to which the delete
+     *                request will be sent.
      */
     void delete(DeleteRequest request) {
         InternalApiClient client = internalApiClientFactory.get();
@@ -41,7 +41,7 @@ class DeleteClient {
                 logger.error(String.format("Server error returned with status code: [%s] when deleting delta", e.getStatusCode()));
                 throw new RetryableException("Server error returned when deleting delta", e);
             } else {
-                logger.error(String.format("Upsert client error returned with status code: [%s] when deleting delta", e.getStatusCode()));
+                logger.error(String.format("Delete client error returned with status code: [%s] when deleting delta", e.getStatusCode()));
                 throw new NonRetryableException("DeleteClient error returned when deleting delta", e);
             }
         } catch (IllegalArgumentException e) {
