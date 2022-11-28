@@ -14,6 +14,7 @@ import uk.gov.companieshouse.api.handler.delta.exemptions.request.PrivateCompany
 import uk.gov.companieshouse.api.handler.exception.URIValidationException;
 import uk.gov.companieshouse.exemptions.delta.NonRetryableException;
 import uk.gov.companieshouse.exemptions.delta.RetryableException;
+import uk.gov.companieshouse.logging.Logger;
 
 import static org.hamcrest.CoreMatchers.equalTo;
 import static org.hamcrest.CoreMatchers.instanceOf;
@@ -38,13 +39,16 @@ public class ClientTest {
     @Mock
     private PrivateCompanyExemptionsDelete deleteHandler;
 
+    @Mock
+    private Logger logger;
+
     @Test
     void testDelete() throws ApiErrorResponseException, URIValidationException {
         // given
         when(internalApiClient.privateDeltaCompanyAppointmentResourceHandler()).thenReturn(resourceHandler);
         when(resourceHandler.deleteCompanyExemptionsResource(any())).thenReturn(deleteHandler);
         DeleteRequest request = new DeleteRequest(REQUEST_PATH);
-        DeleteClient client = new DeleteClient(() -> internalApiClient);
+        DeleteClient client = new DeleteClient(() -> internalApiClient, logger);
 
         // when
         client.delete(request);
@@ -61,7 +65,7 @@ public class ClientTest {
         when(resourceHandler.deleteCompanyExemptionsResource(any())).thenReturn(deleteHandler);
         when(deleteHandler.execute()).thenThrow(new ApiErrorResponseException(new HttpResponseException.Builder(400, "Bad request", new HttpHeaders())));
         DeleteRequest request = new DeleteRequest(REQUEST_PATH);
-        DeleteClient client = new DeleteClient(() -> internalApiClient);
+        DeleteClient client = new DeleteClient(() -> internalApiClient, logger);
 
         // when
         Executable actual = () -> client.delete(request);
@@ -79,7 +83,7 @@ public class ClientTest {
         when(resourceHandler.deleteCompanyExemptionsResource(any())).thenReturn(deleteHandler);
         when(deleteHandler.execute()).thenThrow(URIValidationException.class);
         DeleteRequest request = new DeleteRequest("invalid");
-        DeleteClient client = new DeleteClient(() -> internalApiClient);
+        DeleteClient client = new DeleteClient(() -> internalApiClient, logger);
 
         // when
         Executable actual = () -> client.delete(request);
@@ -97,7 +101,7 @@ public class ClientTest {
         when(resourceHandler.deleteCompanyExemptionsResource(any())).thenReturn(deleteHandler);
         when(deleteHandler.execute()).thenThrow(new ApiErrorResponseException(new HttpResponseException.Builder(503, "Service unavailable", new HttpHeaders())));
         DeleteRequest request = new DeleteRequest(REQUEST_PATH);
-        DeleteClient client = new DeleteClient(() -> internalApiClient);
+        DeleteClient client = new DeleteClient(() -> internalApiClient, logger);
 
         // when
         Executable actual = () -> client.delete(request);
