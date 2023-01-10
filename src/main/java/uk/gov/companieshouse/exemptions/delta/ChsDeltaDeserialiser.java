@@ -1,5 +1,6 @@
 package uk.gov.companieshouse.exemptions.delta;
 
+import java.io.UncheckedIOException;
 import org.apache.avro.AvroRuntimeException;
 import org.apache.avro.io.DatumReader;
 import org.apache.avro.io.Decoder;
@@ -36,7 +37,8 @@ public class ChsDeltaDeserialiser implements Deserializer<ChsDelta> {
             return reader.read(null, decoder);
         } catch (IOException | AvroRuntimeException e) {
             LOGGER.error("Error deserialising message FOUR", e);
-            return null;
+            //TODO custom exception? i.e. InvalidPayloadException
+            throw new RuntimeException(e);
         }
     }
 }

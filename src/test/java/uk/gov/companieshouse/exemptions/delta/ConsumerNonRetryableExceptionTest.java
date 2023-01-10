@@ -67,7 +67,7 @@ public class ConsumerNonRetryableExceptionTest {
         DatumWriter<ChsDelta> writer = new ReflectDatumWriter<>(ChsDelta.class);
         writer.write(new ChsDelta("{}", 0, "context_id", false), encoder);
         embeddedKafkaBroker.consumeFromAllEmbeddedTopics(testConsumer);
-        doThrow(NonRetryableException.class).when(router).route(any());
+        //doThrow(NonRetryableException.class).when(router).route(any());
 
         //when
         testProducer.send(new ProducerRecord<>("echo", 0, System.currentTimeMillis(), "key", outputStream.toByteArray()));
