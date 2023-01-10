@@ -35,7 +35,7 @@ public class ChsDeltaDeserialiser implements Deserializer<ChsDelta> {
             DatumReader<ChsDelta> reader = new ReflectDatumReader<>(ChsDelta.class);
             return reader.read(null, decoder);
         } catch (IOException | AvroRuntimeException e) {
-            LOGGER.error("Error deserialising message", e);
+            LOGGER.error("Error deserialising message FOUR", e);
             return null;
         }
     }
