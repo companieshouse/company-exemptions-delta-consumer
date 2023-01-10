@@ -27,7 +27,7 @@ public class InvalidMessageRouter implements ProducerInterceptor<String, ChsDelt
             ObjectMapper mapper = new ObjectMapper();
             String dataMessage = "";
             try {
-                byte[] stringBytes = mapper.writeValueAsBytes(record.value().getData());
+                byte[] stringBytes = mapper.writeValueAsBytes(record.value());
                 dataMessage = Base64.getEncoder().encodeToString(stringBytes);
             } catch (JsonProcessingException e) {
                 e.printStackTrace();
