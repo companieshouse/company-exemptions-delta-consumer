@@ -1,8 +1,6 @@
 package uk.gov.companieshouse.exemptions.delta;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.databind.ObjectMapper;
-import java.util.Base64;
+import java.math.BigInteger;
 import org.apache.kafka.clients.producer.ProducerInterceptor;
 import org.apache.kafka.clients.producer.ProducerRecord;
 import org.apache.kafka.clients.producer.RecordMetadata;
@@ -24,20 +22,15 @@ public class InvalidMessageRouter implements ProducerInterceptor<String, ChsDelt
             messageFlags.destroy();
             return record;
         } else {
-            ObjectMapper mapper = new ObjectMapper();
-            String dataMessage = "";
-            try {
-                byte[] stringBytes = mapper.writeValueAsBytes(record.value());
-                dataMessage = Base64.getEncoder().encodeToString(stringBytes);
-            } catch (JsonProcessingException e) {
-                e.printStackTrace();
-            }
-            LOGGER.info("HELLO WORLD1");
-            //TODO capture as much metadata as possible.
-            ChsDelta invalidData = new ChsDelta(dataMessage, 0, "context_id", false);
+            String topic = new String(record.headers().lastHeader("kafka_original-topic").value());
+            BigInteger partition = new BigInteger(record.headers().lastHeader("kafka_original-partition").value());
+            BigInteger offset = new BigInteger(record.headers().lastHeader("kafka_original-offset").value());
+            String message = String.format("Invalid message for topic: %s, partition: %d, offset: %d", topic, partition, offset);
+            ChsDelta invalidData = new ChsDelta(String.format("{ \"invalid_message\": \"%s\" }", message), 0, "", false);
+
             ProducerRecord<String, ChsDelta> invalidRecord = new ProducerRecord<>(invalidMessageTopic, record.key(), invalidData);
-            LOGGER.info(String.format("Moving record into topic: [%s]\nMessage content: %s",
-                    invalidRecord.topic(), dataMessage));
+            LOGGER.info(String.format("Moving record into topic: [%s]\nMessage content: %s", invalidRecord.topic(), message));
+
             return invalidRecord;
         }
     }

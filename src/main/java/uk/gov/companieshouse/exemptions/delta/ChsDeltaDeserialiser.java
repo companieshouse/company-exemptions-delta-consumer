@@ -36,9 +36,8 @@ public class ChsDeltaDeserialiser implements Deserializer<ChsDelta> {
             DatumReader<ChsDelta> reader = new ReflectDatumReader<>(ChsDelta.class);
             return reader.read(null, decoder);
         } catch (IOException | AvroRuntimeException e) {
-            LOGGER.error("Error deserialising message FOUR", e);
-            //TODO custom exception? i.e. InvalidPayloadException
-            throw new RuntimeException(e);
+            LOGGER.error("Error deserialising message.", e);
+            throw new InvalidPayloadException("Invalid payload was provided.", e);
         }
     }
 }
