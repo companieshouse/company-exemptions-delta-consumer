@@ -1,6 +1,15 @@
 package uk.gov.companieshouse.exemptions.delta;
 
+import static org.springframework.kafka.support.KafkaHeaders.EXCEPTION_MESSAGE;
+import static org.springframework.kafka.support.KafkaHeaders.ORIGINAL_OFFSET;
+import static org.springframework.kafka.support.KafkaHeaders.ORIGINAL_PARTITION;
+import static org.springframework.kafka.support.KafkaHeaders.ORIGINAL_TOPIC;
+
+import java.math.BigInteger;
+import java.util.List;
 import org.apache.kafka.clients.producer.ProducerRecord;
+import org.apache.kafka.common.header.Header;
+import org.apache.kafka.common.header.internals.RecordHeader;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -38,14 +47,38 @@ public class InvalidMessageRouterTest {
     @Test
     void testOnSendRoutesMessageToInvalidMessageTopicIfNonRetryableExceptionThrown() {
         // given
-        ProducerRecord<String, ChsDelta> message = new ProducerRecord<>("main", "key", delta);
+        ProducerRecord<String, ChsDelta> message = new ProducerRecord<>("main", 0, "key", delta,
+                List.of(
+                        new RecordHeader(ORIGINAL_TOPIC, "main".getBytes()),
+                        new RecordHeader(ORIGINAL_PARTITION, BigInteger.ZERO.toByteArray()),
+                        new RecordHeader(ORIGINAL_OFFSET, BigInteger.ONE.toByteArray()),
+                        new RecordHeader(EXCEPTION_MESSAGE, "[invalid]".getBytes())));
 
+        ChsDelta invalidData = new ChsDelta(
+                "{ \"invalid_message\": \"payload: [ invalid ] passed for topic: main, partition: 0, offset: 1\" }",
+                0, "", false);
         // when
         ProducerRecord<String, ChsDelta> actual = invalidMessageRouter.onSend(message);
 
         // then
         verify(flags, times(0)).destroy();
-        assertThat(actual, is(equalTo(new ProducerRecord<>("invalid", "key", delta))));
+        assertThat(actual, is(equalTo(new ProducerRecord<>("invalid", "key", invalidData))));
+    }
+
+    @Test
+    void testOnSendRoutesMessageToInvalidMessageTopicIfNonRetryableExceptionThrownNoHeaders() {
+        // given
+        ProducerRecord<String, ChsDelta> message = new ProducerRecord<>("main",  "key", delta);
+
+        ChsDelta invalidData = new ChsDelta(
+                "{ \"invalid_message\": \"payload: [ unknown ] passed for topic: unknown, partition: -1, offset: -1\" }",
+                0, "", false);
+        // when
+        ProducerRecord<String, ChsDelta> actual = invalidMessageRouter.onSend(message);
+
+        // then
+        verify(flags, times(0)).destroy();
+        assertThat(actual, is(equalTo(new ProducerRecord<>("invalid", "key", invalidData))));
     }
 
     @Test

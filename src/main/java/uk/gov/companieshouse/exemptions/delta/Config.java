@@ -20,6 +20,7 @@ import org.springframework.kafka.listener.ConcurrentMessageListenerContainer;
 import org.springframework.kafka.listener.ContainerProperties;
 import org.springframework.kafka.listener.DeadLetterPublishingRecoverer;
 import org.springframework.kafka.listener.DefaultErrorHandler;
+import org.springframework.kafka.support.serializer.ErrorHandlingDeserializer;
 import org.springframework.util.backoff.FixedBackOff;
 import uk.gov.companieshouse.api.InternalApiClient;
 import uk.gov.companieshouse.delta.ChsDelta;
@@ -38,11 +39,13 @@ public class Config {
     public ConsumerFactory<String, ChsDelta> consumerFactory(@Value("${spring.kafka.bootstrap-servers}") String bootstrapServers) {
         return new DefaultKafkaConsumerFactory<>(new HashMap<>() {{
             put(ConsumerConfig.BOOTSTRAP_SERVERS_CONFIG, bootstrapServers);
-            put(ConsumerConfig.KEY_DESERIALIZER_CLASS_CONFIG, StringDeserializer.class);
-            put(ConsumerConfig.VALUE_DESERIALIZER_CLASS_CONFIG, ChsDeltaDeserialiser.class);
+            put(ConsumerConfig.KEY_DESERIALIZER_CLASS_CONFIG, ErrorHandlingDeserializer.class);
+            put(ConsumerConfig.VALUE_DESERIALIZER_CLASS_CONFIG, ErrorHandlingDeserializer.class);
+            put(ErrorHandlingDeserializer.KEY_DESERIALIZER_CLASS, StringDeserializer.class);
+            put(ErrorHandlingDeserializer.VALUE_DESERIALIZER_CLASS, ChsDeltaDeserialiser.class);
             put(ConsumerConfig.AUTO_OFFSET_RESET_CONFIG, "earliest");
             put(ConsumerConfig.ENABLE_AUTO_COMMIT_CONFIG, "false");
-        }}, new StringDeserializer(), new ChsDeltaDeserialiser());
+        }}, new StringDeserializer(), new ErrorHandlingDeserializer<>(new ChsDeltaDeserialiser()));
     }
 
     @Bean
