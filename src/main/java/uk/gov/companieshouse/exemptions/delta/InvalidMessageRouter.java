@@ -1,6 +1,12 @@
 package uk.gov.companieshouse.exemptions.delta;
 
+import static org.springframework.kafka.support.KafkaHeaders.EXCEPTION_MESSAGE;
+import static org.springframework.kafka.support.KafkaHeaders.ORIGINAL_OFFSET;
+import static org.springframework.kafka.support.KafkaHeaders.ORIGINAL_PARTITION;
+import static org.springframework.kafka.support.KafkaHeaders.ORIGINAL_TOPIC;
+
 import java.math.BigInteger;
+import java.util.Optional;
 import org.apache.kafka.clients.producer.ProducerInterceptor;
 import org.apache.kafka.clients.producer.ProducerRecord;
 import org.apache.kafka.clients.producer.RecordMetadata;
@@ -22,14 +28,24 @@ public class InvalidMessageRouter implements ProducerInterceptor<String, ChsDelt
             messageFlags.destroy();
             return record;
         } else {
-            String topic = new String(record.headers().lastHeader("kafka_original-topic").value());
-            BigInteger partition = new BigInteger(record.headers().lastHeader("kafka_original-partition").value());
-            BigInteger offset = new BigInteger(record.headers().lastHeader("kafka_original-offset").value());
-            String message = String.format("Invalid message for topic: %s, partition: %d, offset: %d", topic, partition, offset);
-            ChsDelta invalidData = new ChsDelta(String.format("{ \"invalid_message\": \"%s\" }", message), 0, "", false);
+            String topic = Optional.ofNullable(record.headers().lastHeader(ORIGINAL_TOPIC))
+                    .map(h -> new String(h.value())).orElse("unknown");
+            BigInteger partition = Optional.ofNullable(record.headers().lastHeader(ORIGINAL_PARTITION))
+                    .map(h -> new BigInteger(h.value())).orElse(BigInteger.valueOf(-1));
+            BigInteger offset = Optional.ofNullable(record.headers().lastHeader(ORIGINAL_OFFSET))
+                    .map(h -> new BigInteger(h.value())).orElse(BigInteger.valueOf(-1));
+            String payload = Optional.ofNullable(record.headers().lastHeader(EXCEPTION_MESSAGE))
+                    .map(h -> {
+                        String exception = new String(h.value());
+                        return exception.substring(exception.indexOf("[")+1, exception.lastIndexOf("]"));
+                    }).orElse("unknown");
+
+            ChsDelta invalidData = new ChsDelta(
+                    String.format("{ \"invalid_message\": \"payload: [ %s ] passed for topic: %s, partition: %d, offset: %d\" }",
+                            payload, topic, partition, offset), 0, "", false);
 
             ProducerRecord<String, ChsDelta> invalidRecord = new ProducerRecord<>(invalidMessageTopic, record.key(), invalidData);
-            LOGGER.info(String.format("Moving record into topic: [%s]\nMessage content: %s", invalidRecord.topic(), message));
+            LOGGER.info(String.format("Moving record into topic: [%s]\nMessage content: %s", invalidRecord.topic(), invalidData.getData()));
 
             return invalidRecord;
         }

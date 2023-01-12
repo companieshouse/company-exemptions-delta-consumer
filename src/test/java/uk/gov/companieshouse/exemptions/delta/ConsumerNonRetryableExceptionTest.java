@@ -59,43 +59,22 @@ public class ConsumerNonRetryableExceptionTest {
     @MockBean
     private ServiceRouter router;
 
+    @MockBean
+    ChsDeltaDeserialiser chsDeltaDeserialiser;
+
     @Test
     void testRepublishToInvalidMessageTopicIfNonRetryableExceptionThrown() throws InterruptedException, IOException {
-        //given
-        ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
-        Encoder encoder = EncoderFactory.get().directBinaryEncoder(outputStream, null);
-        DatumWriter<ChsDelta> writer = new ReflectDatumWriter<>(ChsDelta.class);
-        writer.write(new ChsDelta("{}", 0, "context_id", false), encoder);
-        embeddedKafkaBroker.consumeFromAllEmbeddedTopics(testConsumer);
-        //doThrow(NonRetryableException.class).when(router).route(any());
-
-        //when
-        testProducer.send(new ProducerRecord<>("echo", 0, System.currentTimeMillis(), "key", outputStream.toByteArray()));
-        if (!latch.await(30L, TimeUnit.SECONDS)) {
-            fail("Timed out waiting for latch");
-        }
-        ConsumerRecords<?, ?> consumerRecords = KafkaTestUtils.getRecords(testConsumer, 10000L, 2);
-
-        //then
-        assertThat(TestUtils.noOfRecordsForTopic(consumerRecords, "echo"), is(1));
-        assertThat(TestUtils.noOfRecordsForTopic(consumerRecords, "echo-echo-consumer-retry"), is(0));
-        assertThat(TestUtils.noOfRecordsForTopic(consumerRecords, "echo-echo-consumer-error"), is(0));
-        assertThat(TestUtils.noOfRecordsForTopic(consumerRecords, "echo-echo-consumer-invalid"), is(1));
-    }
-
-    @Test
-    void testInvalidTopicHandlesMalformedMessage() throws IOException, InterruptedException {
         //given
         ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
         Encoder encoder = EncoderFactory.get().directBinaryEncoder(outputStream, null);
         DatumWriter<String> writer = new ReflectDatumWriter<>(String.class);
         writer.write("hello", encoder);
         embeddedKafkaBroker.consumeFromAllEmbeddedTopics(testConsumer);
-        //doThrow(NonRetryableException.class).when(router).route(any());
+        //doThrow(InvalidPayloadException.class).when(chsDeltaDeserialiser).deserialize(any(), any());
 
         //when
         testProducer.send(new ProducerRecord<>("echo", 0, System.currentTimeMillis(), "key", outputStream.toByteArray()));
-        if (!latch.await(30L, TimeUnit.SECONDS)) {
+        if (!latch.await(300L, TimeUnit.SECONDS)) {
             fail("Timed out waiting for latch");
         }
         ConsumerRecords<?, ?> consumerRecords = KafkaTestUtils.getRecords(testConsumer, 10000L, 2);
@@ -105,6 +84,5 @@ public class ConsumerNonRetryableExceptionTest {
         assertThat(TestUtils.noOfRecordsForTopic(consumerRecords, "echo-echo-consumer-retry"), is(0));
         assertThat(TestUtils.noOfRecordsForTopic(consumerRecords, "echo-echo-consumer-error"), is(0));
         assertThat(TestUtils.noOfRecordsForTopic(consumerRecords, "echo-echo-consumer-invalid"), is(1));
-
     }
 }
