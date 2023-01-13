@@ -45,7 +45,7 @@ public class InvalidMessageRouterTest {
     }
 
     @Test
-    void testOnSendRoutesMessageToInvalidMessageTopicIfNonRetryableExceptionThrown() {
+    void testOnSendRoutesMessageToInvalidMessageTopicIfInvalidPayloadExceptionThrown() {
         // given
         ProducerRecord<String, ChsDelta> message = new ProducerRecord<>("main", 0, "key", delta,
                 List.of(
@@ -66,7 +66,7 @@ public class InvalidMessageRouterTest {
     }
 
     @Test
-    void testOnSendRoutesMessageToInvalidMessageTopicIfNonRetryableExceptionThrownNoHeaders() {
+    void testOnSendRoutesMessageToInvalidMessageTopicIfInvalidPayloadExceptionThrownNoHeaders() {
         // given
         ProducerRecord<String, ChsDelta> message = new ProducerRecord<>("main",  "key", delta);
 

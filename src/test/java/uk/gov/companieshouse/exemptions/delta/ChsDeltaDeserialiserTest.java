@@ -43,8 +43,8 @@ class ChsDeltaDeserialiserTest {
     }
 
     @Test
-    @DisplayName("Return null if an IOException is thrown when deserialising a message")
-    void testDeserialiseDataReturnsNullIfIOExceptionThrown() throws IOException {
+    @DisplayName("Throws InvalidPayloadException if IOException encountered when deserialising a message")
+    void testDeserialiseDataThrowsInvalidPayloadExceptionlIfIOExceptionEncountered() throws IOException {
         // given
         ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
         Encoder encoder = EncoderFactory.get().directBinaryEncoder(outputStream, null);
@@ -63,8 +63,8 @@ class ChsDeltaDeserialiserTest {
     }
 
     @Test
-    @DisplayName("Return null if an AvroException is thrown when deserialising a message")
-    void testDeserialiseDataReturnsNullIfAvroRuntimeExceptionThrown() {
+    @DisplayName("Throws InvalidPayloadException if AvroRuntimeException encountered when deserialising a message")
+    void testDeserialiseDataThrowsInvalidPayloadExceptionlIfAvroRuntimeExceptionEncountered() {
         // given
         ChsDeltaDeserialiser deserialiser = new ChsDeltaDeserialiser();
 
