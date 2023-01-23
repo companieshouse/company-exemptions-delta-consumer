@@ -30,4 +30,4 @@ steps: 1
 
 wiremock:
   server:
-    port: 8888
+    port: 8081
