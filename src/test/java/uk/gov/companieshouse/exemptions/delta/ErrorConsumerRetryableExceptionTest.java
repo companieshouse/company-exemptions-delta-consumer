@@ -43,7 +43,7 @@ import static org.mockito.Mockito.verify;
 @TestPropertySource(locations = "classpath:application-test_error_negative.yml")
 @Import(TestConfig.class)
 @ActiveProfiles("test_error_negative")
-public class ErrorConsumerRetryableExceptionTest {
+class ErrorConsumerRetryableExceptionTest {
 
     @Autowired
     private EmbeddedKafkaBroker embeddedKafkaBroker;

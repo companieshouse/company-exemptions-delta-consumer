@@ -40,7 +40,7 @@ import static org.hamcrest.MatcherAssert.assertThat;
 @TestPropertySource(locations = "classpath:application-test_main_nonretryable.yml")
 @Import(TestConfig.class)
 @ActiveProfiles("test_main_nonretryable")
-public class ConsumerInvalidTopicTest {
+class ConsumerInvalidTopicTest {
 
     @Autowired
     private EmbeddedKafkaBroker embeddedKafkaBroker;
@@ -50,15 +50,6 @@ public class ConsumerInvalidTopicTest {
 
     @Autowired
     private KafkaProducer<String, byte[]> testProducer;
-
-    @Autowired
-    private CountDownLatch latch;
-
-    @MockBean
-    private ServiceRouter router;
-
-    @MockBean
-    ChsDeltaDeserialiser chsDeltaDeserialiser;
 
     @Test
     void testPublishToInvalidMessageTopicIfInvalidDataDeserialised() throws InterruptedException, IOException, ExecutionException {

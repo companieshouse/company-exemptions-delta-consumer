@@ -42,7 +42,7 @@ import static org.mockito.Mockito.doThrow;
 @TestPropertySource(locations = "classpath:application-test_main_nonretryable.yml")
 @Import(TestConfig.class)
 @ActiveProfiles("test_main_nonretryable")
-public class ConsumerNonRetryableExceptionTest {
+class ConsumerNonRetryableExceptionTest {
 
     @Autowired
     private EmbeddedKafkaBroker embeddedKafkaBroker;
@@ -79,7 +79,7 @@ public class ConsumerNonRetryableExceptionTest {
         //then
         assertThat(TestUtils.noOfRecordsForTopic(consumerRecords, "echo"), is(1));
         assertThat(TestUtils.noOfRecordsForTopic(consumerRecords, "echo-echo-consumer-retry"), is(0));
-        assertThat(TestUtils.noOfRecordsForTopic(consumerRecords, "echo-echo-consumer-error"), is(1));
-        assertThat(TestUtils.noOfRecordsForTopic(consumerRecords, "echo-echo-consumer-invalid"), is(0));
+        assertThat(TestUtils.noOfRecordsForTopic(consumerRecords, "echo-echo-consumer-error"), is(0));
+        assertThat(TestUtils.noOfRecordsForTopic(consumerRecords, "echo-echo-consumer-invalid"), is(1));
     }
 }
