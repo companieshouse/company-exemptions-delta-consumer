@@ -20,32 +20,30 @@ public class InvalidMessageRouter implements ProducerInterceptor<String, ChsDelt
 
     private MessageFlags messageFlags;
     private String invalidMessageTopic;
-    private Logger LOGGER = LoggerFactory.getLogger(Application.NAMESPACE);
+    private static final Logger LOGGER = LoggerFactory.getLogger(Application.NAMESPACE);
 
     @Override
-    public ProducerRecord<String, ChsDelta> onSend(ProducerRecord<String, ChsDelta> record) {
+    public ProducerRecord<String, ChsDelta> onSend(ProducerRecord<String, ChsDelta> producerRecord) {
         if (messageFlags.isRetryable()) {
             messageFlags.destroy();
-            return record;
+            return producerRecord;
         } else {
-            String topic = Optional.ofNullable(record.headers().lastHeader(ORIGINAL_TOPIC))
+            String topic = Optional.ofNullable(producerRecord.headers().lastHeader(ORIGINAL_TOPIC))
                     .map(h -> new String(h.value())).orElse("unknown");
-            BigInteger partition = Optional.ofNullable(record.headers().lastHeader(ORIGINAL_PARTITION))
+            BigInteger partition = Optional.ofNullable(producerRecord.headers().lastHeader(ORIGINAL_PARTITION))
                     .map(h -> new BigInteger(h.value())).orElse(BigInteger.valueOf(-1));
-            BigInteger offset = Optional.ofNullable(record.headers().lastHeader(ORIGINAL_OFFSET))
+            BigInteger offset = Optional.ofNullable(producerRecord.headers().lastHeader(ORIGINAL_OFFSET))
                     .map(h -> new BigInteger(h.value())).orElse(BigInteger.valueOf(-1));
-            String payload = Optional.ofNullable(record.headers().lastHeader(EXCEPTION_MESSAGE))
-                    .map(h -> {
-                        String exception = new String(h.value());
-                        return exception.substring(exception.indexOf("[")+1, exception.lastIndexOf("]"));
-                    }).orElse("unknown");
+            String exception = Optional.ofNullable(producerRecord.headers().lastHeader(EXCEPTION_MESSAGE))
+                    .map(h -> new String(h.value()))
+                    .orElse("unknown");
 
             ChsDelta invalidData = new ChsDelta(
-                    String.format("{ \"invalid_message\": \"payload: [ %s ] passed for topic: %s, partition: %d, offset: %d\" }",
-                            payload, topic, partition, offset), 0, "", false);
+                    String.format("{ \"invalid_message\": \"exception: [ %s ] passed for topic: %s, partition: %d, offset: %d\" }",
+                            exception, topic, partition, offset), 0, "", false);
 
-            ProducerRecord<String, ChsDelta> invalidRecord = new ProducerRecord<>(invalidMessageTopic, record.key(), invalidData);
-            LOGGER.info(String.format("Moving record into topic: [%s]\nMessage content: %s", invalidRecord.topic(), invalidData.getData()));
+            ProducerRecord<String, ChsDelta> invalidRecord = new ProducerRecord<>(invalidMessageTopic, producerRecord.key(), invalidData);
+            LOGGER.info(String.format("Moving record into topic: [%s]%nMessage content: %s", invalidRecord.topic(), invalidData.getData()));
 
             return invalidRecord;
         }

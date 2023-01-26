@@ -8,7 +8,6 @@ import static org.springframework.kafka.support.KafkaHeaders.ORIGINAL_TOPIC;
 import java.math.BigInteger;
 import java.util.List;
 import org.apache.kafka.clients.producer.ProducerRecord;
-import org.apache.kafka.common.header.Header;
 import org.apache.kafka.common.header.internals.RecordHeader;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -28,7 +27,7 @@ import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
 @ExtendWith(MockitoExtension.class)
-public class InvalidMessageRouterTest {
+class InvalidMessageRouterTest {
 
     private InvalidMessageRouter invalidMessageRouter;
 
@@ -55,7 +54,7 @@ public class InvalidMessageRouterTest {
                         new RecordHeader(EXCEPTION_MESSAGE, "[invalid]".getBytes())));
 
         ChsDelta invalidData = new ChsDelta(
-                "{ \"invalid_message\": \"payload: [ invalid ] passed for topic: main, partition: 0, offset: 1\" }",
+                "{ \"invalid_message\": \"exception: [ [invalid] ] passed for topic: main, partition: 0, offset: 1\" }",
                 0, "", false);
         // when
         ProducerRecord<String, ChsDelta> actual = invalidMessageRouter.onSend(message);
@@ -71,7 +70,7 @@ public class InvalidMessageRouterTest {
         ProducerRecord<String, ChsDelta> message = new ProducerRecord<>("main",  "key", delta);
 
         ChsDelta invalidData = new ChsDelta(
-                "{ \"invalid_message\": \"payload: [ unknown ] passed for topic: unknown, partition: -1, offset: -1\" }",
+                "{ \"invalid_message\": \"exception: [ unknown ] passed for topic: unknown, partition: -1, offset: -1\" }",
                 0, "", false);
         // when
         ProducerRecord<String, ChsDelta> actual = invalidMessageRouter.onSend(message);

@@ -1,5 +1,6 @@
 package uk.gov.companieshouse.exemptions.delta;
 
+import java.util.Optional;
 import org.apache.kafka.clients.consumer.KafkaConsumer;
 import org.apache.kafka.common.TopicPartition;
 import org.slf4j.Logger;
@@ -31,10 +32,10 @@ public class ErrorConsumer {
     private final MessageFlags messageFlags;
 
     public ErrorConsumer(KafkaListenerEndpointRegistry registry,
-                         OffsetConstraint offsetConstraint,
-                         ServiceRouter router,
-                         @Value("${error_consumer.group_id}") String container,
-                         MessageFlags messageFlags) {
+            OffsetConstraint offsetConstraint,
+            ServiceRouter router,
+            @Value("${error_consumer.group_id}") String container,
+            MessageFlags messageFlags) {
         this.registry = registry;
         this.offsetConstraint = offsetConstraint;
         this.router = router;
@@ -51,9 +52,9 @@ public class ErrorConsumer {
      * An {@link Acknowledgment#acknowledge() acknowledgement} is issued after the meessage is consumed; this is done
      * to prevent the offset immediately after the final offset that was calculated from being processed.
      *
-     * @param message A message containing a {@link ChsDelta delta} containing an
-     * {@link uk.gov.companieshouse.api.delta.PscExemptionDelta exemption delta} or an
-     * {@link uk.gov.companieshouse.api.delta.PscExemptionDeleteDelta exemption delete delta}.
+     * @param message        A message containing a {@link ChsDelta delta} containing an
+     *                       {@link uk.gov.companieshouse.api.delta.PscExemptionDelta exemption delta} or an
+     *                       {@link uk.gov.companieshouse.api.delta.PscExemptionDeleteDelta exemption delete delta}.
      * @param acknowledgment An {@link Acknowledgment acknowledgement handler}.
      */
     @KafkaListener(
@@ -64,16 +65,20 @@ public class ErrorConsumer {
             autoStartup = "${error_consumer.enabled}"
     )
     public void consume(Message<ChsDelta> message, Acknowledgment acknowledgment) {
-        KafkaConsumer<?, ?> consumer = (KafkaConsumer<?, ?>)message.getHeaders().get(KafkaHeaders.CONSUMER);
-        String topic = (String)message.getHeaders().get(KafkaHeaders.RECEIVED_TOPIC);
-        Integer partition = (Integer)message.getHeaders().get(KafkaHeaders.RECEIVED_PARTITION_ID);
-        Long offset = (Long)message.getHeaders().get(KafkaHeaders.OFFSET);
+        KafkaConsumer<?, ?> consumer = Optional.ofNullable((KafkaConsumer<?, ?>) message.getHeaders().get(KafkaHeaders.CONSUMER))
+                .orElseThrow(() -> new NonRetryableException("Missing consumer header"));
+        String topic = (String) message.getHeaders().get(KafkaHeaders.RECEIVED_TOPIC);
+        Integer partition = Optional.ofNullable((Integer) message.getHeaders().get(KafkaHeaders.RECEIVED_PARTITION_ID))
+                .orElseThrow(() -> new NonRetryableException("Missing partition header"));
+        Long offset = Optional.ofNullable((Long) message.getHeaders().get(KafkaHeaders.OFFSET))
+                .orElseThrow(() -> new NonRetryableException("Missing offset header"));
         if (offsetConstraint.getOffsetConstraint() == null) {
             offsetConstraint.setOffsetConstraint(consumer.endOffsets(Collections.singletonList(new TopicPartition(topic, partition))).values().stream().findFirst().orElse(1L) - 1);
         }
         if (offset > offsetConstraint.getOffsetConstraint()) {
             LOGGER.info("Maximum offset exceeded; stopping consumer...");
-            this.registry.getListenerContainer(this.container).pause();
+            Optional.ofNullable(this.registry.getListenerContainer(this.container))
+                    .ifPresent(MessageListenerContainer::pause);
         } else {
             try {
                 router.route(message.getPayload());
