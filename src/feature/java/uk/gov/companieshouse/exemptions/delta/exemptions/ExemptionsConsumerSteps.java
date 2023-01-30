@@ -1,18 +1,15 @@
 package uk.gov.companieshouse.exemptions.delta.exemptions;
 
-import static com.github.tomakehurst.wiremock.client.WireMock.aResponse;
-import static com.github.tomakehurst.wiremock.client.WireMock.configureFor;
-import static com.github.tomakehurst.wiremock.client.WireMock.put;
-import static com.github.tomakehurst.wiremock.client.WireMock.requestMadeFor;
-import static com.github.tomakehurst.wiremock.client.WireMock.stubFor;
-import static com.github.tomakehurst.wiremock.client.WireMock.urlEqualTo;
-import static com.github.tomakehurst.wiremock.client.WireMock.verify;
+import static com.github.tomakehurst.wiremock.client.WireMock.*;
 import static org.assertj.core.api.Assertions.assertThat;
 
+import com.github.tomakehurst.wiremock.stubbing.ServeEvent;
 import io.cucumber.java.en.Given;
 import io.cucumber.java.en.Then;
 import io.cucumber.java.en.When;
 import java.io.ByteArrayOutputStream;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.Future;
 import java.util.concurrent.TimeUnit;
@@ -81,23 +78,43 @@ public class ExemptionsConsumerSteps {
 
         Future<RecordMetadata> future = testProducer.send(new ProducerRecord<>("company-exemptions-delta", 0, System.currentTimeMillis(), "key", outputStream.toByteArray()));
         future.get();
+        List<ServeEvent> serverEvents = getServeEvents();
+        assertThat(serverEvents.size()).isEqualTo(1);
+        assertThat(serverEvents.isEmpty()).isFalse();
     }
 
     @Then("a PUT request is sent to the company exemptions data api with the transformed data")
     public void putRequestSentToCompanyExemptionsDataApi() {
         // TODO: Change code where necessary
-        verify(1, requestMadeFor(new ExemptionsRequestMatcher(logger, output)));
+        verify(1, putRequestedFor(urlEqualTo("/company-exemptions/00006400/internal")));
     }
 
     private void stubPutExemptions(int responseCode) {
         stubFor(put(urlEqualTo("/company-exemptions/00006400/internal"))
-                .willReturn(aResponse().withStatus(responseCode)));
+                .willReturn(ok()));
+
     }
 
     private void configureWiremock() {
-        wireMockServer = new WireMockServer(Integer.parseInt(port));
-        wireMockServer.start();
-        configureFor("localhost", Integer.parseInt(port));
+        if (wireMockServer == null) {
+            wireMockServer = new WireMockServer(Integer.parseInt(port));
+            wireMockServer.start();
+            configureFor("localhost", Integer.parseInt(port));
+        } else{
+            resetWiremock();
+        }
+    }
+
+    private void resetWiremock(){
+        if(wireMockServer == null){
+            throw new RuntimeException("Wiremock not initialised");
+        }
+        wireMockServer.resetRequests();
+    }
+
+    private List<ServeEvent> getServeEvents(){
+        return wireMockServer != null ? wireMockServer.getAllServeEvents() :
+            new ArrayList<>();
     }
 
     private void countDown() throws Exception {

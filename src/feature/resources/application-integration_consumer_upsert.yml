@@ -30,4 +30,16 @@ steps: 1
 
 wiremock:
   server:
-    port: 8081
+    port: 8888
+
+#chs:
+#  kafka:
+#    api:
+#      endpoint: ${CHS_KAFKA_API_URL:http://localhost:8888}
+#      key: ${CHS_API_KEY:chsApiKey}
+api:
+#  api-url: ${ERIC_API_URL:http://localhost:8888}
+#  api-key: ${ERIC_API_KEY:chsApiKey}
+  api-url: http://localhost:8888
+  api-key: g9yZIA81Zo9J46Kzp3JPbfld6kOqxR47EAYqXbRV
+  payments-url: http://localhost:8888

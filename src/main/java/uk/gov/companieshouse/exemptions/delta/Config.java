@@ -23,6 +23,7 @@ import org.springframework.kafka.listener.DefaultErrorHandler;
 import org.springframework.kafka.support.serializer.ErrorHandlingDeserializer;
 import org.springframework.util.backoff.FixedBackOff;
 import uk.gov.companieshouse.api.InternalApiClient;
+import uk.gov.companieshouse.api.http.ApiKeyHttpClient;
 import uk.gov.companieshouse.delta.ChsDelta;
 import uk.gov.companieshouse.logging.Logger;
 import uk.gov.companieshouse.logging.LoggerFactory;
@@ -92,9 +93,21 @@ public class Config {
         return new DefaultErrorHandler(new DeadLetterPublishingRecoverer(kafkaTemplate, fixedDestinationResolver::resolve), new FixedBackOff(100, 0));
     }
 
+//    @Bean
+//    public Supplier<InternalApiClient> internalApiClientFactory() {
+//        return ApiSdkManager::getPrivateSDK;
     @Bean
-    public Supplier<InternalApiClient> internalApiClientFactory() {
-        return ApiSdkManager::getPrivateSDK;
+    Supplier<InternalApiClient> internalApiClientSupplier(
+            @Value("${api.api-key}") String apiKey,
+            @Value("${api.api-url}") String apiUrl,
+            @Value("${api.payments-url}") String paymentsUrl) {
+        return () -> {
+            InternalApiClient internalApiClient = new InternalApiClient(new ApiKeyHttpClient(
+                    apiKey));
+            internalApiClient.setBasePath(apiUrl);
+            internalApiClient.setBasePaymentsPath(paymentsUrl);
+            return internalApiClient;
+        };
     }
 
     @Bean

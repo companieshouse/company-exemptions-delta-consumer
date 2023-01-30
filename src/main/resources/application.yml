@@ -35,3 +35,13 @@ management:
     health:
       show-details: never
       enabled: true
+
+chs:
+  kafka:
+    api:
+      endpoint: ${CHS_KAFKA_API_URL:localhost}
+      key: ${CHS_API_KEY:chsApiKey}
+api:
+  api-url: ${API_URL:localhost}
+  api-key: ${CHS_API_KEY:chsApiKey}
+  payments-url: ${PAYMENTS_URL:localhost}
