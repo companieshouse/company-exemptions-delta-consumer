@@ -15,7 +15,7 @@ import org.springframework.test.context.TestPropertySource;
 @DirtiesContext(classMode = DirtiesContext.ClassMode.AFTER_CLASS)
 @EmbeddedKafka(
         topics = {"company-exemptions-delta", "company-exemptions-delta-company-exemptions-delta-consumer-retry",
-                "company-exemptions-delta-company-exemptions-delta-consumer-error"},
+                "company-exemptions-delta-company-exemptions-delta-consumer-error", "company-exemptions-delta-company-exemptions-delta-consumer-invalid"},
         controlledShutdown = true,
         partitions = 1
 )

@@ -4,12 +4,11 @@ import org.springframework.stereotype.Component;
 import uk.gov.companieshouse.api.InternalApiClient;
 import uk.gov.companieshouse.api.error.ApiErrorResponseException;
 import uk.gov.companieshouse.api.handler.exception.URIValidationException;
-import uk.gov.companieshouse.api.model.ApiResponse;
 import uk.gov.companieshouse.exemptions.delta.NonRetryableException;
 import uk.gov.companieshouse.exemptions.delta.RetryableException;
+import uk.gov.companieshouse.logging.Logger;
 
 import java.util.function.Supplier;
-import uk.gov.companieshouse.logging.Logger;
 
 /**
  * Upserts a company exemptions resource via a REST HTTP request.

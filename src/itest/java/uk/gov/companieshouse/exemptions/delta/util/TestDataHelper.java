@@ -9,12 +9,12 @@ import org.springframework.util.FileCopyUtils;
 public class TestDataHelper {
 
     public static String getInputData() {
-        String path = "src/feature/resources/fragments/exemptions_delta_input.json";
+        String path = "src/itest/resources/fragments/exemptions_delta_input.json";
         return readFile(path);
     }
 
-    public static String getOutputData() {
-        String path = "src/feature/resources/fragments/exemptions_delta_output.json";
+    public static String getDeleteData() {
+        String path = "src/itest/resources/fragments/delete_exemptions.json";
         return readFile(path).replaceAll("\n", "");
     }
 
