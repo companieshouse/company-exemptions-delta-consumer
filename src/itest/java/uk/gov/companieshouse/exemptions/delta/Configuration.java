@@ -21,6 +21,5 @@ import org.springframework.test.context.TestPropertySource;
 )
 @TestPropertySource(locations = "classpath:application-integration_consumer_upsert.yml")
 @Import(TestConfig.class)
-@ActiveProfiles("integration_consumer_upsert")
 public class Configuration {
 }

@@ -9,7 +9,7 @@ import org.junit.platform.suite.api.Suite;
 
 @Suite
 @IncludeEngines("cucumber")
-@SelectClasspathResource("features/exemptions")
+@SelectClasspathResource("features")
 @ConfigurationParameter(key = GLUE_PROPERTY_NAME, value = "uk.gov.companieshouse.exemptions.delta")
 public class Runner {
 }

@@ -36,6 +36,7 @@ import org.apache.kafka.clients.producer.KafkaProducer;
 import org.apache.kafka.clients.producer.ProducerRecord;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.http.HttpStatus;
 import org.springframework.kafka.test.EmbeddedKafkaBroker;
 import org.springframework.kafka.test.utils.KafkaTestUtils;
 import uk.gov.companieshouse.delta.ChsDelta;
@@ -48,7 +49,7 @@ public class ExemptionsConsumerSteps {
     @Value("${wiremock.server.port}")
     private String port;
 
-    private String output;
+    private static final int MESSAGE_CONSUMED_TIMEOUT = 5;
 
     private static WireMockServer wireMockServer;
 
@@ -68,20 +69,21 @@ public class ExemptionsConsumerSteps {
     @When("^the topic receives a message containing a valid CHS upsert delta payload")
     public void consumerReceivesExemptionDeltaRequest() throws IOException, InterruptedException {
         configureWiremock();
-        stubPutExemptions(200);
+        stubPutExemptions(HttpStatus.OK.value());
 
         ChsDelta delta = new ChsDelta(TestDataHelper.getInputData(), 1, "123", false);
         sendDeltaToMainTopic(delta);
 
-        assertThat(latch.await(5, TimeUnit.SECONDS)).isTrue();
+        assertMessageConsumed();
     }
+
 
     @When("the consumer receives a message with invalid payload")
     public void messageWithInvalidDataIsSent() throws Exception {
         ChsDelta delta = new ChsDelta("invalidData", 1, "123", false);
         sendDeltaToMainTopic(delta);
 
-        assertThat(latch.await(5, TimeUnit.SECONDS)).isTrue();
+        assertMessageConsumed();
     }
 
     @When("an invalid avro message is sent")
@@ -99,12 +101,12 @@ public class ExemptionsConsumerSteps {
     @When("the topic receives a message with a valid CHS delete delta payload")
     public void consumerReceivesExemptionsDeltaDeleteRequest() throws IOException, InterruptedException {
         configureWiremock();
-        stubDeleteExemptions(200);
+        stubDeleteExemptions(HttpStatus.OK.value());
 
         ChsDelta delta = new ChsDelta(TestDataHelper.getDeleteData(), 1, "123", true);
         sendDeltaToMainTopic(delta);
 
-        assertThat(latch.await(5, TimeUnit.SECONDS)).isTrue();
+        assertMessageConsumed();
     }
 
     @Then("^the message should be moved to topic (.*)$")
@@ -122,7 +124,7 @@ public class ExemptionsConsumerSteps {
         ChsDelta delta = new ChsDelta(TestDataHelper.getInputData(), 1, "123", false);
         sendDeltaToMainTopic(delta);
 
-        assertThat(latch.await(5, TimeUnit.SECONDS)).isTrue();
+        assertMessageConsumed();
 
     }
 
@@ -146,7 +148,7 @@ public class ExemptionsConsumerSteps {
 
         List<ServeEvent> wiremockEvents = getAllServeEvents();
         assertEquals(1, wiremockEvents.size());
-        assertEquals(200, wiremockEvents.get(0).getResponse().getStatus());
+        assertEquals(HttpStatus.OK.value(), wiremockEvents.get(0).getResponse().getStatus());
     }
 
     @Then("a PUT request is sent to the company exemptions data api with the transformed data")
@@ -196,5 +198,9 @@ public class ExemptionsConsumerSteps {
         embeddedKafkaBroker.consumeFromAllEmbeddedTopics(testConsumer);
 
         testProducer.send(new ProducerRecord<>("company-exemptions-delta", 0, System.currentTimeMillis(), "key", outputStream.toByteArray()));
+    }
+
+    private void assertMessageConsumed() throws InterruptedException {
+        assertThat(latch.await(MESSAGE_CONSUMED_TIMEOUT, TimeUnit.SECONDS)).isTrue();
     }
 }

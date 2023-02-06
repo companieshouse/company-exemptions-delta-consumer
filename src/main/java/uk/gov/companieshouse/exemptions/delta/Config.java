@@ -93,9 +93,6 @@ public class Config {
         return new DefaultErrorHandler(new DeadLetterPublishingRecoverer(kafkaTemplate, fixedDestinationResolver::resolve), new FixedBackOff(100, 0));
     }
 
-//    @Bean
-//    public Supplier<InternalApiClient> internalApiClientFactory() {
-//        return ApiSdkManager::getPrivateSDK;
     @Bean
     Supplier<InternalApiClient> internalApiClientSupplier(
             @Value("${api.api-key}") String apiKey,
