@@ -19,7 +19,7 @@ import org.springframework.test.context.TestPropertySource;
         controlledShutdown = true,
         partitions = 1
 )
-@TestPropertySource(locations = "classpath:application-integration_consumer_upsert.yml")
 @Import(TestConfig.class)
+@ActiveProfiles("integration_tests")
 public class Configuration {
 }
