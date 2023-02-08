@@ -1,0 +1,38 @@
+server:
+  port: 8080
+
+spring:
+  main:
+    allow-bean-definition-overriding: true
+  kafka:
+    bootstrap-servers: ${spring.embedded.kafka.brokers}
+
+consumer:
+  topic: company-exemptions-delta
+  group_id: company-exemptions-delta-consumer
+  max_attempts: 5
+  backoff_delay: 100
+  concurrency: 1
+
+error_consumer:
+  topic: company-exemptions-delta-company-exemptions-delta-consumer-error
+  group_id: company-exemptions-delta-error-consumer
+  enabled: false
+  dlt: company-exemptions-delta-company-exemptions-delta-consumer-retry
+  concurrency: 1
+
+invalid_message_topic: company-exemptions-delta-company-exemptions-delta-consumer-invalid
+
+logger:
+  namespace: archetype-client
+
+steps: 1
+
+wiremock:
+  server:
+    port: 8888
+
+api:
+  api-url: http://localhost:8888
+  api-key: g9yZIA81Zo9J46Kzp3JPbfld6kOqxR47EAYqXbRV
+  payments-url: http://localhost:8888
