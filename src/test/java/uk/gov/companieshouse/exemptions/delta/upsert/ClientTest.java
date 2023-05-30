@@ -44,7 +44,6 @@ public class ClientTest {
 
     @Test
     void testUpsert() throws ApiErrorResponseException, URIValidationException {
-        Assertions.fail();
         // given
         InternalExemptionsApi body = new InternalExemptionsApi();
         UpsertRequest request = new UpsertRequest();
