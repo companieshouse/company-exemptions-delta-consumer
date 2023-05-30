@@ -2,6 +2,7 @@ package uk.gov.companieshouse.exemptions.delta.upsert;
 
 import com.google.api.client.http.HttpHeaders;
 import com.google.api.client.http.HttpResponseException;
+import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.junit.jupiter.api.function.Executable;
@@ -43,6 +44,7 @@ public class ClientTest {
 
     @Test
     void testUpsert() throws ApiErrorResponseException, URIValidationException {
+        Assertions.fail();
         // given
         InternalExemptionsApi body = new InternalExemptionsApi();
         UpsertRequest request = new UpsertRequest();

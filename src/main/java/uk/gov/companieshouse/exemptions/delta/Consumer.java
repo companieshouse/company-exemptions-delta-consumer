@@ -16,7 +16,7 @@ import uk.gov.companieshouse.delta.ChsDelta;
 @Component
 public class Consumer implements ConsumerSeekAware {
 
-    //private final ServiceRouter router;
+    private final ServiceRouter router;
     private final MessageFlags messageFlags;
 
     public Consumer(ServiceRouter router, MessageFlags messageFlags) {
