@@ -15,7 +15,7 @@ import java.util.Map;
 
 /**
  * Logs message details before and after it has been processed by
- * the {@link Consumer main consumer} or {@link ErrorConsumer error consumer}.<br>
+ * the {@link Consumer main consumer}.<br>
  * <br>
  * Details that will be logged will include:
  * <ul>
@@ -39,22 +39,12 @@ public class MessageLoggingAspect {
     }
 
     @Before("execution(* uk.gov.companieshouse.exemptions.delta.Consumer.consume(..))")
-    void logBeforeMainConsumer(JoinPoint joinPoint) {
+    void logBeforeConsumer(JoinPoint joinPoint) {
         logMessage(LOG_MESSAGE_RECEIVED, (Message<?>)joinPoint.getArgs()[0]);
     }
 
     @After("execution(* uk.gov.companieshouse.exemptions.delta.Consumer.consume(..))")
-    void logAfterMainConsumer(JoinPoint joinPoint) {
-        logMessage(LOG_MESSAGE_PROCESSED, (Message<?>)joinPoint.getArgs()[0]);
-    }
-
-    @Before("execution(* uk.gov.companieshouse.exemptions.delta.ErrorConsumer.consume(..))")
-    void logBeforeErrorConsumer(JoinPoint joinPoint) {
-        logMessage(LOG_MESSAGE_RECEIVED, (Message<?>)joinPoint.getArgs()[0]);
-    }
-
-    @After("execution(* uk.gov.companieshouse.exemptions.delta.ErrorConsumer.consume(..))")
-    void logAfterErrorConsumer(JoinPoint joinPoint) {
+    void logAfterConsumer(JoinPoint joinPoint) {
         logMessage(LOG_MESSAGE_PROCESSED, (Message<?>)joinPoint.getArgs()[0]);
     }
 

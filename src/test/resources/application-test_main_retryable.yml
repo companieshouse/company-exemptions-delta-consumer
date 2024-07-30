@@ -14,12 +14,6 @@ consumer:
   backoff_delay: 100
   concurrency: 1
 
-error_consumer:
-  topic: echo-echo-consumer-error
-  group_id: echo-error-consumer
-  enabled: false
-  dlt: echo-echo-consumer-retry
-  concurrency: 1
 
 invalid_message_topic: echo-echo-consumer-invalid
 

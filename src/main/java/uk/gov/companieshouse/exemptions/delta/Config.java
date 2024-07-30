@@ -79,21 +79,6 @@ public class Config {
     }
 
     @Bean
-    public KafkaListenerContainerFactory<ConcurrentMessageListenerContainer<String, ChsDelta>> kafkaErrorListenerContainerFactory(CommonErrorHandler errorConsumerErrorHandler, ConsumerFactory<String, ChsDelta> consumerFactory, @Value("${error_consumer.concurrency}") Integer concurrency) {
-        ConcurrentKafkaListenerContainerFactory<String, ChsDelta> factory = new ConcurrentKafkaListenerContainerFactory<>();
-        factory.setConsumerFactory(consumerFactory);
-        factory.setConcurrency(concurrency);
-        factory.setCommonErrorHandler(errorConsumerErrorHandler);
-        factory.getContainerProperties().setAckMode(ContainerProperties.AckMode.MANUAL_IMMEDIATE);
-        return factory;
-    }
-
-    @Bean
-    public CommonErrorHandler errorConsumerErrorHandler(KafkaTemplate<String, ChsDelta> kafkaTemplate, FixedDestinationResolver fixedDestinationResolver) {
-        return new DefaultErrorHandler(new DeadLetterPublishingRecoverer(kafkaTemplate, fixedDestinationResolver::resolve), new FixedBackOff(100, 0));
-    }
-
-    @Bean
     Supplier<InternalApiClient> internalApiClientSupplier(
             @Value("${api.api-key}") String apiKey,
             @Value("${api.api-url}") String apiUrl,

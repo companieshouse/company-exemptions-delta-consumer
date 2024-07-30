@@ -14,12 +14,6 @@ consumer:
   backoff_delay: 100
   concurrency: 1
 
-error_consumer:
-  topic: company-exemptions-delta-company-exemptions-delta-consumer-error
-  group_id: company-exemptions-delta-error-consumer
-  enabled: false
-  dlt: company-exemptions-delta-company-exemptions-delta-consumer-retry
-  concurrency: 1
 
 invalid_message_topic: company-exemptions-delta-company-exemptions-delta-consumer-invalid
 
