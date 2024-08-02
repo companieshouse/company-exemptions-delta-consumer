@@ -7,7 +7,6 @@ import org.springframework.context.annotation.Import;
 import org.springframework.kafka.test.context.EmbeddedKafka;
 import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.context.ActiveProfiles;
-import org.springframework.test.context.TestPropertySource;
 
 @CucumberContextConfiguration
 @AutoConfigureMockMvc

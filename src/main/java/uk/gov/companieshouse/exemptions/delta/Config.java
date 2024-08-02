@@ -15,20 +15,14 @@ import org.springframework.kafka.core.DefaultKafkaConsumerFactory;
 import org.springframework.kafka.core.DefaultKafkaProducerFactory;
 import org.springframework.kafka.core.KafkaTemplate;
 import org.springframework.kafka.core.ProducerFactory;
-import org.springframework.kafka.listener.CommonErrorHandler;
 import org.springframework.kafka.listener.ConcurrentMessageListenerContainer;
 import org.springframework.kafka.listener.ContainerProperties;
-import org.springframework.kafka.listener.DeadLetterPublishingRecoverer;
-import org.springframework.kafka.listener.DefaultErrorHandler;
 import org.springframework.kafka.support.serializer.ErrorHandlingDeserializer;
-import org.springframework.util.backoff.FixedBackOff;
 import uk.gov.companieshouse.api.InternalApiClient;
 import uk.gov.companieshouse.api.http.ApiKeyHttpClient;
 import uk.gov.companieshouse.delta.ChsDelta;
 import uk.gov.companieshouse.logging.Logger;
 import uk.gov.companieshouse.logging.LoggerFactory;
-import uk.gov.companieshouse.sdk.manager.ApiSdkManager;
-
 import java.util.HashMap;
 import java.util.function.Supplier;
 
@@ -76,21 +70,6 @@ public class Config {
         factory.setConcurrency(concurrency);
         factory.getContainerProperties().setAckMode(ContainerProperties.AckMode.RECORD);
         return factory;
-    }
-
-    @Bean
-    public KafkaListenerContainerFactory<ConcurrentMessageListenerContainer<String, ChsDelta>> kafkaErrorListenerContainerFactory(CommonErrorHandler errorConsumerErrorHandler, ConsumerFactory<String, ChsDelta> consumerFactory, @Value("${error_consumer.concurrency}") Integer concurrency) {
-        ConcurrentKafkaListenerContainerFactory<String, ChsDelta> factory = new ConcurrentKafkaListenerContainerFactory<>();
-        factory.setConsumerFactory(consumerFactory);
-        factory.setConcurrency(concurrency);
-        factory.setCommonErrorHandler(errorConsumerErrorHandler);
-        factory.getContainerProperties().setAckMode(ContainerProperties.AckMode.MANUAL_IMMEDIATE);
-        return factory;
-    }
-
-    @Bean
-    public CommonErrorHandler errorConsumerErrorHandler(KafkaTemplate<String, ChsDelta> kafkaTemplate, FixedDestinationResolver fixedDestinationResolver) {
-        return new DefaultErrorHandler(new DeadLetterPublishingRecoverer(kafkaTemplate, fixedDestinationResolver::resolve), new FixedBackOff(100, 0));
     }
 
     @Bean

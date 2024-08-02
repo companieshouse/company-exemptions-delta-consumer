@@ -12,12 +12,6 @@ consumer:
   backoff_delay: ${BACKOFF_DELAY}
   concurrency: ${CONCURRENT_LISTENER_INSTANCES}
 
-error_consumer:
-  topic: ${ERROR_TOPIC}
-  group_id: ${ERROR_GROUP_ID}
-  enabled: ${IS_ERROR_CONSUMER}
-  dlt: ${RETRY_TOPIC}
-  concurrency: ${CONCURRENT_ERROR_LISTENER_INSTANCES}
 
 invalid_message_topic: ${INVALID_MESSAGE_TOPIC}
 
