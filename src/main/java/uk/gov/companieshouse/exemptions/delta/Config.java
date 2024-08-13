@@ -1,5 +1,7 @@
 package uk.gov.companieshouse.exemptions.delta;
 
+import java.util.HashMap;
+import java.util.function.Supplier;
 import org.apache.kafka.clients.consumer.ConsumerConfig;
 import org.apache.kafka.clients.producer.ProducerConfig;
 import org.apache.kafka.common.serialization.StringDeserializer;
@@ -23,8 +25,6 @@ import uk.gov.companieshouse.api.http.ApiKeyHttpClient;
 import uk.gov.companieshouse.delta.ChsDelta;
 import uk.gov.companieshouse.logging.Logger;
 import uk.gov.companieshouse.logging.LoggerFactory;
-import java.util.HashMap;
-import java.util.function.Supplier;
 
 @Configuration
 @EnableKafka

@@ -1,5 +1,8 @@
 package uk.gov.companieshouse.exemptions.delta;
 
+import static uk.gov.companieshouse.exemptions.delta.Application.NAMESPACE;
+
+import java.io.IOException;
 import org.apache.avro.AvroRuntimeException;
 import org.apache.avro.io.DatumReader;
 import org.apache.avro.io.Decoder;
@@ -9,10 +12,6 @@ import org.apache.kafka.common.serialization.Deserializer;
 import uk.gov.companieshouse.delta.ChsDelta;
 import uk.gov.companieshouse.logging.Logger;
 import uk.gov.companieshouse.logging.LoggerFactory;
-
-import java.io.IOException;
-
-import static uk.gov.companieshouse.exemptions.delta.Application.NAMESPACE;
 
 /**
  * Transforms an incoming delta from Avro to a {@link ChsDelta}.

@@ -1,8 +1,7 @@
 package uk.gov.companieshouse.exemptions.delta.upsert;
 
-import uk.gov.companieshouse.api.exemptions.InternalExemptionsApi;
-
 import java.util.Objects;
+import uk.gov.companieshouse.api.exemptions.InternalExemptionsApi;
 
 /**
  * Contains all parameters required to upsert a company exemptions resource.

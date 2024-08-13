@@ -1,8 +1,7 @@
 package uk.gov.companieshouse.exemptions.delta;
 
-import org.springframework.stereotype.Component;
-
 import javax.annotation.PreDestroy;
+import org.springframework.stereotype.Component;
 
 @Component
 public class MessageFlags {

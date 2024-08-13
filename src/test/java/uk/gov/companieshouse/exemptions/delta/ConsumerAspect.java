@@ -1,12 +1,11 @@
 package uk.gov.companieshouse.exemptions.delta;
 
+import java.util.concurrent.CountDownLatch;
 import org.aspectj.lang.JoinPoint;
 import org.aspectj.lang.annotation.After;
 import org.aspectj.lang.annotation.Aspect;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
-
-import java.util.concurrent.CountDownLatch;
 
 @Aspect
 @Component

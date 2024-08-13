@@ -1,14 +1,13 @@
 package uk.gov.companieshouse.exemptions.delta;
 
+import java.io.ByteArrayOutputStream;
+import java.io.IOException;
 import org.apache.avro.io.DatumWriter;
 import org.apache.avro.io.Encoder;
 import org.apache.avro.io.EncoderFactory;
 import org.apache.avro.reflect.ReflectDatumWriter;
 import org.apache.kafka.common.serialization.Serializer;
 import uk.gov.companieshouse.delta.ChsDelta;
-
-import java.io.ByteArrayOutputStream;
-import java.io.IOException;
 
 /**
  * Serialises a {@link ChsDelta delta} as a byte array (e.g. if the message has to be republished to the retry/error topics).

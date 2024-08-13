@@ -6,13 +6,12 @@ import static org.springframework.kafka.support.KafkaHeaders.ORIGINAL_PARTITION;
 import static org.springframework.kafka.support.KafkaHeaders.ORIGINAL_TOPIC;
 
 import java.math.BigInteger;
+import java.util.Map;
 import java.util.Optional;
 import org.apache.kafka.clients.producer.ProducerInterceptor;
 import org.apache.kafka.clients.producer.ProducerRecord;
 import org.apache.kafka.clients.producer.RecordMetadata;
 import uk.gov.companieshouse.delta.ChsDelta;
-
-import java.util.Map;
 import uk.gov.companieshouse.logging.Logger;
 import uk.gov.companieshouse.logging.LoggerFactory;
 
