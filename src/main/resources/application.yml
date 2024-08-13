@@ -9,7 +9,7 @@ consumer:
   topic: ${TOPIC:company-exemptions-delta}
   group_id: ${GROUP_ID:company-exemptions-delta-consumer}
   max_attempts: ${MAX_ATTEMPTS:5}
-  backoff_delay: ${BACKOFF_DELAY:1000}
+  backoff_delay: ${BACKOFF_DELAY:100}
   concurrency: ${CONCURRENT_LISTENER_INSTANCES:1}
 
 
