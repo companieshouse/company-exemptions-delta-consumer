@@ -49,7 +49,7 @@ class ConsumerRetryableExceptionTest extends AbstractKafkaTest {
     @DynamicPropertySource
     static void props(DynamicPropertyRegistry registry) {
         registry.add("spring.kafka.bootstrap-servers", kafka::getBootstrapServers);
-        registry.add("steps", () -> 1);
+        registry.add("steps", () -> 5);
     }
 
     @BeforeEach
