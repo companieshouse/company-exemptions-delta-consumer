@@ -10,7 +10,6 @@ import static uk.gov.companieshouse.exemptions.delta.TestUtils.COMPANY_EXEMPTION
 
 import com.github.tomakehurst.wiremock.junit5.WireMockTest;
 import java.io.ByteArrayOutputStream;
-import java.io.IOException;
 import java.time.Duration;
 import java.util.concurrent.TimeUnit;
 import org.apache.avro.io.DatumWriter;
@@ -59,7 +58,7 @@ class ConsumerPositiveTest extends AbstractKafkaTest {
     }
 
     @Test
-    void testConsumeMessage() throws IOException, InterruptedException {
+    void testConsumeMessage() throws Exception {
         //given
         ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
         Encoder encoder = EncoderFactory.get().directBinaryEncoder(outputStream, null);
