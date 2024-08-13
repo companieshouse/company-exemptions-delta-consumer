@@ -1,5 +1,13 @@
 package uk.gov.companieshouse.exemptions.delta;
 
+import static uk.gov.companieshouse.exemptions.delta.TestUtils.COMPANY_EXEMPTIONS_DELTA_ERROR_TOPIC;
+import static uk.gov.companieshouse.exemptions.delta.TestUtils.COMPANY_EXEMPTIONS_DELTA_INVALID_TOPIC;
+import static uk.gov.companieshouse.exemptions.delta.TestUtils.COMPANY_EXEMPTIONS_DELTA_RETRY_TOPIC;
+import static uk.gov.companieshouse.exemptions.delta.TestUtils.COMPANY_EXEMPTIONS_DELTA_TOPIC;
+
+import java.util.HashMap;
+import java.util.List;
+import java.util.UUID;
 import org.apache.kafka.clients.consumer.ConsumerConfig;
 import org.apache.kafka.clients.consumer.KafkaConsumer;
 import org.apache.kafka.clients.producer.KafkaProducer;
@@ -12,21 +20,12 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.test.context.TestConfiguration;
 import org.springframework.context.annotation.Bean;
 
-import java.util.HashMap;
-import java.util.UUID;
-import java.util.concurrent.CountDownLatch;
-
 @TestConfiguration
 public class TestConfig {
 
     @Bean
-    CountDownLatch latch(@Value("${steps}") int steps) {
-        return new CountDownLatch(steps);
-    }
-
-    @Bean
     KafkaConsumer<String, byte[]> testConsumer(@Value("${spring.kafka.bootstrap-servers}") String bootstrapServers) {
-        return new KafkaConsumer<>(new HashMap<>() {{
+        KafkaConsumer<String, byte[]> consumer = new KafkaConsumer<>(new HashMap<>() {{
             put(ConsumerConfig.BOOTSTRAP_SERVERS_CONFIG, bootstrapServers);
             put(ConsumerConfig.KEY_DESERIALIZER_CLASS_CONFIG, StringDeserializer.class);
             put(ConsumerConfig.VALUE_DESERIALIZER_CLASS_CONFIG, ByteArrayDeserializer.class);
@@ -34,6 +33,15 @@ public class TestConfig {
             put(ConsumerConfig.ENABLE_AUTO_COMMIT_CONFIG, "false");
             put(ConsumerConfig.GROUP_ID_CONFIG, UUID.randomUUID().toString());
         }}, new StringDeserializer(), new ByteArrayDeserializer());
+
+        consumer.subscribe(List.of(
+                COMPANY_EXEMPTIONS_DELTA_TOPIC,
+                COMPANY_EXEMPTIONS_DELTA_INVALID_TOPIC,
+                COMPANY_EXEMPTIONS_DELTA_RETRY_TOPIC,
+                COMPANY_EXEMPTIONS_DELTA_ERROR_TOPIC
+        ));
+
+        return consumer;
     }
 
     @Bean
