@@ -1,5 +1,11 @@
 package uk.gov.companieshouse.exemptions.delta.upsert;
 
+import static org.hamcrest.CoreMatchers.equalTo;
+import static org.hamcrest.CoreMatchers.instanceOf;
+import static org.hamcrest.CoreMatchers.is;
+import static org.hamcrest.MatcherAssert.assertThat;
+import static org.junit.jupiter.api.Assertions.assertThrows;
+
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.junit.jupiter.api.Test;
@@ -7,12 +13,6 @@ import org.junit.jupiter.api.function.Executable;
 import uk.gov.companieshouse.api.delta.PscExemptionDelta;
 import uk.gov.companieshouse.delta.ChsDelta;
 import uk.gov.companieshouse.exemptions.delta.NonRetryableException;
-
-import static org.hamcrest.CoreMatchers.equalTo;
-import static org.hamcrest.CoreMatchers.instanceOf;
-import static org.hamcrest.CoreMatchers.is;
-import static org.hamcrest.MatcherAssert.assertThat;
-import static org.junit.jupiter.api.Assertions.assertThrows;
 
 class ContentFilterTest {
 

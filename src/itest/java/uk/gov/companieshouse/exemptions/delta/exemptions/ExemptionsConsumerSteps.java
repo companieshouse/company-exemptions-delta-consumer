@@ -1,30 +1,32 @@
 package uk.gov.companieshouse.exemptions.delta.exemptions;
 
 
-import static com.github.tomakehurst.wiremock.client.WireMock.delete;
-import static com.github.tomakehurst.wiremock.client.WireMock.deleteRequestedFor;
-import static com.github.tomakehurst.wiremock.client.WireMock.getAllServeEvents;
-import static com.github.tomakehurst.wiremock.client.WireMock.putRequestedFor;
-import static com.github.tomakehurst.wiremock.client.WireMock.verify;
-import static com.github.tomakehurst.wiremock.client.WireMock.urlEqualTo;
-import static com.github.tomakehurst.wiremock.client.WireMock.stubFor;
-import static com.github.tomakehurst.wiremock.client.WireMock.put;
 import static com.github.tomakehurst.wiremock.client.WireMock.aResponse;
 import static com.github.tomakehurst.wiremock.client.WireMock.configureFor;
-import static org.assertj.core.api.Assertions.assertThat;
+import static com.github.tomakehurst.wiremock.client.WireMock.delete;
+import static com.github.tomakehurst.wiremock.client.WireMock.deleteRequestedFor;
 import static com.github.tomakehurst.wiremock.client.WireMock.exactly;
+import static com.github.tomakehurst.wiremock.client.WireMock.getAllServeEvents;
+import static com.github.tomakehurst.wiremock.client.WireMock.put;
+import static com.github.tomakehurst.wiremock.client.WireMock.putRequestedFor;
+import static com.github.tomakehurst.wiremock.client.WireMock.stubFor;
+import static com.github.tomakehurst.wiremock.client.WireMock.urlEqualTo;
+import static com.github.tomakehurst.wiremock.client.WireMock.verify;
+import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static uk.gov.companieshouse.exemptions.delta.Configuration.kafkaContainer;
 
+import com.github.tomakehurst.wiremock.WireMockServer;
 import com.github.tomakehurst.wiremock.stubbing.ServeEvent;
+import io.cucumber.java.Before;
 import io.cucumber.java.en.Then;
 import io.cucumber.java.en.When;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
+import java.time.Duration;
 import java.util.List;
-import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.TimeUnit;
 import java.util.stream.StreamSupport;
-
 import org.apache.avro.io.DatumWriter;
 import org.apache.avro.io.Encoder;
 import org.apache.avro.io.EncoderFactory;
@@ -37,34 +39,34 @@ import org.apache.kafka.clients.producer.ProducerRecord;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpStatus;
-import org.springframework.kafka.test.EmbeddedKafkaBroker;
 import org.springframework.kafka.test.utils.KafkaTestUtils;
 import uk.gov.companieshouse.delta.ChsDelta;
-import com.github.tomakehurst.wiremock.WireMockServer;
+import uk.gov.companieshouse.exemptions.delta.ConsumerAspect;
 import uk.gov.companieshouse.exemptions.delta.util.TestDataHelper;
 
-
 public class ExemptionsConsumerSteps {
+
+    private static final int MESSAGE_CONSUMED_TIMEOUT = 5;
+    private static WireMockServer wireMockServer;
 
     @Value("${wiremock.server.port}")
     private String port;
 
-    private static final int MESSAGE_CONSUMED_TIMEOUT = 5;
-
-    private static WireMockServer wireMockServer;
-
-    @Autowired
-    private EmbeddedKafkaBroker embeddedKafkaBroker;
-
     @Autowired
     private KafkaConsumer<String, byte[]> testConsumer;
-
     @Autowired
     private KafkaProducer<String, byte[]> testProducer;
-
     @Autowired
-    private CountDownLatch latch;
+    private ConsumerAspect consumerAspect;
 
+    @Before
+    public void cleanUp() {
+        if (!kafkaContainer.isRunning()) {
+            kafkaContainer.start();
+        }
+        consumerAspect.resetLatch();
+        testConsumer.poll(Duration.ofMillis(1000));
+    }
 
     @When("^the topic receives a message containing a valid CHS upsert delta payload")
     public void consumerReceivesExemptionDeltaRequest() throws IOException, InterruptedException {
@@ -93,7 +95,6 @@ public class ExemptionsConsumerSteps {
         Encoder encoder = EncoderFactory.get().directBinaryEncoder(outputStream, null);
         DatumWriter<String> writer = new ReflectDatumWriter<>(String.class);
         writer.write("invalidData", encoder);
-        embeddedKafkaBroker.consumeFromAllEmbeddedTopics(testConsumer);
 
         testProducer.send(new ProducerRecord<>("company-exemptions-delta", 0, System.currentTimeMillis(), "key", outputStream.toByteArray()));
     }
@@ -129,7 +130,7 @@ public class ExemptionsConsumerSteps {
     }
 
     @Then("the message should retry (\\d*) times and then error$")
-    public void theMessageShouldRetryAndError(int retries){
+    public void theMessageShouldRetryAndError(int retries) {
         ConsumerRecords<String, byte[]> records = KafkaTestUtils.getRecords(testConsumer, 10000L, 6);
         Iterable<ConsumerRecord<String, byte[]>> retryRecords = records.records("company-exemptions-delta-company-exemptions-delta-consumer-retry");
         Iterable<ConsumerRecord<String, byte[]>> errorRecords = records.records("company-exemptions-delta-company-exemptions-delta-consumer-error");
@@ -143,7 +144,7 @@ public class ExemptionsConsumerSteps {
     }
 
     @Then("a DELETE request is sent to the company exemptions data api")
-    public void deleteRequestSentToCompanyExemptionsDataApi(){
+    public void deleteRequestSentToCompanyExemptionsDataApi() {
         verify(exactly(1), deleteRequestedFor(urlEqualTo("/company-exemptions/00006400/internal")));
 
         List<ServeEvent> wiremockEvents = getAllServeEvents();
@@ -168,7 +169,7 @@ public class ExemptionsConsumerSteps {
                 .willReturn(aResponse().withStatus(responseCode)));
     }
 
-    private void stubDeleteExemptions(int responseCode){
+    private void stubDeleteExemptions(int responseCode) {
         stubFor(delete(urlEqualTo("/company-exemptions/00006400/internal"))
                 .willReturn(aResponse().withStatus(responseCode)));
     }
@@ -178,13 +179,13 @@ public class ExemptionsConsumerSteps {
             wireMockServer = new WireMockServer(Integer.parseInt(port));
             wireMockServer.start();
             configureFor("localhost", Integer.parseInt(port));
-        } else{
+        } else {
             resetWiremock();
         }
     }
 
-    private void resetWiremock(){
-        if(wireMockServer == null){
+    private void resetWiremock() {
+        if (wireMockServer == null) {
             throw new RuntimeException("Wiremock not initialised");
         }
         wireMockServer.resetRequests();
@@ -195,12 +196,11 @@ public class ExemptionsConsumerSteps {
         Encoder encoder = EncoderFactory.get().directBinaryEncoder(outputStream, null);
         DatumWriter<ChsDelta> writer = new ReflectDatumWriter<>(ChsDelta.class);
         writer.write(delta, encoder);
-        embeddedKafkaBroker.consumeFromAllEmbeddedTopics(testConsumer);
 
         testProducer.send(new ProducerRecord<>("company-exemptions-delta", 0, System.currentTimeMillis(), "key", outputStream.toByteArray()));
     }
 
     private void assertMessageConsumed() throws InterruptedException {
-        assertThat(latch.await(MESSAGE_CONSUMED_TIMEOUT, TimeUnit.SECONDS)).isTrue();
+        assertThat(consumerAspect.getLatch().await(MESSAGE_CONSUMED_TIMEOUT, TimeUnit.SECONDS)).isTrue();
     }
 }

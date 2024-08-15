@@ -1,8 +1,7 @@
 package uk.gov.companieshouse.exemptions.delta;
 
-import uk.gov.companieshouse.delta.ChsDelta;
-
 import java.util.Objects;
+import uk.gov.companieshouse.delta.ChsDelta;
 
 /**
  * Contains all parameters required by {@link Service service implementations}.

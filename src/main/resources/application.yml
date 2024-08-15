@@ -1,19 +1,19 @@
 server:
-  port: ${SERVER_PORT}
+  port: ${SERVER_PORT:8081}
 
 spring:
   kafka:
-    bootstrap-servers: ${BOOTSTRAP_SERVER_URL}
+    bootstrap-servers: ${BOOTSTRAP_SERVER_URL:localhost:9092}
 
 consumer:
-  topic: ${TOPIC}
-  group_id: ${GROUP_ID}
-  max_attempts: ${MAX_ATTEMPTS}
-  backoff_delay: ${BACKOFF_DELAY}
-  concurrency: ${CONCURRENT_LISTENER_INSTANCES}
+  topic: ${TOPIC:company-exemptions-delta}
+  group_id: ${GROUP_ID:company-exemptions-delta-consumer}
+  max_attempts: ${MAX_ATTEMPTS:5}
+  backoff_delay: ${BACKOFF_DELAY:100}
+  concurrency: ${CONCURRENT_LISTENER_INSTANCES:1}
 
 
-invalid_message_topic: ${INVALID_MESSAGE_TOPIC}
+invalid_message_topic: ${INVALID_MESSAGE_TOPIC:company-exemptions-delta-company-exemptions-delta-consumer-invalid}
 
 logger:
   namespace: company-exemptions-delta-consumer

@@ -1,5 +1,7 @@
 package uk.gov.companieshouse.exemptions.delta;
 
+import java.util.HashMap;
+import java.util.Map;
 import org.aspectj.lang.JoinPoint;
 import org.aspectj.lang.annotation.After;
 import org.aspectj.lang.annotation.Aspect;
@@ -9,9 +11,6 @@ import org.springframework.messaging.Message;
 import org.springframework.stereotype.Component;
 import uk.gov.companieshouse.delta.ChsDelta;
 import uk.gov.companieshouse.logging.Logger;
-
-import java.util.HashMap;
-import java.util.Map;
 
 /**
  * Logs message details before and after it has been processed by

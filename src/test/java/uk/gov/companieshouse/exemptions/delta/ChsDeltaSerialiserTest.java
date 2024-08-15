@@ -1,15 +1,5 @@
 package uk.gov.companieshouse.exemptions.delta;
 
-import org.apache.avro.io.DatumWriter;
-import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.extension.ExtendWith;
-import org.junit.jupiter.api.function.Executable;
-import org.mockito.Mock;
-import org.mockito.junit.jupiter.MockitoExtension;
-import uk.gov.companieshouse.delta.ChsDelta;
-
-import java.io.IOException;
-
 import static org.hamcrest.CoreMatchers.equalTo;
 import static org.hamcrest.CoreMatchers.instanceOf;
 import static org.hamcrest.CoreMatchers.is;
@@ -20,6 +10,15 @@ import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.doReturn;
 import static org.mockito.Mockito.doThrow;
 import static org.mockito.Mockito.spy;
+
+import java.io.IOException;
+import org.apache.avro.io.DatumWriter;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
+import org.junit.jupiter.api.function.Executable;
+import org.mockito.Mock;
+import org.mockito.junit.jupiter.MockitoExtension;
+import uk.gov.companieshouse.delta.ChsDelta;
 
 @ExtendWith(MockitoExtension.class)
 public class ChsDeltaSerialiserTest {

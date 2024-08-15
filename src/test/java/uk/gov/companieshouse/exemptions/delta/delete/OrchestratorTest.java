@@ -1,5 +1,9 @@
 package uk.gov.companieshouse.exemptions.delta.delete;
 
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.when;
+
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
@@ -8,10 +12,6 @@ import org.mockito.junit.jupiter.MockitoExtension;
 import uk.gov.companieshouse.api.delta.PscExemptionDeleteDelta;
 import uk.gov.companieshouse.delta.ChsDelta;
 import uk.gov.companieshouse.exemptions.delta.ServiceParameters;
-
-import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.when;
 
 @ExtendWith(MockitoExtension.class)
 public class OrchestratorTest {
