@@ -5,9 +5,7 @@ import org.springframework.stereotype.Component;
 import uk.gov.companieshouse.api.InternalApiClient;
 import uk.gov.companieshouse.api.error.ApiErrorResponseException;
 import uk.gov.companieshouse.api.handler.exception.URIValidationException;
-import uk.gov.companieshouse.exemptions.delta.NonRetryableException;
-import uk.gov.companieshouse.exemptions.delta.RetryableException;
-import uk.gov.companieshouse.logging.Logger;
+import uk.gov.companieshouse.exemptions.delta.ResponseHandler;;
 
 /**
  * Upserts a company exemptions resource via a REST HTTP request.
@@ -16,11 +14,12 @@ import uk.gov.companieshouse.logging.Logger;
 class UpsertClient {
 
     private final Supplier<InternalApiClient> internalApiClientFactory;
-    private final Logger logger;
 
-    UpsertClient(Supplier<InternalApiClient> internalApiClientFactory, Logger logger) {
+    private final ResponseHandler handler;
+
+    UpsertClient(Supplier<InternalApiClient> internalApiClientFactory, ResponseHandler handler) {
         this.internalApiClientFactory = internalApiClientFactory;
-        this.logger = logger;
+        this.handler = handler;
     }
 
     /**
@@ -35,20 +34,10 @@ class UpsertClient {
             client.privateDeltaCompanyAppointmentResourceHandler()
                     .upsertCompanyExemptionsResource(request.getPath(), request.getBody())
                     .execute();
-        } catch (ApiErrorResponseException e) {
-            if(e.getStatusCode() / 100 == 5) {
-                logger.error(String.format("Server error returned with status code: [%s] when upserting delta", e.getStatusCode()));
-                throw new RetryableException("Server error returned when upserting delta", e);
-            } else {
-                logger.error(String.format("Upsert client error returned with status code: [%s] when upserting delta", e.getStatusCode()));
-                throw new NonRetryableException("UpsertClient error returned when upserting delta", e);
-            }
-        } catch (IllegalArgumentException e) {
-            logger.error("Illegal argument exception caught when handling API response");
-            throw new RetryableException("Server error returned when upserting delta", e);
+        }  catch (ApiErrorResponseException e) {
+            handler.handle(e);
         } catch (URIValidationException e) {
-            logger.error("Invalid path specified when handling API request");
-            throw new NonRetryableException("Invalid path specified", e);
+            handler.handle(e);
         }
     }
 }
