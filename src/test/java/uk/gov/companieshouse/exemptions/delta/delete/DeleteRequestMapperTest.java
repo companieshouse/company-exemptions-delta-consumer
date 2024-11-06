@@ -21,11 +21,13 @@ public class DeleteRequestMapperTest {
         PscExemptionDeleteDelta delta = new PscExemptionDeleteDelta();
         delta.setAction(PscExemptionDeleteDelta.ActionEnum.DELETE);
         delta.setCompanyNumber("12345678");
+        delta.setDeltaAt("20190612181928152002");
 
         // when
         DeleteRequest request = requestMapper.mapDelta(delta);
 
         // then
-        assertThat(request, is(equalTo(new DeleteRequest("/company-exemptions/12345678/internal"))));
+        assertThat(request, is(equalTo(new DeleteRequest("/company-exemptions/12345678/internal",
+                "20190612181928152002"))));
     }
 }

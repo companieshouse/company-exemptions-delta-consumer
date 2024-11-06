@@ -32,7 +32,7 @@ class DeleteClient {
         InternalApiClient client = internalApiClientFactory.get();
         try {
             client.privateDeltaCompanyAppointmentResourceHandler()
-                    .deleteCompanyExemptionsResource(request.getPath())
+                    .deleteCompanyExemptionsResource(request.getPath(), request.getDeltaAt())
                     .execute();
         } catch (ApiErrorResponseException e) {
             handler.handle(e);

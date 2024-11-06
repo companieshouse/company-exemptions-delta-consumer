@@ -24,7 +24,7 @@
         <cucumber.version>7.8.1</cucumber.version>
         <jib.version>3.0.0</jib.version>
         <api-sdk-manager-java-library.version>1.0.4</api-sdk-manager-java-library.version>
-        <private-api-sdk-java.version>2.0.444</private-api-sdk-java.version>
+        <private-api-sdk-java.version>unversioned</private-api-sdk-java.version>
         <kafka-models.version>1.0.29</kafka-models.version>
         <structured-logging.version>1.9.14</structured-logging.version>
         <mapstruct.version>1.5.3.Final</mapstruct.version>

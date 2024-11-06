@@ -1,6 +1,7 @@
 package uk.gov.companieshouse.exemptions.delta.delete;
 
 import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
@@ -21,6 +22,8 @@ import uk.gov.companieshouse.exemptions.delta.ResponseHandler;
 public class ClientTest {
 
     private static final String REQUEST_PATH = "/company-exemptions/12345678/internal";
+    private static final String DELTA_AT = "20190612181928152002";
+    private static final String INVALID_PATH = "invalid";
 
     @Mock
     private InternalApiClient internalApiClient;
@@ -32,14 +35,15 @@ public class ClientTest {
     private PrivateDeltaResourceHandler resourceHandler;
 
     @Mock
-    private PrivateCompanyExemptionsDelete deleteHandler;
+    private PrivateCompanyExemptionsDelete companyExemptionsDelete;
 
     @Test
     void testDelete() throws ApiErrorResponseException, URIValidationException {
         // given
         when(internalApiClient.privateDeltaCompanyAppointmentResourceHandler()).thenReturn(resourceHandler);
-        when(resourceHandler.deleteCompanyExemptionsResource(any())).thenReturn(deleteHandler);
-        DeleteRequest request = new DeleteRequest(REQUEST_PATH);
+        when(resourceHandler.deleteCompanyExemptionsResource(anyString(), anyString())).thenReturn(
+                companyExemptionsDelete);
+        DeleteRequest request = new DeleteRequest(REQUEST_PATH, DELTA_AT);
         DeleteClient client = new DeleteClient(() -> internalApiClient, handler);
 
         // when
@@ -47,9 +51,8 @@ public class ClientTest {
 
         // then
         verify(internalApiClient).privateDeltaCompanyAppointmentResourceHandler();
-        verify(resourceHandler).deleteCompanyExemptionsResource(any());
-        verify(deleteHandler).execute();
-        verify(resourceHandler).deleteCompanyExemptionsResource(REQUEST_PATH);
+        verify(resourceHandler).deleteCompanyExemptionsResource(REQUEST_PATH, DELTA_AT);
+        verify(companyExemptionsDelete).execute();
     }
 
     @Test
@@ -59,9 +62,10 @@ public class ClientTest {
 
         // given
         when(internalApiClient.privateDeltaCompanyAppointmentResourceHandler()).thenReturn(resourceHandler);
-        when(resourceHandler.deleteCompanyExemptionsResource(any())).thenReturn(deleteHandler);
-        when(deleteHandler.execute()).thenThrow(exception);
-        DeleteRequest request = new DeleteRequest(REQUEST_PATH);
+        when(resourceHandler.deleteCompanyExemptionsResource(anyString(), anyString())).thenReturn(
+                companyExemptionsDelete);
+        when(companyExemptionsDelete.execute()).thenThrow(exception);
+        DeleteRequest request = new DeleteRequest(REQUEST_PATH, DELTA_AT);
         DeleteClient client = new DeleteClient(() -> internalApiClient, handler);
 
         // when
@@ -69,8 +73,8 @@ public class ClientTest {
 
         // then
         verify(internalApiClient).privateDeltaCompanyAppointmentResourceHandler();
-        verify(resourceHandler).deleteCompanyExemptionsResource(any());
-        verify(deleteHandler).execute();
+        verify(resourceHandler).deleteCompanyExemptionsResource(REQUEST_PATH, DELTA_AT);
+        verify(companyExemptionsDelete).execute();
         verify(handler).handle(exception);
     }
 
@@ -80,9 +84,10 @@ public class ClientTest {
                 503, "Service Unavailable", new HttpHeaders()));
         // given
         when(internalApiClient.privateDeltaCompanyAppointmentResourceHandler()).thenReturn(resourceHandler);
-        when(resourceHandler.deleteCompanyExemptionsResource(any())).thenReturn(deleteHandler);
-        when(deleteHandler.execute()).thenThrow(exception);
-        DeleteRequest request = new DeleteRequest(REQUEST_PATH);
+        when(resourceHandler.deleteCompanyExemptionsResource(anyString(), anyString())).thenReturn(
+                companyExemptionsDelete);
+        when(companyExemptionsDelete.execute()).thenThrow(exception);
+        DeleteRequest request = new DeleteRequest(REQUEST_PATH, DELTA_AT);
         DeleteClient client = new DeleteClient(() -> internalApiClient, handler);
 
         // when
@@ -90,8 +95,8 @@ public class ClientTest {
 
         // then
         verify(internalApiClient).privateDeltaCompanyAppointmentResourceHandler();
-        verify(resourceHandler).deleteCompanyExemptionsResource(any());
-        verify(deleteHandler).execute();
+        verify(resourceHandler).deleteCompanyExemptionsResource(REQUEST_PATH, DELTA_AT);
+        verify(companyExemptionsDelete).execute();
         verify(handler).handle(exception);
     }
 
@@ -101,9 +106,10 @@ public class ClientTest {
 
         // given
         when(internalApiClient.privateDeltaCompanyAppointmentResourceHandler()).thenReturn(resourceHandler);
-        when(resourceHandler.deleteCompanyExemptionsResource(any())).thenReturn(deleteHandler);
-        when(deleteHandler.execute()).thenThrow(exceptionClass);
-        DeleteRequest request = new DeleteRequest("invalid");
+        when(resourceHandler.deleteCompanyExemptionsResource(anyString(), anyString())).thenReturn(
+                companyExemptionsDelete);
+        when(companyExemptionsDelete.execute()).thenThrow(exceptionClass);
+        DeleteRequest request = new DeleteRequest(INVALID_PATH, DELTA_AT);
         DeleteClient client = new DeleteClient(() -> internalApiClient, handler);
 
         // when
@@ -111,8 +117,8 @@ public class ClientTest {
 
         // then
         verify(internalApiClient).privateDeltaCompanyAppointmentResourceHandler();
-        verify(resourceHandler).deleteCompanyExemptionsResource(any());
-        verify(deleteHandler).execute();
+        verify(resourceHandler).deleteCompanyExemptionsResource(INVALID_PATH, DELTA_AT);
+        verify(companyExemptionsDelete).execute();
         verify(handler).handle(any(exceptionClass));
     }
 }
