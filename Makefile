@@ -23,11 +23,11 @@ test: test-unit test-integration
 
 .PHONY: test-unit
 test-unit:
-	mvn test
+	mvn clean verify
 
 .PHONY: test-integration
 test-integration:
-	mvn verify -Dskip.unit.tests=true -Dskip.integration.tests=false
+	mvn clean verify -Dskip.unit.tests=true -Dskip.integration.tests=false
 
 .PHONY: package
 package:
