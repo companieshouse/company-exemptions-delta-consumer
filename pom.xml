@@ -19,7 +19,7 @@
         <maven.compiler.source>11</maven.compiler.source>
         <maven.compiler.target>11</maven.compiler.target>
         <maven-helper-plugin.version>3.6.0</maven-helper-plugin.version>
-        <maven-compiler.version>3.13.0</maven-compiler.version>
+        <maven-compiler.version>3.6.2</maven-compiler.version>
         <!-- max version of spring boot compatible with Java 11 -->
         <spring.boot.version>2.7.18</spring.boot.version>
         <cucumber.version>7.20.1</cucumber.version>
