@@ -18,6 +18,7 @@
     <properties>
         <maven.compiler.source>11</maven.compiler.source>
         <maven.compiler.target>11</maven.compiler.target>
+        <maven-plugin.version>3.6.0</maven-plugin.version>
         <!-- max version of spring boot compatible with Java 11 -->
         <spring.boot.version>2.7.18</spring.boot.version>
         <cucumber.version>7.20.1</cucumber.version>
@@ -281,7 +282,7 @@
             <plugin>
                 <groupId>org.codehaus.mojo</groupId>
                 <artifactId>build-helper-maven-plugin</artifactId>
-                <version>3.3.0</version>
+                <version>${maven-plugin.version}</version>
                 <executions>
                     <execution>
                         <id>add-test-source</id>
