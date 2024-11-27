@@ -8,9 +8,11 @@ import java.util.Objects;
 public class DeleteRequest {
 
     private String path;
+    private String deltaAt;
 
-    public DeleteRequest(String path) {
+    public DeleteRequest(String path, String deltaAt) {
         this.path = path;
+        this.deltaAt = deltaAt;
     }
 
     public DeleteRequest() {
@@ -34,20 +36,29 @@ public class DeleteRequest {
         this.path = path;
     }
 
+    public String getDeltaAt() {
+        return deltaAt;
+    }
+
+    public void setDeltaAt(String deltaAt) {
+        this.deltaAt = deltaAt;
+    }
+
     @Override
     public boolean equals(Object o) {
         if (this == o) {
             return true;
         }
-        if (!(o instanceof DeleteRequest)) {
+        if (o == null || getClass() != o.getClass()) {
             return false;
         }
-        DeleteRequest request = (DeleteRequest) o;
-        return Objects.equals(getPath(), request.getPath());
+        DeleteRequest that = (DeleteRequest) o;
+        return Objects.equals(getPath(), that.getPath()) && Objects.equals(getDeltaAt(),
+                that.getDeltaAt());
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(getPath());
+        return Objects.hash(getPath(), getDeltaAt());
     }
 }

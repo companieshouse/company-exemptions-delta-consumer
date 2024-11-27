@@ -18,42 +18,30 @@
     <properties>
         <maven.compiler.source>11</maven.compiler.source>
         <maven.compiler.target>11</maven.compiler.target>
-        <spring.framework.version>5.3.11</spring.framework.version>
+        <maven-helper-plugin.version>3.3.0</maven-helper-plugin.version>
+        <maven-compiler.version>3.6.2</maven-compiler.version>
+        <!-- max version of spring boot compatible with Java 11 -->
         <spring.boot.version>2.7.18</spring.boot.version>
-        <mockito.version>4.8.0</mockito.version>
-        <cucumber.version>7.8.1</cucumber.version>
-        <jib.version>3.0.0</jib.version>
-        <api-sdk-manager-java-library.version>1.0.4</api-sdk-manager-java-library.version>
-        <private-api-sdk-java.version>2.0.444</private-api-sdk-java.version>
-        <kafka-models.version>1.0.29</kafka-models.version>
-        <structured-logging.version>1.9.14</structured-logging.version>
-        <mapstruct.version>1.5.3.Final</mapstruct.version>
+        <cucumber.version>7.20.1</cucumber.version>
+        <jib.version>3.4.2</jib.version>
+        <mapstruct.version>1.6.3</mapstruct.version>
+        <test-containers.version>1.20.3</test-containers.version>
+        <wiremock.version>3.9.2</wiremock.version>
         <skip.unit.tests>false</skip.unit.tests>
-        <skip.integration.tests>true</skip.integration.tests>
-        <test-containers.version>1.20.1</test-containers.version>
-        <wiremock.version>2.35.0</wiremock.version>
+        <skip.integration.tests>false</skip.integration.tests>
+
+        <!-- internal dependencies -->
+        <private-api-sdk-java.version>2.0.460</private-api-sdk-java.version>
+        <kafka-models.version>1.0.40</kafka-models.version>
+        <structured-logging.version>1.9.41</structured-logging.version>
     </properties>
 
     <dependencyManagement>
         <dependencies>
             <dependency>
-                <groupId>org.springframework</groupId>
-                <artifactId>spring-framework-bom</artifactId>
-                <version>${spring.framework.version}</version>
-                <type>pom</type>
-                <scope>import</scope>
-            </dependency>
-            <dependency>
                 <groupId>org.springframework.boot</groupId>
                 <artifactId>spring-boot-dependencies</artifactId>
                 <version>${spring.boot.version}</version>
-                <type>pom</type>
-                <scope>import</scope>
-            </dependency>
-            <dependency>
-                <groupId>org.mockito</groupId>
-                <artifactId>mockito-bom</artifactId>
-                <version>${mockito.version}</version>
                 <type>pom</type>
                 <scope>import</scope>
             </dependency>
@@ -75,16 +63,13 @@
     </dependencyManagement>
     <dependencies>
         <dependency>
-            <groupId>uk.gov.companieshouse</groupId>
-            <artifactId>api-sdk-manager-java-library</artifactId>
-            <version>${api-sdk-manager-java-library.version}</version>
-            <exclusions>
-                <exclusion>
-                    <groupId>javax.servlet</groupId>
-                    <artifactId>servlet-api</artifactId>
-                </exclusion>
-            </exclusions>
+            <!--Explicitly declaring transitive dep because higher version required for mockito unit tests to work-->
+            <!--Can probably remove this when Java 21 upgrade happens-->
+            <groupId>net.bytebuddy</groupId>
+            <artifactId>byte-buddy</artifactId>
+            <version>1.15.10</version>
         </dependency>
+
         <dependency>
             <groupId>uk.gov.companieshouse</groupId>
             <artifactId>private-api-sdk-java</artifactId>
@@ -108,10 +93,12 @@
         <dependency>
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>org.springframework.boot</groupId>
-            <artifactId>spring-boot-starter-logging</artifactId>
+            <exclusions>
+                <exclusion>
+                    <groupId>ch.qos.logback</groupId>
+                    <artifactId>logback-classic</artifactId>
+                </exclusion>
+            </exclusions>
         </dependency>
         <dependency>
             <groupId>org.springframework.boot</groupId>
@@ -160,16 +147,6 @@
         </dependency>
         <dependency>
             <groupId>org.mockito</groupId>
-            <artifactId>mockito-core</artifactId>
-            <scope>test</scope>
-        </dependency>
-        <dependency>
-            <groupId>org.mockito</groupId>
-            <artifactId>mockito-junit-jupiter</artifactId>
-            <scope>test</scope>
-        </dependency>
-        <dependency>
-            <groupId>org.mockito</groupId>
             <artifactId>mockito-inline</artifactId>
             <scope>test</scope>
         </dependency>
@@ -199,12 +176,6 @@
             <scope>test</scope>
         </dependency>
         <dependency>
-            <groupId>commons-io</groupId>
-            <artifactId>commons-io</artifactId>
-            <version>2.11.0</version>
-            <scope>test</scope>
-        </dependency>
-        <dependency>
             <groupId>org.testcontainers</groupId>
             <artifactId>kafka</artifactId>
             <version>${test-containers.version}</version>
@@ -216,26 +187,14 @@
             <scope>test</scope>
         </dependency>
         <dependency>
-            <groupId>com.github.tomakehurst</groupId>
-            <artifactId>wiremock-jre8</artifactId>
+            <groupId>org.wiremock</groupId>
+            <artifactId>wiremock</artifactId>
             <version>${wiremock.version}</version>
             <scope>test</scope>
             <exclusions>
                 <exclusion>
-                    <groupId>org.conscrypt</groupId>
-                    <artifactId>conscrypt-openjdk-uber</artifactId>
-                </exclusion>
-                <exclusion>
-                    <groupId>net.javacrumbs.json-unit</groupId>
-                    <artifactId>json-unit-core</artifactId>
-                </exclusion>
-                <exclusion>
-                    <groupId>com.github.jknack</groupId>
-                    <artifactId>handlebars</artifactId>
-                </exclusion>
-                <exclusion>
-                    <groupId>com.github.jknack</groupId>
-                    <artifactId>handlebars-helpers</artifactId>
+                    <groupId>com.ethlo.time</groupId>
+                    <artifactId>itu</artifactId>
                 </exclusion>
             </exclusions>
         </dependency>
@@ -249,7 +208,7 @@
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-compiler-plugin</artifactId>
-                <version>3.6.2</version>
+                <version>${maven-compiler.version}</version>
                 <configuration>
                     <source>11</source>
                     <target>11</target>
@@ -324,7 +283,7 @@
             <plugin>
                 <groupId>org.codehaus.mojo</groupId>
                 <artifactId>build-helper-maven-plugin</artifactId>
-                <version>3.3.0</version>
+                <version>${maven-helper-plugin.version}</version>
                 <executions>
                     <execution>
                         <id>add-test-source</id>

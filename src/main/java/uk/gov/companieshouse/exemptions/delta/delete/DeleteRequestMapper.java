@@ -24,7 +24,8 @@ interface DeleteRequestMapper {
     DeleteRequest mapDelta(PscExemptionDeleteDelta delta);
 
     @AfterMapping
-    default void mapPath(@MappingTarget DeleteRequest request, PscExemptionDeleteDelta delta) {
+    default void postMappings(@MappingTarget DeleteRequest request, PscExemptionDeleteDelta delta) {
         request.setPath(String.format("/company-exemptions/%s/internal", delta.getCompanyNumber()));
+        request.setDeltaAt(delta.getDeltaAt());
     }
 }

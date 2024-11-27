@@ -14,20 +14,26 @@ clean:
 
 .PHONY: build
 build:
-	mvn versions:set -DnewVersion=$(version) -DgenerateBackupPoms=false
+	# Temporary workaround for failure on concourse - waiting for artifactory request of new version to be actioned by platform
+	mvn org.codehaus.mojo:versions-maven-plugin:2.16.2:set -DnewVersion=$(version) -DgenerateBackupPoms=false
 	mvn package -Dskip.unit.tests=true
 	cp ./target/$(artifact_name)-$(version).jar ./$(artifact_name).jar
+
+	# Original make build command below
+#	mvn versions:set -DnewVersion=$(version) -DgenerateBackupPoms=false
+#	mvn package -Dskip.unit.tests=true
+#	cp ./target/$(artifact_name)-$(version).jar ./$(artifact_name).jar
 
 .PHONY: test
 test: test-unit test-integration
 
 .PHONY: test-unit
 test-unit:
-	mvn test
+	mvn clean verify
 
 .PHONY: test-integration
 test-integration:
-	mvn verify -Dskip.unit.tests=true -Dskip.integration.tests=false
+	mvn clean verify -Dskip.unit.tests=true -Dskip.integration.tests=false
 
 .PHONY: package
 package:
@@ -35,7 +41,9 @@ ifndef version
 	$(error No version given. Aborting)
 endif
 	$(info Packaging version: $(version))
-	mvn versions:set -DnewVersion=$(version) -DgenerateBackupPoms=false
+	# Temporary workaround for failure on concourse - waiting for artifactory request of new version to be actioned by platform
+	mvn org.codehaus.mojo:versions-maven-plugin:2.17.1:set -DnewVersion=$(version) -DgenerateBackupPoms=false
+	#mvn versions:set -DnewVersion=$(version) -DgenerateBackupPoms=false
 	mvn package -Dskip.unit.tests=true
 	$(eval tmpdir:=$(shell mktemp -d build-XXXXXXXXXX))
 	cp ./start.sh $(tmpdir)
