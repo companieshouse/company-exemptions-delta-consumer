@@ -5,7 +5,7 @@
     <parent>
         <groupId>uk.gov.companieshouse</groupId>
         <artifactId>companies-house-parent</artifactId>
-        <version>2.1.6</version>
+        <version>2.1.9</version>
     </parent>
 
     <name>company-exemptions-delta-consumer</name>
@@ -18,8 +18,10 @@
     <properties>
         <maven.compiler.source>11</maven.compiler.source>
         <maven.compiler.target>11</maven.compiler.target>
-        <maven-helper-plugin.version>3.3.0</maven-helper-plugin.version>
-        <maven-compiler.version>3.6.2</maven-compiler.version>
+        <maven-helper-plugin.version>3.6.0</maven-helper-plugin.version>
+        <maven-compiler.version>3.13.0</maven-compiler.version>
+        <maven-surefire-plugin.version>3.5.2</maven-surefire-plugin.version>
+        <maven-failsafe-plugin.version>3.5.2</maven-failsafe-plugin.version>
         <!-- max version of spring boot compatible with Java 11 -->
         <spring.boot.version>2.7.18</spring.boot.version>
         <cucumber.version>7.20.1</cucumber.version>
@@ -224,7 +226,7 @@
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-surefire-plugin</artifactId>
-                <version>3.0.0-M7</version>
+                <version>${maven-surefire-plugin.version}</version>
                 <configuration>
                     <skipTests>${skip.unit.tests}</skipTests>
                     <excludes>
@@ -235,7 +237,7 @@
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-failsafe-plugin</artifactId>
-                <version>3.0.0-M7</version>
+                <version>${maven-failsafe-plugin.version}</version>
                 <executions>
                     <execution>
                         <goals>
