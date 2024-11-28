@@ -35,7 +35,7 @@
         <!-- internal dependencies -->
         <private-api-sdk-java.version>2.0.460</private-api-sdk-java.version>
         <kafka-models.version>1.0.40</kafka-models.version>
-        <structured-logging.version>1.9.41</structured-logging.version>
+        <structured-logging.version>1.9.14</structured-logging.version>
     </properties>
 
     <dependencyManagement>
