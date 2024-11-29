@@ -23,16 +23,18 @@
         <maven-surefire-plugin.version>3.0.0-M7</maven-surefire-plugin.version>
         <maven-failsafe-plugin.version>3.0.0-M7</maven-failsafe-plugin.version>
         <!-- max version of spring boot compatible with Java 11 -->
+        <spring.framework.version>5.3.11</spring.framework.version>
         <spring.boot.version>2.7.18</spring.boot.version>
-        <cucumber.version>7.20.1</cucumber.version>
-        <jib.version>3.4.2</jib.version>
-        <mapstruct.version>1.6.3</mapstruct.version>
-        <test-containers.version>1.20.3</test-containers.version>
-        <wiremock.version>3.9.2</wiremock.version>
+        <cucumber.version>7.8.1</cucumber.version>
+        <jib.version>3.0.0</jib.version>
+        <mapstruct.version>1.5.3.Final</mapstruct.version>
+        <test-containers.version>1.20.1</test-containers.version>
+        <wiremock.version>2.35.0</wiremock.version>
         <skip.unit.tests>false</skip.unit.tests>
         <skip.integration.tests>false</skip.integration.tests>
 
         <!-- internal dependencies -->
+        <api-sdk-manager-java-library.version>1.0.4</api-sdk-manager-java-library.version>
         <private-api-sdk-java.version>2.0.460</private-api-sdk-java.version>
         <kafka-models.version>1.0.40</kafka-models.version>
         <structured-logging.version>1.9.14</structured-logging.version>
@@ -40,6 +42,13 @@
 
     <dependencyManagement>
         <dependencies>
+            <dependency>
+                <groupId>org.springframework</groupId>
+                <artifactId>spring-framework-bom</artifactId>
+                <version>${spring.framework.version}</version>
+                <type>pom</type>
+                <scope>import</scope>
+            </dependency>
             <dependency>
                 <groupId>org.springframework.boot</groupId>
                 <artifactId>spring-boot-dependencies</artifactId>
@@ -64,6 +73,17 @@
         </dependencies>
     </dependencyManagement>
     <dependencies>
+        <dependency>
+            <groupId>uk.gov.companieshouse</groupId>
+            <artifactId>api-sdk-manager-java-library</artifactId>
+            <version>${api-sdk-manager-java-library.version}</version>
+            <exclusions>
+                <exclusion>
+                    <groupId>javax.servlet</groupId>
+                    <artifactId>servlet-api</artifactId>
+                </exclusion>
+            </exclusions>
+        </dependency>
         <dependency>
             <!--Explicitly declaring transitive dep because higher version required for mockito unit tests to work-->
             <!--Can probably remove this when Java 21 upgrade happens-->
@@ -101,6 +121,10 @@
                     <artifactId>logback-classic</artifactId>
                 </exclusion>
             </exclusions>
+        </dependency>
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-logging</artifactId>
         </dependency>
         <dependency>
             <groupId>org.springframework.boot</groupId>
@@ -189,14 +213,26 @@
             <scope>test</scope>
         </dependency>
         <dependency>
-            <groupId>org.wiremock</groupId>
-            <artifactId>wiremock</artifactId>
+            <groupId>com.github.tomakehurst</groupId>
+            <artifactId>wiremock-jre8</artifactId>
             <version>${wiremock.version}</version>
             <scope>test</scope>
             <exclusions>
                 <exclusion>
-                    <groupId>com.ethlo.time</groupId>
-                    <artifactId>itu</artifactId>
+                    <groupId>org.conscrypt</groupId>
+                    <artifactId>conscrypt-openjdk-uber</artifactId>
+                </exclusion>
+                <exclusion>
+                    <groupId>net.javacrumbs.json-unit</groupId>
+                    <artifactId>json-unit-core</artifactId>
+                </exclusion>
+                <exclusion>
+                    <groupId>com.github.jknack</groupId>
+                    <artifactId>handlebars</artifactId>
+                </exclusion>
+                <exclusion>
+                    <groupId>com.github.jknack</groupId>
+                    <artifactId>handlebars-helpers</artifactId>
                 </exclusion>
             </exclusions>
         </dependency>
