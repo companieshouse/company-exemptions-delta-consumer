@@ -12,14 +12,18 @@ import java.util.stream.Stream;
 import org.apache.commons.io.IOUtils;
 import org.json.JSONException;
 import org.junit.jupiter.api.DisplayName;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.Arguments;
 import org.junit.jupiter.params.provider.MethodSource;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.test.context.junit.jupiter.SpringExtension;
+
 import uk.gov.companieshouse.api.delta.PscExemptionDelta;
 
 @SpringBootTest(classes = UpsertRequestMapperImpl.class)
+@ExtendWith(SpringExtension.class)
 @DisplayName("Upsert request mapper")
 public class UpsertRequestMapperTest {
 

@@ -32,7 +32,9 @@ public class Config {
 
     @Bean
     public ConsumerFactory<String, ChsDelta> consumerFactory(@Value("${spring.kafka.bootstrap-servers}") String bootstrapServers) {
-        return new DefaultKafkaConsumerFactory<>(new HashMap<>() {{
+        return new DefaultKafkaConsumerFactory<>(new HashMap<>() {private static final long serialVersionUID = 1928650767814419652L;
+
+        {
             put(ConsumerConfig.BOOTSTRAP_SERVERS_CONFIG, bootstrapServers);
             put(ConsumerConfig.KEY_DESERIALIZER_CLASS_CONFIG, ErrorHandlingDeserializer.class);
             put(ConsumerConfig.VALUE_DESERIALIZER_CLASS_CONFIG, ErrorHandlingDeserializer.class);
@@ -47,7 +49,9 @@ public class Config {
     public ProducerFactory<String, ChsDelta> producerFactory(@Value("${spring.kafka.bootstrap-servers}") String bootstrapServers,
                                                              MessageFlags messageFlags,
                                                              @Value("${invalid_message_topic}") String invalidMessageTopic) {
-        return new DefaultKafkaProducerFactory<>(new HashMap<>() {{
+        return new DefaultKafkaProducerFactory<>(new HashMap<>() {private static final long serialVersionUID = 1847481535595008920L;
+
+        {
             put(ProducerConfig.BOOTSTRAP_SERVERS_CONFIG, bootstrapServers);
             put(ProducerConfig.ACKS_CONFIG, "all");
             put(ProducerConfig.KEY_SERIALIZER_CLASS_CONFIG, StringSerializer.class);
