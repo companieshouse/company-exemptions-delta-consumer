@@ -5,6 +5,8 @@ package uk.gov.companieshouse.exemptions.delta;
  */
 public class InvalidPayloadException extends RuntimeException {
 
+    private static final long serialVersionUID = -8906667414301827974L;
+
     public InvalidPayloadException(String message, Throwable cause) {
         super(message, cause);
     }

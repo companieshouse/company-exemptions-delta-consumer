@@ -30,13 +30,13 @@ public class ChsDeltaSerialiserTest {
     void testSerialiseChsDelta() {
         // given
         ChsDelta delta = new ChsDelta("{}", 0, "context_id", false);
-        ChsDeltaSerialiser serialiser = new ChsDeltaSerialiser();
+        try (ChsDeltaSerialiser serialiser = new ChsDeltaSerialiser()) {
+            // when
+            byte[] actual = serialiser.serialize("topic", delta);
 
-        // when
-        byte[] actual = serialiser.serialize("topic", delta);
-
-        // then
-        assertThat(actual, is(notNullValue()));
+            // then
+            assertThat(actual, is(notNullValue()));
+        }
     }
 
     @Test

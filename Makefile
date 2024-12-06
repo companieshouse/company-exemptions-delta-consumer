@@ -1,5 +1,5 @@
 artifact_name       := company-exemptions-delta-consumer
-version             := latest
+version             := "unversioned"
 
 .PHONY: all
 all: build
@@ -7,27 +7,33 @@ all: build
 .PHONY: clean
 clean:
 	mvn clean
-	rm -f $(artifact_name)-*.zip
-	rm -f $(artifact_name).jar
+	rm -f ./$(artifact_name).jar
+	rm -f ./$(artifact_name)-*.zip
 	rm -rf ./build-*
 	rm -f ./build.log
+
+.PHONY: security-check
+security-check:
+	mvn org.owasp:dependency-check-maven:update-only
+	mvn org.owasp:dependency-check-maven:check -DfailBuildOnCVSS=4 -DassemblyAnalyzerEnabled=false
 
 .PHONY: build
 build:
 	mvn versions:set -DnewVersion=$(version) -DgenerateBackupPoms=false
-	mvn package -Dskip.unit.tests=true
+	mvn package -DskipTests=true
 	cp ./target/$(artifact_name)-$(version).jar ./$(artifact_name).jar
 
 .PHONY: test
-test: test-unit test-integration
+test: clean
+	mvn verify
 
 .PHONY: test-unit
-test-unit:
-	mvn clean verify
+test-unit: clean
+	mvn test -DexcludedGroups="integration-test"
 
 .PHONY: test-integration
-test-integration:
-	mvn clean verify -Dskip.unit.tests=true -Dskip.integration.tests=false
+test-integration: clean
+	mvn test -Dgroups="integration-test"
 
 .PHONY: package
 package:
