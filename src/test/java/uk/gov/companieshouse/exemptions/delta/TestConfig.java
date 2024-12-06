@@ -25,7 +25,9 @@ public class TestConfig {
 
     @Bean
     KafkaConsumer<String, byte[]> testConsumer(@Value("${spring.kafka.bootstrap-servers}") String bootstrapServers) {
-        KafkaConsumer<String, byte[]> consumer = new KafkaConsumer<>(new HashMap<>() {{
+        KafkaConsumer<String, byte[]> consumer = new KafkaConsumer<>(new HashMap<>() {private static final long serialVersionUID = 7449366286646831115L;
+
+        {
             put(ConsumerConfig.BOOTSTRAP_SERVERS_CONFIG, bootstrapServers);
             put(ConsumerConfig.KEY_DESERIALIZER_CLASS_CONFIG, StringDeserializer.class);
             put(ConsumerConfig.VALUE_DESERIALIZER_CLASS_CONFIG, ByteArrayDeserializer.class);
@@ -46,7 +48,9 @@ public class TestConfig {
 
     @Bean
     KafkaProducer<String, byte[]> testProducer(@Value("${spring.kafka.bootstrap-servers}") String bootstrapServers) {
-        return new KafkaProducer<>(new HashMap<>() {{
+        return new KafkaProducer<>(new HashMap<>() {private static final long serialVersionUID = 6409518428577007424L;
+
+        {
             put(ProducerConfig.ACKS_CONFIG, "all");
             put(ProducerConfig.BOOTSTRAP_SERVERS_CONFIG, bootstrapServers);
         }}, new StringSerializer(), new ByteArraySerializer());

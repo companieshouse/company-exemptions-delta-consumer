@@ -6,10 +6,10 @@ import static uk.gov.companieshouse.exemptions.delta.TestUtils.COMPANY_EXEMPTION
 import static uk.gov.companieshouse.exemptions.delta.TestUtils.COMPANY_EXEMPTIONS_DELTA_RETRY_TOPIC;
 import static uk.gov.companieshouse.exemptions.delta.TestUtils.COMPANY_EXEMPTIONS_DELTA_TOPIC;
 
-import com.github.tomakehurst.wiremock.junit5.WireMockTest;
 import java.io.ByteArrayOutputStream;
 import java.time.Duration;
 import java.util.concurrent.Future;
+
 import org.apache.avro.io.DatumWriter;
 import org.apache.avro.io.Encoder;
 import org.apache.avro.io.EncoderFactory;
@@ -27,20 +27,24 @@ import org.springframework.kafka.test.utils.KafkaTestUtils;
 import org.springframework.test.context.DynamicPropertyRegistry;
 import org.springframework.test.context.DynamicPropertySource;
 
+import com.github.tomakehurst.wiremock.junit5.WireMockTest;
+
 @SpringBootTest
 @WireMockTest(httpPort = 8888)
 class ConsumerInvalidTopicTest extends AbstractKafkaTest {
 
     @Autowired
     private KafkaConsumer<String, byte[]> testConsumer;
+
     @Autowired
     private KafkaProducer<String, byte[]> testProducer;
+
     @Autowired
     private ConsumerAspect consumerAspect;
 
     @DynamicPropertySource
     static void props(DynamicPropertyRegistry registry) {
-        registry.add("spring.kafka.bootstrap-servers", kafka::getBootstrapServers);
+        registry.add("spring.kafka.bootstrap-servers", confluentKafkaContainer::getBootstrapServers);
         registry.add("steps", () -> 1);
     }
 
@@ -63,7 +67,7 @@ class ConsumerInvalidTopicTest extends AbstractKafkaTest {
         future.get();
 
         //then
-        ConsumerRecords<?, ?> consumerRecords = KafkaTestUtils.getRecords(testConsumer, 10000L, 2);
+        ConsumerRecords<?, ?> consumerRecords = KafkaTestUtils.getRecords(testConsumer, Duration.ofSeconds(10L), 2);
         assertThat(TestUtils.noOfRecordsForTopic(consumerRecords, COMPANY_EXEMPTIONS_DELTA_TOPIC)).isOne();
         assertThat(TestUtils.noOfRecordsForTopic(consumerRecords, COMPANY_EXEMPTIONS_DELTA_INVALID_TOPIC)).isOne();
         assertThat(TestUtils.noOfRecordsForTopic(consumerRecords, COMPANY_EXEMPTIONS_DELTA_RETRY_TOPIC)).isZero();
