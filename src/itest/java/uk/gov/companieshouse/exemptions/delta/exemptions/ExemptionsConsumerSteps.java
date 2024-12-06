@@ -131,7 +131,7 @@ public class ExemptionsConsumerSteps {
 
     @Then("the message should retry (\\d*) times and then error$")
     public void theMessageShouldRetryAndError(int retries) {
-        ConsumerRecords<String, byte[]> records = KafkaTestUtils.getRecords(testConsumer, 10000L, 6);
+        ConsumerRecords<String, byte[]> records = KafkaTestUtils.getRecords(testConsumer, Duration.ofSeconds(10L), 6);
         Iterable<ConsumerRecord<String, byte[]>> retryRecords = records.records("company-exemptions-delta-company-exemptions-delta-consumer-retry");
         Iterable<ConsumerRecord<String, byte[]>> errorRecords = records.records("company-exemptions-delta-company-exemptions-delta-consumer-error");
 

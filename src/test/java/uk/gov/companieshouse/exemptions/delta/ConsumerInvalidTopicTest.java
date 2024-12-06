@@ -21,7 +21,10 @@ import org.apache.kafka.clients.producer.ProducerRecord;
 import org.apache.kafka.clients.producer.RecordMetadata;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
+import org.mockito.InjectMocks;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.kafka.test.utils.KafkaTestUtils;
 import org.springframework.test.context.DynamicPropertyRegistry;
@@ -37,6 +40,9 @@ class ConsumerInvalidTopicTest extends AbstractKafkaTest {
     private KafkaProducer<String, byte[]> testProducer;
     @Autowired
     private ConsumerAspect consumerAspect;
+
+    @InjectMocks
+    private DeleteOrchestrator orchestrator;
 
     @DynamicPropertySource
     static void props(DynamicPropertyRegistry registry) {
@@ -63,7 +69,7 @@ class ConsumerInvalidTopicTest extends AbstractKafkaTest {
         future.get();
 
         //then
-        ConsumerRecords<?, ?> consumerRecords = KafkaTestUtils.getRecords(testConsumer, 10000L, 2);
+        ConsumerRecords<?, ?> consumerRecords = KafkaTestUtils.getRecords(testConsumer, Duration.ofSeconds(10L), 2);
         assertThat(TestUtils.noOfRecordsForTopic(consumerRecords, COMPANY_EXEMPTIONS_DELTA_TOPIC)).isOne();
         assertThat(TestUtils.noOfRecordsForTopic(consumerRecords, COMPANY_EXEMPTIONS_DELTA_INVALID_TOPIC)).isOne();
         assertThat(TestUtils.noOfRecordsForTopic(consumerRecords, COMPANY_EXEMPTIONS_DELTA_RETRY_TOPIC)).isZero();
