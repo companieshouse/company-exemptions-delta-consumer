@@ -2,8 +2,6 @@ environment = "cidev"
 aws_profile = "development-eu-west-2"
 
 # service configs
-log_level = "trace"
-
 required_cpus = 512
 required_memory = 1024
 
