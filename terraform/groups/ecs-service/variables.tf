@@ -114,9 +114,9 @@ variable "log_level" {
   type        = string
   description = "The log level for services to use: trace, debug, info or error"
 }
-variable "company_profile_search_consumer_version" {
+variable "company_exemptions_delta_consumer_version" {
   type        = string
-  description = "The version of the company-profile-search-consumer container to run."
+  description = "The version of the company-exemptions-delta-consumer container to run."
 }
 # ------------------------------------------------------------------------------
 # Kafka Consumer Configurations

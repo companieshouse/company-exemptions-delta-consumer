@@ -3,15 +3,15 @@ locals {
   stack_name                  = "data-sync" # this must match the stack name the service deploys into
   name_prefix                 = "${local.stack_name}-${var.environment}"
   global_prefix               = "global-${var.environment}"
-  service_name                = "company-profile-search-consumer"
+  service_name                = "company-exemptions-delta-consumer"
   container_port              = "8080"
-  docker_repo                 = "company-profile-search-consumer"
+  docker_repo                 = "company-exemptions-delta-consumer"
   kms_alias                   = "alias/${var.aws_profile}/environment-services-kms"
-  healthcheck_path            = "/company-profile-search-consumer/healthcheck"
+  healthcheck_path            = "/company-exemptions-delta-consumer/healthcheck"
   healthcheck_matcher         = "200"
   vpc_name                    = local.stack_secrets["vpc_name"]
   s3_config_bucket            = data.vault_generic_secret.shared_s3.data["config_bucket_name"]
-  app_environment_filename    = "company-profile-search-consumer.env"
+  app_environment_filename    = "company-exemptions-delta-consumer.env"
   use_set_environment_files   = var.use_set_environment_files
   application_subnet_ids      = data.aws_subnets.application.ids
 
@@ -61,7 +61,6 @@ locals {
   task_secrets = concat(local.service_secret_list,local.global_secret_list)
 
   task_environment = concat(local.ssm_global_version_map,local.ssm_service_version_map,[
-    { name : "PORT", value : local.container_port },
-    { name : "LOGLEVEL", value : var.log_level }
+    { name : "PORT", value : local.container_port }
   ])
 }
