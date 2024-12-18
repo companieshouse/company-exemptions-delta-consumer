@@ -1,5 +1,5 @@
 environment = "live"
 aws_profile = "live-eu-west-2"
 
-# service configsß
+# service configs
 service_autoscale_scale_in_cooldown = 600
