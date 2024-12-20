@@ -51,7 +51,7 @@ public class MessageLoggingAspect {
         Map<String, Object> logData = new HashMap<>();
         ChsDelta payload = (ChsDelta)incomingMessage.getPayload();
         String topic = (String)incomingMessage.getHeaders().get(KafkaHeaders.RECEIVED_TOPIC);
-        Integer partition = (Integer)incomingMessage.getHeaders().get(KafkaHeaders.RECEIVED_PARTITION_ID);
+        Integer partition = (Integer)incomingMessage.getHeaders().get(KafkaHeaders.RECEIVED_PARTITION);
         Long offset = (Long)incomingMessage.getHeaders().get(KafkaHeaders.OFFSET);
         logData.put("contextId", payload.getContextId());
         logData.put("topic", topic);
