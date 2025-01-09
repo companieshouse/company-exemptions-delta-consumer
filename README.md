@@ -10,9 +10,93 @@ Transforms company exemptions deltas into an entity sent to company-exemptions-d
 * [Git](https://git-scm.com/downloads)
 * [Java](http://www.oracle.com/technetwork/java/javase/downloads)
 * [Maven](https://maven.apache.org/download.cgi)
-* [Apache Kafka](https://kafka.apache.org/)
 
 ## Getting started
+
+### Building and running locally using docker
+
+1. Clone [Docker CHS Development](https://github.com/companieshouse/docker-chs-development) and follow the steps in the
+   README.
+2. Enable the required services by running the following command in the `docker-chs-development` directory
+
+```bash
+  chs-dev services enable \
+  chs-delta-api \
+  company-exemptions-delta-consumer \
+  company-exemptions-data-api \
+  company-profile-api \
+  chs-kafka-api mongo \
+  company-links-consumer \
+  chs-streaming-api
+```
+3. Boot up the services' containers on docker using `chs-dev up`.
+
+![](./diagrams/image.png)
+
+### Testing locally
+
+To test `company-exemptions-delta-consumer` you will need the following software:
+* Postman - API development tool
+* Studio 3T - MongoDB IDE
+
+#### Updating / inserting delta (POST)
+
+http://api.chs.local:4001/delta/exemption
+```json
+{
+    "company_number": "IP031918",
+    "exemption": {
+        "psc_exempt_as_trading_on_regulated_market": {
+            "description": "Non-UK EEA state market",
+            "items": [
+                {
+                    "exempt_from": "20181219",
+                    "exempt_to": "20211219"
+                }
+            ]
+        },
+        "psc_exempt_as_shares_admitted_on_market": {
+            "description": "Schedule 1 Register market",
+            "items": [
+                {
+                    "exempt_from": "20171219",
+                    "exempt_to": ""
+                }
+            ]
+        },
+        "psc_exempt_as_trading_on_uk_regulated_market": {
+            "description": "UK EEA state market",
+            "items": [
+                {
+                    "exempt_from": "20210110",
+                    "exempt_to": "20210212"
+                }
+            ]
+        },
+        "psc_exempt_as_trading_on_eu_regulated_market": {
+            "description": "EU state market",
+            "items": [
+                {
+                    "exempt_from": "20211219",
+                    "exempt_to": ""
+                }
+            ]
+        }
+    },
+    "delta_at": "20240102142043360560"
+}
+
+```
+#### Delete delta (POST)
+
+http://api.chs.local:4001/delta/exemption/delete
+```json
+{
+    "company_number": "IP031918",
+    "action": "DELETE",
+    "delta_at": "20241231142043360560"
+}
+```
 
 ### Building the docker image with local changes, requires access to AWS ECR
 
