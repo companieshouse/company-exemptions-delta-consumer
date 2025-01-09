@@ -31,6 +31,9 @@ Transforms company exemptions deltas into an entity sent to company-exemptions-d
 ```
 3. Boot up the services' containers on docker using `chs-dev up`.
 
+
+### Useful Diagrams
+#### Component Diagram
 ![](./diagrams/image.png)
 
 ### Testing locally
@@ -117,7 +120,6 @@ http://api.chs.local:4001/delta/exemption/delete
 | `MAX_ATTEMPTS            `            | The number of times a message will be retried before being moved to the error topic                     | 1000                                              |
 | `INVALID_MESSAGE_TOPIC`               | The topic to which message are sent if any unchecked exception other than  RetryableException is thrown | tbirds1-company-exemptions-delta-consumer-invalid |
 | `CHS_API_KEY`                         | The client ID of an API key, with internal app privileges                                               | 63db7d49-de65-44ca-8959-217a99e890fb              |
-| `PAYMENTS_URL`                        | Payments API URL                                                                                        | https://api-payments.cidev.aws.chdev.org          |
 | `API_URL`                             | URL to CHS API                                                                                          | http://api.chs.local:4001                         |
 | `CHS_KAFKA_API_URL`                   | The URL which the chs-kafka-api is hosted on                                                            | 63db7d49-de65-44ca-8959-217a99e890fb              |
 

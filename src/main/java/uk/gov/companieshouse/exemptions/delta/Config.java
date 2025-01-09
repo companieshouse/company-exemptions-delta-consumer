@@ -79,13 +79,11 @@ public class Config {
     @Bean
     Supplier<InternalApiClient> internalApiClientSupplier(
             @Value("${api.api-key}") String apiKey,
-            @Value("${api.api-url}") String apiUrl,
-            @Value("${api.payments-url}") String paymentsUrl) {
+            @Value("${api.api-url}") String apiUrl) {
         return () -> {
             InternalApiClient internalApiClient = new InternalApiClient(new ApiKeyHttpClient(
                     apiKey));
             internalApiClient.setBasePath(apiUrl);
-            internalApiClient.setBasePaymentsPath(paymentsUrl);
             return internalApiClient;
         };
     }
