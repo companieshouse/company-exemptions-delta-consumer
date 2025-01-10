@@ -8,10 +8,10 @@ import static uk.gov.companieshouse.exemptions.delta.TestUtils.COMPANY_EXEMPTION
 import static uk.gov.companieshouse.exemptions.delta.TestUtils.COMPANY_EXEMPTIONS_DELTA_RETRY_TOPIC;
 import static uk.gov.companieshouse.exemptions.delta.TestUtils.COMPANY_EXEMPTIONS_DELTA_TOPIC;
 
-import com.github.tomakehurst.wiremock.junit5.WireMockTest;
 import java.io.ByteArrayOutputStream;
 import java.time.Duration;
 import java.util.concurrent.TimeUnit;
+
 import org.apache.avro.io.DatumWriter;
 import org.apache.avro.io.Encoder;
 import org.apache.avro.io.EncoderFactory;
@@ -25,14 +25,14 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.kafka.test.utils.KafkaTestUtils;
 import org.springframework.test.context.DynamicPropertyRegistry;
 import org.springframework.test.context.DynamicPropertySource;
+import org.springframework.test.context.bean.override.mockito.MockitoBean;
+
 import uk.gov.companieshouse.delta.ChsDelta;
 
 @SpringBootTest
-@WireMockTest(httpPort = 8888)
 class ConsumerPositiveTest extends AbstractKafkaTest {
 
     @Autowired
@@ -42,12 +42,12 @@ class ConsumerPositiveTest extends AbstractKafkaTest {
     @Autowired
     private ConsumerAspect consumerAspect;
 
-    @MockBean
+    @MockitoBean
     private ServiceRouter router;
 
     @DynamicPropertySource
     static void props(DynamicPropertyRegistry registry) {
-        registry.add("spring.kafka.bootstrap-servers", kafka::getBootstrapServers);
+        registry.add("spring.kafka.bootstrap-servers", confluentKafkaContainer::getBootstrapServers);
         registry.add("steps", () -> 1);
     }
 
@@ -70,7 +70,7 @@ class ConsumerPositiveTest extends AbstractKafkaTest {
         if (!consumerAspect.getLatch().await(30L, TimeUnit.SECONDS)) {
             fail("Timed out waiting for latch");
         }
-        ConsumerRecords<?, ?> records = KafkaTestUtils.getRecords(testConsumer, 10000L, 1);
+        ConsumerRecords<?, ?> records = KafkaTestUtils.getRecords(testConsumer, Duration.ofSeconds(10L), 1);
         Assertions.assertThat(TestUtils.noOfRecordsForTopic(records, COMPANY_EXEMPTIONS_DELTA_TOPIC)).isOne();
         Assertions.assertThat(TestUtils.noOfRecordsForTopic(records, COMPANY_EXEMPTIONS_DELTA_INVALID_TOPIC)).isZero();
         Assertions.assertThat(TestUtils.noOfRecordsForTopic(records, COMPANY_EXEMPTIONS_DELTA_RETRY_TOPIC)).isZero();

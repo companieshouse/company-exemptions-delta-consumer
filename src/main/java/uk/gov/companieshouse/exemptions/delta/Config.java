@@ -1,6 +1,6 @@
 package uk.gov.companieshouse.exemptions.delta;
 
-import java.util.HashMap;
+import java.util.Map;
 import java.util.function.Supplier;
 import org.apache.kafka.clients.consumer.ConsumerConfig;
 import org.apache.kafka.clients.producer.ProducerConfig;
@@ -32,30 +32,30 @@ public class Config {
 
     @Bean
     public ConsumerFactory<String, ChsDelta> consumerFactory(@Value("${spring.kafka.bootstrap-servers}") String bootstrapServers) {
-        return new DefaultKafkaConsumerFactory<>(new HashMap<>() {{
-            put(ConsumerConfig.BOOTSTRAP_SERVERS_CONFIG, bootstrapServers);
-            put(ConsumerConfig.KEY_DESERIALIZER_CLASS_CONFIG, ErrorHandlingDeserializer.class);
-            put(ConsumerConfig.VALUE_DESERIALIZER_CLASS_CONFIG, ErrorHandlingDeserializer.class);
-            put(ErrorHandlingDeserializer.KEY_DESERIALIZER_CLASS, StringDeserializer.class);
-            put(ErrorHandlingDeserializer.VALUE_DESERIALIZER_CLASS, ChsDeltaDeserialiser.class);
-            put(ConsumerConfig.AUTO_OFFSET_RESET_CONFIG, "earliest");
-            put(ConsumerConfig.ENABLE_AUTO_COMMIT_CONFIG, "false");
-        }}, new StringDeserializer(), new ErrorHandlingDeserializer<>(new ChsDeltaDeserialiser()));
+        return new DefaultKafkaConsumerFactory<>(Map.of(
+            ConsumerConfig.BOOTSTRAP_SERVERS_CONFIG, bootstrapServers,
+            ConsumerConfig.KEY_DESERIALIZER_CLASS_CONFIG, ErrorHandlingDeserializer.class,
+            ConsumerConfig.VALUE_DESERIALIZER_CLASS_CONFIG, ErrorHandlingDeserializer.class,
+            ErrorHandlingDeserializer.KEY_DESERIALIZER_CLASS, StringDeserializer.class,
+            ErrorHandlingDeserializer.VALUE_DESERIALIZER_CLASS, ChsDeltaDeserialiser.class,
+            ConsumerConfig.AUTO_OFFSET_RESET_CONFIG, "earliest",
+            ConsumerConfig.ENABLE_AUTO_COMMIT_CONFIG, "false")
+        , new StringDeserializer(), new ErrorHandlingDeserializer<>(new ChsDeltaDeserialiser()));
     }
 
     @Bean
     public ProducerFactory<String, ChsDelta> producerFactory(@Value("${spring.kafka.bootstrap-servers}") String bootstrapServers,
                                                              MessageFlags messageFlags,
                                                              @Value("${invalid_message_topic}") String invalidMessageTopic) {
-        return new DefaultKafkaProducerFactory<>(new HashMap<>() {{
-            put(ProducerConfig.BOOTSTRAP_SERVERS_CONFIG, bootstrapServers);
-            put(ProducerConfig.ACKS_CONFIG, "all");
-            put(ProducerConfig.KEY_SERIALIZER_CLASS_CONFIG, StringSerializer.class);
-            put(ProducerConfig.VALUE_SERIALIZER_CLASS_CONFIG, ChsDeltaSerialiser.class);
-            put(ProducerConfig.INTERCEPTOR_CLASSES_CONFIG, InvalidMessageRouter.class.getName());
-            put("message.flags", messageFlags);
-            put("invalid.message.topic", invalidMessageTopic);
-        }}, new StringSerializer(), new ChsDeltaSerialiser());
+        return new DefaultKafkaProducerFactory<>(Map.of(
+            ProducerConfig.BOOTSTRAP_SERVERS_CONFIG, bootstrapServers,
+            ProducerConfig.ACKS_CONFIG, "all",
+            ProducerConfig.KEY_SERIALIZER_CLASS_CONFIG, StringSerializer.class,
+            ProducerConfig.VALUE_SERIALIZER_CLASS_CONFIG, ChsDeltaSerialiser.class,
+            ProducerConfig.INTERCEPTOR_CLASSES_CONFIG, InvalidMessageRouter.class.getName(),
+            "message.flags", messageFlags,
+            "invalid.message.topic", invalidMessageTopic)
+        , new StringSerializer(), new ChsDeltaSerialiser());
     }
 
     @Bean
@@ -75,13 +75,11 @@ public class Config {
     @Bean
     Supplier<InternalApiClient> internalApiClientSupplier(
             @Value("${api.api-key}") String apiKey,
-            @Value("${api.api-url}") String apiUrl,
-            @Value("${api.payments-url}") String paymentsUrl) {
+            @Value("${api.api-url}") String apiUrl) {
         return () -> {
             InternalApiClient internalApiClient = new InternalApiClient(new ApiKeyHttpClient(
                     apiKey));
             internalApiClient.setBasePath(apiUrl);
-            internalApiClient.setBasePaymentsPath(paymentsUrl);
             return internalApiClient;
         };
     }

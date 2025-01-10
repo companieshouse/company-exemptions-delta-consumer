@@ -5,6 +5,8 @@ package uk.gov.companieshouse.exemptions.delta;
  */
 public class RetryableException extends RuntimeException {
 
+    private static final long serialVersionUID = 5932496698060923804L;
+
     public RetryableException(String message, Throwable cause) {
         super(message, cause);
     }

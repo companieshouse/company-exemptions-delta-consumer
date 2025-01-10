@@ -1,5 +1,6 @@
 package uk.gov.companieshouse.exemptions.delta;
 
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Component;
 import uk.gov.companieshouse.delta.ChsDelta;
 
@@ -12,7 +13,7 @@ public class ServiceRouter {
     private final Service upsertService;
     private final Service deleteService;
 
-    public ServiceRouter(Service upsertService, Service deleteService) {
+    public ServiceRouter(@Qualifier("upsertService")Service upsertService, @Qualifier("deleteService")Service deleteService) {
         this.upsertService = upsertService;
         this.deleteService = deleteService;
     }

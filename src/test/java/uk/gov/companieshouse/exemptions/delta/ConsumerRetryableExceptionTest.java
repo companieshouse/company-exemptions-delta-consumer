@@ -26,10 +26,11 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.kafka.test.utils.KafkaTestUtils;
 import org.springframework.test.context.DynamicPropertyRegistry;
 import org.springframework.test.context.DynamicPropertySource;
+import org.springframework.test.context.bean.override.mockito.MockitoBean;
+
 import uk.gov.companieshouse.delta.ChsDelta;
 
 @SpringBootTest
@@ -43,12 +44,12 @@ class ConsumerRetryableExceptionTest extends AbstractKafkaTest {
     @Autowired
     private ConsumerAspect consumerAspect;
 
-    @MockBean
+    @MockitoBean
     private ServiceRouter router;
 
     @DynamicPropertySource
     static void props(DynamicPropertyRegistry registry) {
-        registry.add("spring.kafka.bootstrap-servers", kafka::getBootstrapServers);
+        registry.add("spring.kafka.bootstrap-servers", confluentKafkaContainer::getBootstrapServers);
         registry.add("steps", () -> 5);
     }
 
@@ -74,7 +75,7 @@ class ConsumerRetryableExceptionTest extends AbstractKafkaTest {
         }
 
         //then
-        ConsumerRecords<?, ?> consumerRecords = KafkaTestUtils.getRecords(testConsumer, 10000L, 6);
+        ConsumerRecords<?, ?> consumerRecords = KafkaTestUtils.getRecords(testConsumer, Duration.ofSeconds(10L), 6);
         assertThat(TestUtils.noOfRecordsForTopic(consumerRecords, COMPANY_EXEMPTIONS_DELTA_TOPIC)).isOne();
         assertThat(TestUtils.noOfRecordsForTopic(consumerRecords, COMPANY_EXEMPTIONS_DELTA_INVALID_TOPIC)).isZero();
         assertThat(TestUtils.noOfRecordsForTopic(consumerRecords, COMPANY_EXEMPTIONS_DELTA_RETRY_TOPIC)).isEqualTo(4);

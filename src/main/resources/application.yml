@@ -38,4 +38,3 @@ chs:
 api:
   api-url: ${API_URL:localhost}
   api-key: ${CHS_API_KEY:chsApiKey}
-  payments-url: ${PAYMENTS_URL:localhost}

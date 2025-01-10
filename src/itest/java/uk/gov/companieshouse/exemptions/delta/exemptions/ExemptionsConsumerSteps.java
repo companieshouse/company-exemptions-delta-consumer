@@ -14,7 +14,7 @@ import static com.github.tomakehurst.wiremock.client.WireMock.urlEqualTo;
 import static com.github.tomakehurst.wiremock.client.WireMock.verify;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertEquals;
-import static uk.gov.companieshouse.exemptions.delta.Configuration.kafkaContainer;
+import static uk.gov.companieshouse.exemptions.delta.Configuration.ConfluentKafkaContainer;
 
 import com.github.tomakehurst.wiremock.WireMockServer;
 import com.github.tomakehurst.wiremock.stubbing.ServeEvent;
@@ -61,8 +61,8 @@ public class ExemptionsConsumerSteps {
 
     @Before
     public void cleanUp() {
-        if (!kafkaContainer.isRunning()) {
-            kafkaContainer.start();
+        if (!ConfluentKafkaContainer.isRunning()) {
+            ConfluentKafkaContainer.start();
         }
         consumerAspect.resetLatch();
         testConsumer.poll(Duration.ofMillis(1000));
@@ -78,7 +78,6 @@ public class ExemptionsConsumerSteps {
 
         assertMessageConsumed();
     }
-
 
     @When("the consumer receives a message with invalid payload")
     public void messageWithInvalidDataIsSent() throws Exception {
@@ -118,7 +117,7 @@ public class ExemptionsConsumerSteps {
     }
 
     @When("^the consumer receives a message but the data api returns a (\\d{1,3}) status code")
-    public void consumerRecievesMessageButDataApiReturns(int responseCode) throws Exception {
+    public void consumerReceivesMessageButDataApiReturns(int responseCode) throws Exception {
         configureWiremock();
         stubPutExemptions(responseCode);
 
@@ -131,7 +130,7 @@ public class ExemptionsConsumerSteps {
 
     @Then("the message should retry (\\d*) times and then error$")
     public void theMessageShouldRetryAndError(int retries) {
-        ConsumerRecords<String, byte[]> records = KafkaTestUtils.getRecords(testConsumer, 10000L, 6);
+        ConsumerRecords<String, byte[]> records = KafkaTestUtils.getRecords(testConsumer, Duration.ofSeconds(10L), 6);
         Iterable<ConsumerRecord<String, byte[]>> retryRecords = records.records("company-exemptions-delta-company-exemptions-delta-consumer-retry");
         Iterable<ConsumerRecord<String, byte[]>> errorRecords = records.records("company-exemptions-delta-company-exemptions-delta-consumer-error");
 
