@@ -7,10 +7,10 @@ all: build
 .PHONY: clean
 clean:
 	mvn clean
-	rm -f ./$(artifact_name).jar
 	rm -f ./$(artifact_name)-*.zip
+	rm -f ./$(artifact_name).jar
 	rm -rf ./build-*
-	rm -f ./build.log
+	rm -rf ./build.log-*
 
 .PHONY: security-check
 security-check:
@@ -20,20 +20,23 @@ security-check:
 .PHONY: build
 build:
 	mvn versions:set -DnewVersion=$(version) -DgenerateBackupPoms=false
-	mvn package -DskipTests=true
+	mvn package -Dmaven.test.skip=true
 	cp ./target/$(artifact_name)-$(version).jar ./$(artifact_name).jar
 
 .PHONY: test
-test: clean
-	mvn verify
+test: test-unit test-integration
 
 .PHONY: test-unit
-test-unit: clean
-	mvn test -DexcludedGroups="integration-test"
+test-unit:
+	mvn test
 
 .PHONY: test-integration
 test-integration: clean
-	mvn test -Dgroups="integration-test"
+	mvn integration-test -Dskip.unit.tests=true failsafe:verify
+
+.PHONY: coverage
+coverage:
+	mvn verify
 
 .PHONY: package
 package:
@@ -42,15 +45,23 @@ ifndef version
 endif
 	$(info Packaging version: $(version))
 	mvn versions:set -DnewVersion=$(version) -DgenerateBackupPoms=false
-	mvn package -Dskip.unit.tests=true
+	mvn package -DskipTests=true
 	$(eval tmpdir:=$(shell mktemp -d build-XXXXXXXXXX))
 	cp ./start.sh $(tmpdir)
 	cp ./target/$(artifact_name)-$(version).jar $(tmpdir)/$(artifact_name).jar
 	cd $(tmpdir); zip -r ../$(artifact_name)-$(version).zip *
 	rm -rf $(tmpdir)
 
+.PHONY: build-container
+build-container: build
+	docker build .
+
 .PHONY: dist
-dist: clean build package
+dist: clean build package coverage
+
+.PHONY: publish
+publish:
+	mvn jar:jar deploy:deploy
 
 .PHONY: sonar
 sonar:
