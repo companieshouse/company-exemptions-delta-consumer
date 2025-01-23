@@ -53,7 +53,7 @@ locals {
 
   ssm_service_version_map = [
     for sec in module.secrets.secrets : {
-      name = "${replace(upper(local.service_name), "-", "_")}_${var.ssm_version_prefix}${replace(upper(basename(sec.name)), "-", "_")}", value = sec.version
+      name = "${replace(upper(local.service_name), "-", "_")}_${var.ssm_version_prefix}${replace(upper(basename(sec.name)), "-", "_")}", value = tostring(sec.version)
     }
   ]
 
