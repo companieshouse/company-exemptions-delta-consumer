@@ -9,6 +9,7 @@ import uk.gov.companieshouse.api.error.ApiErrorResponseException;
 import uk.gov.companieshouse.api.handler.exception.URIValidationException;
 import uk.gov.companieshouse.exemptions.delta.exception.NonRetryableException;
 import uk.gov.companieshouse.exemptions.delta.exception.RetryableException;
+import uk.gov.companieshouse.exemptions.delta.logging.DataMapHolder;
 import uk.gov.companieshouse.logging.Logger;
 import uk.gov.companieshouse.logging.LoggerFactory;
 
@@ -25,16 +26,16 @@ public class ResponseHandler {
         final HttpStatus httpStatus = HttpStatus.valueOf(ex.getStatusCode());
 
         if (HttpStatus.CONFLICT.equals(httpStatus) || HttpStatus.BAD_REQUEST.equals(httpStatus)) {
-            LOGGER.error(String.format(API_ERROR_RESPONSE_MESSAGE, statusCode), ex);
+            LOGGER.error(String.format(API_ERROR_RESPONSE_MESSAGE, statusCode), ex, DataMapHolder.getLogMap());
             throw new NonRetryableException(String.format(API_ERROR_RESPONSE_MESSAGE, statusCode), ex);
         } else {
-            LOGGER.info(String.format(API_INFO_RESPONSE_MESSAGE, statusCode, Arrays.toString(ex.getStackTrace())));
+            LOGGER.info(String.format(API_INFO_RESPONSE_MESSAGE, statusCode, Arrays.toString(ex.getStackTrace())), DataMapHolder.getLogMap());
             throw new RetryableException(String.format(API_ERROR_RESPONSE_MESSAGE, statusCode), ex);
         }
     }
 
     public void handle(URIValidationException ex) {
-        LOGGER.error(URI_VALIDATION_EXCEPTION_MESSAGE);
+        LOGGER.error(URI_VALIDATION_EXCEPTION_MESSAGE, DataMapHolder.getLogMap());
         throw new NonRetryableException(URI_VALIDATION_EXCEPTION_MESSAGE, ex);
     }
 }

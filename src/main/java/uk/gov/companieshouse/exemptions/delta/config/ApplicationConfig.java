@@ -23,13 +23,10 @@ import org.springframework.kafka.support.serializer.ErrorHandlingDeserializer;
 import uk.gov.companieshouse.api.InternalApiClient;
 import uk.gov.companieshouse.api.http.ApiKeyHttpClient;
 import uk.gov.companieshouse.delta.ChsDelta;
-import uk.gov.companieshouse.exemptions.delta.CompanyExemptionsDeltaConsumerApplication;
 import uk.gov.companieshouse.exemptions.delta.kafka.InvalidMessageRouter;
 import uk.gov.companieshouse.exemptions.delta.kafka.MessageFlags;
 import uk.gov.companieshouse.exemptions.delta.serdes.ChsDeltaDeserialiser;
 import uk.gov.companieshouse.exemptions.delta.serdes.ChsDeltaSerialiser;
-import uk.gov.companieshouse.logging.Logger;
-import uk.gov.companieshouse.logging.LoggerFactory;
 
 @Configuration
 @EnableKafka
@@ -89,10 +86,5 @@ public class ApplicationConfig {
             internalApiClient.setBasePath(apiUrl);
             return internalApiClient;
         };
-    }
-
-    @Bean
-    public Logger logger() {
-        return LoggerFactory.getLogger(CompanyExemptionsDeltaConsumerApplication.NAMESPACE);
     }
 }

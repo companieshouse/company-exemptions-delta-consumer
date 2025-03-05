@@ -4,6 +4,7 @@ import static org.springframework.kafka.support.KafkaHeaders.EXCEPTION_MESSAGE;
 import static org.springframework.kafka.support.KafkaHeaders.ORIGINAL_OFFSET;
 import static org.springframework.kafka.support.KafkaHeaders.ORIGINAL_PARTITION;
 import static org.springframework.kafka.support.KafkaHeaders.ORIGINAL_TOPIC;
+import static uk.gov.companieshouse.exemptions.delta.CompanyExemptionsDeltaConsumerApplication.NAMESPACE;
 
 import java.math.BigInteger;
 import java.util.Map;
@@ -12,7 +13,7 @@ import org.apache.kafka.clients.producer.ProducerInterceptor;
 import org.apache.kafka.clients.producer.ProducerRecord;
 import org.apache.kafka.clients.producer.RecordMetadata;
 import uk.gov.companieshouse.delta.ChsDelta;
-import uk.gov.companieshouse.exemptions.delta.CompanyExemptionsDeltaConsumerApplication;
+import uk.gov.companieshouse.exemptions.delta.logging.DataMapHolder;
 import uk.gov.companieshouse.logging.Logger;
 import uk.gov.companieshouse.logging.LoggerFactory;
 
@@ -20,7 +21,7 @@ public class InvalidMessageRouter implements ProducerInterceptor<String, ChsDelt
 
     private MessageFlags messageFlags;
     private String invalidMessageTopic;
-    private static final Logger LOGGER = LoggerFactory.getLogger(CompanyExemptionsDeltaConsumerApplication.NAMESPACE);
+    private static final Logger LOGGER = LoggerFactory.getLogger(NAMESPACE);
 
     @Override
     public ProducerRecord<String, ChsDelta> onSend(ProducerRecord<String, ChsDelta> producerRecord) {
@@ -43,7 +44,8 @@ public class InvalidMessageRouter implements ProducerInterceptor<String, ChsDelt
                             exception, topic, partition, offset), 0, "", false);
 
             ProducerRecord<String, ChsDelta> invalidRecord = new ProducerRecord<>(invalidMessageTopic, producerRecord.key(), invalidData);
-            LOGGER.info(String.format("Moving record into topic: [%s]%nMessage content: %s", invalidRecord.topic(), invalidData.getData()));
+            LOGGER.info(String.format("Moving record into topic: [%s]%nMessage content: %s", invalidRecord.topic(), invalidData.getData()),
+                    DataMapHolder.getLogMap());
 
             return invalidRecord;
         }
