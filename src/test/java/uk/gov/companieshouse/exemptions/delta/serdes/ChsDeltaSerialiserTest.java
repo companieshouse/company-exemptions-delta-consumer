@@ -1,4 +1,4 @@
-package uk.gov.companieshouse.exemptions.delta.transformer;
+package uk.gov.companieshouse.exemptions.delta.serdes;
 
 import static org.hamcrest.CoreMatchers.equalTo;
 import static org.hamcrest.CoreMatchers.instanceOf;

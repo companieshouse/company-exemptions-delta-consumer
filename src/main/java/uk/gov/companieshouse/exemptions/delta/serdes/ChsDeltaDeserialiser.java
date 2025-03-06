@@ -1,4 +1,4 @@
-package uk.gov.companieshouse.exemptions.delta.transformer;
+package uk.gov.companieshouse.exemptions.delta.serdes;
 
 import static uk.gov.companieshouse.exemptions.delta.CompanyExemptionsDeltaConsumerApplication.NAMESPACE;
 

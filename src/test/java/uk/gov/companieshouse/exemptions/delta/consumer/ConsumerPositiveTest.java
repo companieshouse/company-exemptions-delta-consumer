@@ -3,10 +3,10 @@ package uk.gov.companieshouse.exemptions.delta.consumer;
 import static org.junit.jupiter.api.Assertions.fail;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.verify;
-import static uk.gov.companieshouse.exemptions.delta.utils.TestUtils.COMPANY_EXEMPTIONS_DELTA_ERROR_TOPIC;
-import static uk.gov.companieshouse.exemptions.delta.utils.TestUtils.COMPANY_EXEMPTIONS_DELTA_INVALID_TOPIC;
-import static uk.gov.companieshouse.exemptions.delta.utils.TestUtils.COMPANY_EXEMPTIONS_DELTA_RETRY_TOPIC;
-import static uk.gov.companieshouse.exemptions.delta.utils.TestUtils.COMPANY_EXEMPTIONS_DELTA_TOPIC;
+import static uk.gov.companieshouse.exemptions.delta.kafka.KafkaUtils.COMPANY_EXEMPTIONS_DELTA_ERROR_TOPIC;
+import static uk.gov.companieshouse.exemptions.delta.kafka.KafkaUtils.COMPANY_EXEMPTIONS_DELTA_INVALID_TOPIC;
+import static uk.gov.companieshouse.exemptions.delta.kafka.KafkaUtils.COMPANY_EXEMPTIONS_DELTA_RETRY_TOPIC;
+import static uk.gov.companieshouse.exemptions.delta.kafka.KafkaUtils.COMPANY_EXEMPTIONS_DELTA_TOPIC;
 
 import java.io.ByteArrayOutputStream;
 import java.time.Duration;
@@ -31,7 +31,7 @@ import org.springframework.test.context.bean.override.mockito.MockitoBean;
 import uk.gov.companieshouse.delta.ChsDelta;
 import uk.gov.companieshouse.exemptions.delta.kafka.AbstractKafkaTest;
 import uk.gov.companieshouse.exemptions.delta.service.ServiceRouter;
-import uk.gov.companieshouse.exemptions.delta.utils.TestUtils;
+import uk.gov.companieshouse.exemptions.delta.kafka.KafkaUtils;
 
 @SpringBootTest
 class ConsumerPositiveTest extends AbstractKafkaTest {
@@ -72,10 +72,10 @@ class ConsumerPositiveTest extends AbstractKafkaTest {
             fail("Timed out waiting for latch");
         }
         ConsumerRecords<?, ?> records = KafkaTestUtils.getRecords(testConsumer, Duration.ofSeconds(10L), 1);
-        Assertions.assertThat(TestUtils.noOfRecordsForTopic(records, COMPANY_EXEMPTIONS_DELTA_TOPIC)).isOne();
-        Assertions.assertThat(TestUtils.noOfRecordsForTopic(records, COMPANY_EXEMPTIONS_DELTA_INVALID_TOPIC)).isZero();
-        Assertions.assertThat(TestUtils.noOfRecordsForTopic(records, COMPANY_EXEMPTIONS_DELTA_RETRY_TOPIC)).isZero();
-        Assertions.assertThat(TestUtils.noOfRecordsForTopic(records, COMPANY_EXEMPTIONS_DELTA_ERROR_TOPIC)).isZero();
+        Assertions.assertThat(KafkaUtils.noOfRecordsForTopic(records, COMPANY_EXEMPTIONS_DELTA_TOPIC)).isOne();
+        Assertions.assertThat(KafkaUtils.noOfRecordsForTopic(records, COMPANY_EXEMPTIONS_DELTA_INVALID_TOPIC)).isZero();
+        Assertions.assertThat(KafkaUtils.noOfRecordsForTopic(records, COMPANY_EXEMPTIONS_DELTA_RETRY_TOPIC)).isZero();
+        Assertions.assertThat(KafkaUtils.noOfRecordsForTopic(records, COMPANY_EXEMPTIONS_DELTA_ERROR_TOPIC)).isZero();
 
         //then
         verify(router).route(any());

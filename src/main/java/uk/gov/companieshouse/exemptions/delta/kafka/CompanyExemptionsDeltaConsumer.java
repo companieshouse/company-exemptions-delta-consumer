@@ -1,4 +1,4 @@
-package uk.gov.companieshouse.exemptions.delta.consumer;
+package uk.gov.companieshouse.exemptions.delta.kafka;
 
 import org.springframework.kafka.annotation.KafkaListener;
 import org.springframework.kafka.annotation.RetryableTopic;
@@ -10,7 +10,6 @@ import org.springframework.retry.annotation.Backoff;
 import org.springframework.stereotype.Component;
 import uk.gov.companieshouse.delta.ChsDelta;
 import uk.gov.companieshouse.exemptions.delta.exception.RetryableException;
-import uk.gov.companieshouse.exemptions.delta.kafka.MessageFlags;
 import uk.gov.companieshouse.exemptions.delta.service.ServiceRouter;
 
 /**

@@ -19,7 +19,7 @@ public class ConsumerAspect {
         this.latch = new CountDownLatch(steps);
     }
 
-    @After("execution(* uk.gov.companieshouse.exemptions.delta.consumer.CompanyExemptionsDeltaConsumer.consume(..))")
+    @After("execution(* uk.gov.companieshouse.exemptions.delta.kafka.CompanyExemptionsDeltaConsumer.consume(..))")
     void afterConsume(JoinPoint joinPoint) {
         latch.countDown();
     }

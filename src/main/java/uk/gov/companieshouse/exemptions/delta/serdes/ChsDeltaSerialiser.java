@@ -1,4 +1,4 @@
-package uk.gov.companieshouse.exemptions.delta.transformer;
+package uk.gov.companieshouse.exemptions.delta.serdes;
 
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;

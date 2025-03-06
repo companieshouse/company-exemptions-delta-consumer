@@ -1,9 +1,9 @@
 package uk.gov.companieshouse.exemptions.delta.kafka;
 
-import static uk.gov.companieshouse.exemptions.delta.utils.TestUtils.COMPANY_EXEMPTIONS_DELTA_ERROR_TOPIC;
-import static uk.gov.companieshouse.exemptions.delta.utils.TestUtils.COMPANY_EXEMPTIONS_DELTA_INVALID_TOPIC;
-import static uk.gov.companieshouse.exemptions.delta.utils.TestUtils.COMPANY_EXEMPTIONS_DELTA_RETRY_TOPIC;
-import static uk.gov.companieshouse.exemptions.delta.utils.TestUtils.COMPANY_EXEMPTIONS_DELTA_TOPIC;
+import static uk.gov.companieshouse.exemptions.delta.kafka.KafkaUtils.COMPANY_EXEMPTIONS_DELTA_ERROR_TOPIC;
+import static uk.gov.companieshouse.exemptions.delta.kafka.KafkaUtils.COMPANY_EXEMPTIONS_DELTA_INVALID_TOPIC;
+import static uk.gov.companieshouse.exemptions.delta.kafka.KafkaUtils.COMPANY_EXEMPTIONS_DELTA_RETRY_TOPIC;
+import static uk.gov.companieshouse.exemptions.delta.kafka.KafkaUtils.COMPANY_EXEMPTIONS_DELTA_TOPIC;
 
 import java.util.HashMap;
 import java.util.List;

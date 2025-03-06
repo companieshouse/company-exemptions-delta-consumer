@@ -10,7 +10,6 @@ import org.springframework.kafka.support.KafkaHeaders;
 import org.springframework.messaging.Message;
 import org.springframework.stereotype.Component;
 import uk.gov.companieshouse.delta.ChsDelta;
-import uk.gov.companieshouse.exemptions.delta.consumer.CompanyExemptionsDeltaConsumer;
 import uk.gov.companieshouse.logging.Logger;
 
 /**
@@ -38,12 +37,12 @@ public class MessageLoggingAspect {
         this.logger = logger;
     }
 
-    @Before("execution(* uk.gov.companieshouse.exemptions.delta.consumer.CompanyExemptionsDeltaConsumer.consume(..))")
+    @Before("execution(* uk.gov.companieshouse.exemptions.delta.kafka.CompanyExemptionsDeltaConsumer.consume(..))")
     void logBeforeConsumer(JoinPoint joinPoint) {
         logMessage(LOG_MESSAGE_RECEIVED, (Message<?>)joinPoint.getArgs()[0]);
     }
 
-    @After("execution(* uk.gov.companieshouse.exemptions.delta.consumer.CompanyExemptionsDeltaConsumer.consume(..))")
+    @After("execution(* uk.gov.companieshouse.exemptions.delta.kafka.CompanyExemptionsDeltaConsumer.consume(..))")
     void logAfterConsumer(JoinPoint joinPoint) {
         logMessage(LOG_MESSAGE_PROCESSED, (Message<?>)joinPoint.getArgs()[0]);
     }

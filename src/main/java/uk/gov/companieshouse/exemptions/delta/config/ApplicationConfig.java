@@ -26,8 +26,8 @@ import uk.gov.companieshouse.delta.ChsDelta;
 import uk.gov.companieshouse.exemptions.delta.CompanyExemptionsDeltaConsumerApplication;
 import uk.gov.companieshouse.exemptions.delta.kafka.InvalidMessageRouter;
 import uk.gov.companieshouse.exemptions.delta.kafka.MessageFlags;
-import uk.gov.companieshouse.exemptions.delta.transformer.ChsDeltaDeserialiser;
-import uk.gov.companieshouse.exemptions.delta.transformer.ChsDeltaSerialiser;
+import uk.gov.companieshouse.exemptions.delta.serdes.ChsDeltaDeserialiser;
+import uk.gov.companieshouse.exemptions.delta.serdes.ChsDeltaSerialiser;
 import uk.gov.companieshouse.logging.Logger;
 import uk.gov.companieshouse.logging.LoggerFactory;
 
