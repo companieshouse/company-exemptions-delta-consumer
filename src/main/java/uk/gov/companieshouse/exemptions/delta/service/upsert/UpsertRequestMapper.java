@@ -17,7 +17,7 @@ import uk.gov.companieshouse.api.exemptions.InternalData;
  * to upsert a company exemption resource.
  */
 @Mapper(componentModel = MappingConstants.ComponentModel.SPRING)
-public interface UpsertRequestMapper {
+interface UpsertRequestMapper {
 
     DateTimeFormatter EXEMPTION_DATE_PATTERN = DateTimeFormatter.ofPattern("yyyyMMdd");
     DateTimeFormatter DELTA_TIME_PATTERN = DateTimeFormatter.ofPattern("yyyyMMddHHmmssSSSSSS")

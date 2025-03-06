@@ -9,7 +9,7 @@ import uk.gov.companieshouse.exemptions.delta.service.ServiceParameters;
  * Orchestrates all steps required to delete a company exemptions resource.
  */
 @Component("deleteService")
-public class DeleteOrchestrator implements Service {
+class DeleteOrchestrator implements Service {
 
     private final DeleteContentFilter filter;
     private final DeleteRequestMapper mapper;

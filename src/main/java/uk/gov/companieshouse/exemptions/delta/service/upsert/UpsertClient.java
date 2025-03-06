@@ -7,13 +7,11 @@ import uk.gov.companieshouse.api.error.ApiErrorResponseException;
 import uk.gov.companieshouse.api.handler.exception.URIValidationException;
 import uk.gov.companieshouse.exemptions.delta.service.ResponseHandler;
 
-;
-
 /**
  * Upserts a company exemptions resource via a REST HTTP request.
  */
 @Component
-public class UpsertClient {
+class UpsertClient {
 
     private final Supplier<InternalApiClient> internalApiClientFactory;
 

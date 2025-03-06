@@ -1,5 +1,6 @@
 package uk.gov.companieshouse.exemptions.delta.kafka;
 
+import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.fail;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.verify;
@@ -7,6 +8,7 @@ import static uk.gov.companieshouse.exemptions.delta.kafka.KafkaUtils.COMPANY_EX
 import static uk.gov.companieshouse.exemptions.delta.kafka.KafkaUtils.COMPANY_EXEMPTIONS_DELTA_INVALID_TOPIC;
 import static uk.gov.companieshouse.exemptions.delta.kafka.KafkaUtils.COMPANY_EXEMPTIONS_DELTA_RETRY_TOPIC;
 import static uk.gov.companieshouse.exemptions.delta.kafka.KafkaUtils.COMPANY_EXEMPTIONS_DELTA_TOPIC;
+import static uk.gov.companieshouse.exemptions.delta.kafka.KafkaUtils.noOfRecordsForTopic;
 
 import java.io.ByteArrayOutputStream;
 import java.time.Duration;
@@ -70,10 +72,10 @@ class ConsumerPositiveTest extends AbstractKafkaTest {
             fail("Timed out waiting for latch");
         }
         ConsumerRecords<?, ?> records = KafkaTestUtils.getRecords(testConsumer, Duration.ofSeconds(10L), 1);
-        Assertions.assertThat(KafkaUtils.noOfRecordsForTopic(records, COMPANY_EXEMPTIONS_DELTA_TOPIC)).isOne();
-        Assertions.assertThat(KafkaUtils.noOfRecordsForTopic(records, COMPANY_EXEMPTIONS_DELTA_INVALID_TOPIC)).isZero();
-        Assertions.assertThat(KafkaUtils.noOfRecordsForTopic(records, COMPANY_EXEMPTIONS_DELTA_RETRY_TOPIC)).isZero();
-        Assertions.assertThat(KafkaUtils.noOfRecordsForTopic(records, COMPANY_EXEMPTIONS_DELTA_ERROR_TOPIC)).isZero();
+        assertThat(noOfRecordsForTopic(records, COMPANY_EXEMPTIONS_DELTA_TOPIC)).isOne();
+        assertThat(noOfRecordsForTopic(records, COMPANY_EXEMPTIONS_DELTA_INVALID_TOPIC)).isZero();
+        assertThat(noOfRecordsForTopic(records, COMPANY_EXEMPTIONS_DELTA_RETRY_TOPIC)).isZero();
+        assertThat(noOfRecordsForTopic(records, COMPANY_EXEMPTIONS_DELTA_ERROR_TOPIC)).isZero();
 
         //then
         verify(router).route(any());

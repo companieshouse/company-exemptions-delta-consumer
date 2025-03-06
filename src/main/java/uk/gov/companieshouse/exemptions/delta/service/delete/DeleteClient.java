@@ -11,7 +11,7 @@ import uk.gov.companieshouse.exemptions.delta.service.ResponseHandler;
  * Deletes a company exemptions resource via a REST HTTP request.
  */
 @Component
-public class DeleteClient {
+class DeleteClient {
 
     private final Supplier<InternalApiClient> internalApiClientFactory;
 

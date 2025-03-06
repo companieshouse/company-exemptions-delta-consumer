@@ -12,7 +12,7 @@ import uk.gov.companieshouse.api.delta.PscExemptionDeleteDelta;
  * required to delete a company exemption resource.
  */
 @Mapper(componentModel = MappingConstants.ComponentModel.SPRING)
-public interface DeleteRequestMapper {
+interface DeleteRequestMapper {
 
     /**
      * Map an {@link PscExemptionDeleteDelta exemption delete delta} to a {@link DeleteRequest request object}.

@@ -24,7 +24,7 @@
         <build-helper-maven-plugin.version>3.6.0</build-helper-maven-plugin.version>
         <jib-maven-plugin.version>3.4.4</jib-maven-plugin.version>
 
-        <spring.boot.version>3.4.2</spring.boot.version>
+        <spring.boot.version>3.4.3</spring.boot.version>
         <spring-kafka.version>3.3.3</spring-kafka.version>
         <cucumber.version>7.20.1</cucumber.version>
         <mapstruct.version>1.6.3</mapstruct.version>

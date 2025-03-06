@@ -11,7 +11,7 @@ import uk.gov.companieshouse.exemptions.delta.exception.NonRetryableException;
  * Extracts and deserialises {@link ChsDelta#getData() data} attached from JSON to a {@link PscExemptionDelta}.
  */
 @Component
-public class UpsertContentFilter {
+class UpsertContentFilter {
 
     private final ObjectMapper mapper;
 

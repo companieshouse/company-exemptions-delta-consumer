@@ -6,7 +6,7 @@ import uk.gov.companieshouse.api.exemptions.InternalExemptionsApi;
 /**
  * Contains all parameters required to upsert a company exemptions resource.
  */
-public class UpsertRequest {
+class UpsertRequest {
 
     private InternalExemptionsApi body;
     private String path;

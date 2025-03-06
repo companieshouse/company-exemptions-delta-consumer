@@ -5,7 +5,7 @@ import java.util.Objects;
 /**
  * Contains all parameters required to delete a company exemptions resource.
  */
-public class DeleteRequest {
+class DeleteRequest {
 
     private String path;
     private String deltaAt;
