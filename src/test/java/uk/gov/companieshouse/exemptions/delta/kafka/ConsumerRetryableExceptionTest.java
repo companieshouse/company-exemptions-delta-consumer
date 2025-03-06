@@ -1,4 +1,4 @@
-package uk.gov.companieshouse.exemptions.delta.kafka.consumer;
+package uk.gov.companieshouse.exemptions.delta.kafka;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.fail;
@@ -33,9 +33,7 @@ import org.springframework.test.context.DynamicPropertySource;
 import org.springframework.test.context.bean.override.mockito.MockitoBean;
 import uk.gov.companieshouse.delta.ChsDelta;
 import uk.gov.companieshouse.exemptions.delta.exception.RetryableException;
-import uk.gov.companieshouse.exemptions.delta.kafka.AbstractKafkaTest;
 import uk.gov.companieshouse.exemptions.delta.service.ServiceRouter;
-import uk.gov.companieshouse.exemptions.delta.kafka.KafkaUtils;
 
 @SpringBootTest
 @WireMockTest(httpPort = 8888)

@@ -1,4 +1,4 @@
-package uk.gov.companieshouse.exemptions.delta.kafka.consumer;
+package uk.gov.companieshouse.exemptions.delta.kafka;
 
 import java.util.concurrent.CountDownLatch;
 import org.aspectj.lang.JoinPoint;

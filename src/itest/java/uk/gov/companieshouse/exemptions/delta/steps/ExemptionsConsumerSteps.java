@@ -41,7 +41,7 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpStatus;
 import org.springframework.kafka.test.utils.KafkaTestUtils;
 import uk.gov.companieshouse.delta.ChsDelta;
-import uk.gov.companieshouse.exemptions.delta.kafka.consumer.ConsumerAspect;
+import uk.gov.companieshouse.exemptions.delta.kafka.ConsumerAspect;
 import uk.gov.companieshouse.exemptions.delta.data.TestData;
 
 public class ExemptionsConsumerSteps {

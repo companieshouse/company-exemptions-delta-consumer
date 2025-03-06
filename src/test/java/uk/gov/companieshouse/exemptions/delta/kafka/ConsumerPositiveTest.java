@@ -1,4 +1,4 @@
-package uk.gov.companieshouse.exemptions.delta.kafka.consumer;
+package uk.gov.companieshouse.exemptions.delta.kafka;
 
 import static org.junit.jupiter.api.Assertions.fail;
 import static org.mockito.ArgumentMatchers.any;
@@ -29,9 +29,7 @@ import org.springframework.test.context.DynamicPropertyRegistry;
 import org.springframework.test.context.DynamicPropertySource;
 import org.springframework.test.context.bean.override.mockito.MockitoBean;
 import uk.gov.companieshouse.delta.ChsDelta;
-import uk.gov.companieshouse.exemptions.delta.kafka.AbstractKafkaTest;
 import uk.gov.companieshouse.exemptions.delta.service.ServiceRouter;
-import uk.gov.companieshouse.exemptions.delta.kafka.KafkaUtils;
 
 @SpringBootTest
 class ConsumerPositiveTest extends AbstractKafkaTest {
