@@ -1,4 +1,4 @@
-package uk.gov.companieshouse.exemptions.delta.consumer;
+package uk.gov.companieshouse.exemptions.delta.kafka.consumer;
 
 import static org.junit.jupiter.api.Assertions.fail;
 import static org.mockito.ArgumentMatchers.any;

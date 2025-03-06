@@ -1,4 +1,4 @@
-package uk.gov.companieshouse.exemptions.delta.consumer;
+package uk.gov.companieshouse.exemptions.delta.kafka.consumer;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static uk.gov.companieshouse.exemptions.delta.kafka.KafkaUtils.COMPANY_EXEMPTIONS_DELTA_ERROR_TOPIC;
