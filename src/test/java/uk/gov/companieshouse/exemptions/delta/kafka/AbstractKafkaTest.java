@@ -1,9 +1,9 @@
 package uk.gov.companieshouse.exemptions.delta.kafka;
 
 import org.springframework.context.annotation.Import;
+import org.testcontainers.containers.KafkaContainer;
 import org.testcontainers.junit.jupiter.Container;
 import org.testcontainers.junit.jupiter.Testcontainers;
-import org.testcontainers.kafka.ConfluentKafkaContainer;
 import org.testcontainers.utility.DockerImageName;
 
 @Testcontainers
@@ -11,5 +11,5 @@ import org.testcontainers.utility.DockerImageName;
 public abstract class AbstractKafkaTest {
 
     @Container
-    public static final ConfluentKafkaContainer confluentKafkaContainer = new ConfluentKafkaContainer(
-            DockerImageName.parse("confluentinc/cp-kafka:latest"));}
+    public static final KafkaContainer kafkaContainer = new KafkaContainer(
+            DockerImageName.parse("confluentinc/cp-kafka:5.0.0"));}

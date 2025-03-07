@@ -14,7 +14,7 @@ import static com.github.tomakehurst.wiremock.client.WireMock.urlEqualTo;
 import static com.github.tomakehurst.wiremock.client.WireMock.verify;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertEquals;
-import static uk.gov.companieshouse.exemptions.delta.config.Configuration.ConfluentKafkaContainer;
+import static uk.gov.companieshouse.exemptions.delta.config.Configuration.kafkaContainer;
 
 import com.github.tomakehurst.wiremock.WireMockServer;
 import com.github.tomakehurst.wiremock.stubbing.ServeEvent;
@@ -41,8 +41,8 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpStatus;
 import org.springframework.kafka.test.utils.KafkaTestUtils;
 import uk.gov.companieshouse.delta.ChsDelta;
-import uk.gov.companieshouse.exemptions.delta.kafka.ConsumerAspect;
 import uk.gov.companieshouse.exemptions.delta.data.TestData;
+import uk.gov.companieshouse.exemptions.delta.kafka.ConsumerAspect;
 
 public class ExemptionsConsumerSteps {
 
@@ -61,8 +61,8 @@ public class ExemptionsConsumerSteps {
 
     @Before
     public void cleanUp() {
-        if (!ConfluentKafkaContainer.isRunning()) {
-            ConfluentKafkaContainer.start();
+        if (!kafkaContainer.isRunning()) {
+            kafkaContainer.start();
         }
         consumerAspect.resetLatch();
         testConsumer.poll(Duration.ofMillis(1000));

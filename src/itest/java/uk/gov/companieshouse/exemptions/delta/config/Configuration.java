@@ -7,7 +7,7 @@ import org.springframework.context.annotation.Import;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.DynamicPropertyRegistry;
 import org.springframework.test.context.DynamicPropertySource;
-import org.testcontainers.kafka.ConfluentKafkaContainer;
+import org.testcontainers.containers.KafkaContainer;
 import org.testcontainers.utility.DockerImageName;
 import uk.gov.companieshouse.exemptions.delta.kafka.TestKafkaConfig;
 
@@ -18,14 +18,14 @@ import uk.gov.companieshouse.exemptions.delta.kafka.TestKafkaConfig;
 @ActiveProfiles("integration_tests")
 public class Configuration {
 
-    public static final ConfluentKafkaContainer ConfluentKafkaContainer = new ConfluentKafkaContainer(
-            DockerImageName.parse("confluentinc/cp-kafka:latest"));
+    public static final KafkaContainer kafkaContainer = new KafkaContainer(
+            DockerImageName.parse("confluentinc/cp-kafka:5.0.0"));
 
 
     @DynamicPropertySource
     static void props(DynamicPropertyRegistry registry) {
-        registry.add("spring.kafka.bootstrap-servers", ConfluentKafkaContainer::getBootstrapServers);
-        ConfluentKafkaContainer.start();
+        registry.add("spring.kafka.bootstrap-servers", kafkaContainer::getBootstrapServers);
+        kafkaContainer.start();
     }
 
 }
