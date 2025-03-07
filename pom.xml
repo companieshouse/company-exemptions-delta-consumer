@@ -17,7 +17,6 @@
 
     <properties>
         <java.version>21</java.version>
-        <maven-helper-plugin.version>3.3.0</maven-helper-plugin.version>
         <maven-compiler.version>3.13.0</maven-compiler.version>
         <maven-surefire-plugin.version>3.5.2</maven-surefire-plugin.version>
         <maven-failsafe-plugin.version>3.5.2</maven-failsafe-plugin.version>
@@ -25,9 +24,8 @@
         <build-helper-maven-plugin.version>3.6.0</build-helper-maven-plugin.version>
         <jib-maven-plugin.version>3.4.4</jib-maven-plugin.version>
 
-        <spring.framework.version>6.2.1</spring.framework.version>
-        <spring.boot.version>3.4.1</spring.boot.version>
-        <spring-kafka.version>3.3.1</spring-kafka.version>
+        <spring.boot.version>3.4.3</spring.boot.version>
+        <spring-kafka.version>3.3.3</spring-kafka.version>
         <cucumber.version>7.20.1</cucumber.version>
         <mapstruct.version>1.6.3</mapstruct.version>
         <avro.version>1.12.0</avro.version>
@@ -36,10 +34,10 @@
         <junit-platform-suite.version>1.11.4</junit-platform-suite.version>
 
         <!-- internal dependencies -->
-        <private-api-sdk-java.version>4.0.259</private-api-sdk-java.version>
-        <api-sdk-java.version>6.0.26</api-sdk-java.version>
-        <kafka-models.version>3.0.8</kafka-models.version>
-        <structured-logging.version>3.0.24</structured-logging.version>
+        <private-api-sdk-java.version>4.0.270</private-api-sdk-java.version>
+        <api-sdk-java.version>6.0.37</api-sdk-java.version>
+        <kafka-models.version>3.0.10</kafka-models.version>
+        <structured-logging.version>3.0.26</structured-logging.version>
     </properties>
 
     <dependencyManagement>
@@ -91,6 +89,10 @@
                 <exclusion>
                     <groupId>org.eclipse.jetty.http2</groupId>
                     <artifactId>http2-server</artifactId>
+                </exclusion>
+                <exclusion>
+                    <groupId>net.minidev</groupId>
+                    <artifactId>json-smart</artifactId>
                 </exclusion>
                 <exclusion>
                     <groupId>org.apache.avro</groupId>
@@ -167,6 +169,12 @@
             <artifactId>spring-boot-starter-test</artifactId>
             <version>${spring.boot.version}</version>
             <scope>test</scope>
+            <exclusions>
+                <exclusion>
+                    <groupId>net.minidev</groupId>
+                    <artifactId>json-smart</artifactId>
+                </exclusion>
+            </exclusions>
         </dependency>
         <dependency>
             <groupId>org.springframework.kafka</groupId>
@@ -182,6 +190,14 @@
                     <!-- Exclude logback to prevent multiple SLF4J binding warning -->
                     <groupId>ch.qos.logback</groupId>
                     <artifactId>logback-core</artifactId>
+                </exclusion>
+                <exclusion>
+                    <groupId>io.netty</groupId>
+                    <artifactId>netty-common</artifactId>
+                </exclusion>
+                <exclusion>
+                    <groupId>io.netty</groupId>
+                    <artifactId>netty-handler</artifactId>
                 </exclusion>
             </exclusions>
             <scope>test</scope>
@@ -263,7 +279,7 @@
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-surefire-plugin</artifactId>
-                <version>${maven-failsafe-plugin.version}</version>
+                <version>${maven-surefire-plugin.version}</version>
                 <configuration>
                     <skipTests>${skip.unit.tests}</skipTests>
                     <excludes>
