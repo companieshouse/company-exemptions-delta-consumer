@@ -36,8 +36,9 @@ public class ChsDeltaDeserialiser implements Deserializer<ChsDelta> {
             DatumReader<ChsDelta> reader = new ReflectDatumReader<>(ChsDelta.class);
             return reader.read(null, decoder);
         } catch (IOException | AvroRuntimeException e) {
-            LOGGER.error("Error deserialising message.", e, DataMapHolder.getLogMap());
-            throw new InvalidPayloadException(String.format("Invalid payload: [%s] was provided.", new String(data)), e);
+            String payload = new String(data);
+            LOGGER.error("Error deserialising message payload: [%s]".formatted(payload), e, DataMapHolder.getLogMap());
+            throw new InvalidPayloadException(String.format("Invalid payload: [%s] was provided.", payload), e);
         }
     }
 }
