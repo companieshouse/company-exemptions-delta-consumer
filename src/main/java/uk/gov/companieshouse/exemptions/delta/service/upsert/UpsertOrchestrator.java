@@ -2,6 +2,7 @@ package uk.gov.companieshouse.exemptions.delta.service.upsert;
 
 import org.springframework.stereotype.Component;
 import uk.gov.companieshouse.api.delta.PscExemptionDelta;
+import uk.gov.companieshouse.exemptions.delta.logging.DataMapHolder;
 import uk.gov.companieshouse.exemptions.delta.service.Service;
 import uk.gov.companieshouse.exemptions.delta.service.ServiceParameters;
 
@@ -24,6 +25,9 @@ class UpsertOrchestrator implements Service {
     @Override
     public void processMessage(ServiceParameters parameters) {
         PscExemptionDelta delta = contentFilter.filter(parameters.getDelta());
+
+        DataMapHolder.get().companyNumber(delta.getCompanyNumber());
+
         UpsertRequest request = mapper.mapDelta(delta);
         client.upsert(request);
     }

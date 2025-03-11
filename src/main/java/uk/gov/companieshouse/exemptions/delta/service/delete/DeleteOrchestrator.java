@@ -2,6 +2,7 @@ package uk.gov.companieshouse.exemptions.delta.service.delete;
 
 import org.springframework.stereotype.Component;
 import uk.gov.companieshouse.api.delta.PscExemptionDeleteDelta;
+import uk.gov.companieshouse.exemptions.delta.logging.DataMapHolder;
 import uk.gov.companieshouse.exemptions.delta.service.Service;
 import uk.gov.companieshouse.exemptions.delta.service.ServiceParameters;
 
@@ -24,6 +25,9 @@ class DeleteOrchestrator implements Service {
     @Override
     public void processMessage(ServiceParameters parameters) {
         PscExemptionDeleteDelta delta = filter.filter(parameters.getDelta());
+
+        DataMapHolder.get().companyNumber(delta.getCompanyNumber());
+
         DeleteRequest request = mapper.mapDelta(delta);
         client.delete(request);
     }
