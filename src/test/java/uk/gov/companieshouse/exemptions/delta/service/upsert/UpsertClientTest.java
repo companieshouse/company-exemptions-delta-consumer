@@ -18,11 +18,12 @@ import uk.gov.companieshouse.api.exemptions.InternalExemptionsApi;
 import uk.gov.companieshouse.api.handler.delta.PrivateDeltaResourceHandler;
 import uk.gov.companieshouse.api.handler.delta.exemptions.request.PrivateCompanyExemptionsUpsert;
 import uk.gov.companieshouse.api.handler.exception.URIValidationException;
+import uk.gov.companieshouse.api.http.HttpClient;
 import uk.gov.companieshouse.api.model.ApiResponse;
 import uk.gov.companieshouse.exemptions.delta.service.ResponseHandler;
 
 @ExtendWith(MockitoExtension.class)
-public class UpsertClientTest {
+class UpsertClientTest {
 
     @Mock
     private InternalApiClient internalApiClient;
@@ -36,6 +37,9 @@ public class UpsertClientTest {
     @Mock
     private PrivateCompanyExemptionsUpsert exemptionsUpsertHandler;
 
+    @Mock
+    private HttpClient httpClient;
+
     @Test
     void testUpsert() throws ApiErrorResponseException, URIValidationException {
         // given
@@ -44,6 +48,7 @@ public class UpsertClientTest {
         request.setPath("/company-exemptions/12345678/internal");
         request.setBody(body);
         when(internalApiClient.privateDeltaCompanyAppointmentResourceHandler()).thenReturn(deltaResourceHandler);
+        when(internalApiClient.getHttpClient()).thenReturn(httpClient);
         when(deltaResourceHandler.upsertCompanyExemptionsResource(anyString(), any())).thenReturn(exemptionsUpsertHandler);
         when(exemptionsUpsertHandler.execute()).thenReturn(new ApiResponse<>(200, Collections.emptyMap()));
         UpsertClient client = new UpsertClient(() -> internalApiClient, handler);
@@ -67,6 +72,7 @@ public class UpsertClientTest {
         request.setPath("/company-exemptions/12345678/internal");
         request.setBody(body);
         when(internalApiClient.privateDeltaCompanyAppointmentResourceHandler()).thenReturn(deltaResourceHandler);
+        when(internalApiClient.getHttpClient()).thenReturn(httpClient);
         when(deltaResourceHandler.upsertCompanyExemptionsResource(anyString(), any())).thenReturn(exemptionsUpsertHandler);
         when(exemptionsUpsertHandler.execute()).thenThrow(exception);
         UpsertClient client = new UpsertClient(() -> internalApiClient, handler);
@@ -92,6 +98,7 @@ public class UpsertClientTest {
         request.setPath("/company-exemptions/12345678/internal");
         request.setBody(body);
         when(internalApiClient.privateDeltaCompanyAppointmentResourceHandler()).thenReturn(deltaResourceHandler);
+        when(internalApiClient.getHttpClient()).thenReturn(httpClient);
         when(deltaResourceHandler.upsertCompanyExemptionsResource(anyString(), any())).thenReturn(exemptionsUpsertHandler);
         when(exemptionsUpsertHandler.execute()).thenThrow(exception);
         UpsertClient client = new UpsertClient(() -> internalApiClient, handler);
@@ -116,6 +123,7 @@ public class UpsertClientTest {
         request.setPath("/invalid/path");
         request.setBody(body);
         when(internalApiClient.privateDeltaCompanyAppointmentResourceHandler()).thenReturn(deltaResourceHandler);
+        when(internalApiClient.getHttpClient()).thenReturn(httpClient);
         when(deltaResourceHandler.upsertCompanyExemptionsResource(anyString(), any())).thenReturn(exemptionsUpsertHandler);
         when(exemptionsUpsertHandler.execute()).thenThrow(exceptionClass);
         UpsertClient client = new UpsertClient(() -> internalApiClient, handler);
