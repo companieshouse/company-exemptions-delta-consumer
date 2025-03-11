@@ -44,7 +44,7 @@ public class InvalidMessageRouter implements ProducerInterceptor<String, ChsDelt
                             exception, topic, partition, offset), 0, "", false);
 
             ProducerRecord<String, ChsDelta> invalidRecord = new ProducerRecord<>(invalidMessageTopic, producerRecord.key(), invalidData);
-            LOGGER.info(String.format("Moving record into topic: [%s]%nMessage content: %s", invalidRecord.topic(), invalidData.getData()),
+            LOGGER.error(String.format("Moving record into topic: [%s]%nMessage content: %s", invalidRecord.topic(), invalidData.getData()),
                     DataMapHolder.getLogMap());
 
             return invalidRecord;

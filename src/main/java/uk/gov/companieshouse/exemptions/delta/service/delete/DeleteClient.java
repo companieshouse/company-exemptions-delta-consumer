@@ -5,6 +5,7 @@ import org.springframework.stereotype.Component;
 import uk.gov.companieshouse.api.InternalApiClient;
 import uk.gov.companieshouse.api.error.ApiErrorResponseException;
 import uk.gov.companieshouse.api.handler.exception.URIValidationException;
+import uk.gov.companieshouse.exemptions.delta.logging.DataMapHolder;
 import uk.gov.companieshouse.exemptions.delta.service.ResponseHandler;
 
 /**
@@ -30,6 +31,7 @@ class DeleteClient {
      */
     void delete(DeleteRequest request) {
         InternalApiClient client = internalApiClientFactory.get();
+        client.getHttpClient().setRequestId(DataMapHolder.getRequestId());
         try {
             client.privateDeltaCompanyAppointmentResourceHandler()
                     .deleteCompanyExemptionsResource(request.getPath(), request.getDeltaAt())
