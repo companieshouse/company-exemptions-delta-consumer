@@ -25,19 +25,21 @@
         <build-helper-maven-plugin.version>3.6.0</build-helper-maven-plugin.version>
         <jib-maven-plugin.version>3.4.4</jib-maven-plugin.version>
 
-        <spring.boot.version>3.4.3</spring.boot.version>
+        <spring.boot.version>3.5.5</spring.boot.version>
         <cucumber.version>7.20.1</cucumber.version>
         <mapstruct.version>1.6.3</mapstruct.version>
         <avro.version>1.12.0</avro.version>
         <test-containers.version>1.20.4</test-containers.version>
         <wiremock.version>3.10.0</wiremock.version>
         <junit-platform-suite.version>1.11.4</junit-platform-suite.version>
+        <commons-lang3.version>3.18.0</commons-lang3.version>
+        <grpc-context.version>1.75.0</grpc-context.version>
 
         <!-- internal dependencies -->
         <private-api-sdk-java.version>4.0.270</private-api-sdk-java.version>
         <api-sdk-java.version>6.0.37</api-sdk-java.version>
         <kafka-models.version>3.0.10</kafka-models.version>
-        <structured-logging.version>3.0.26</structured-logging.version>
+        <structured-logging.version>3.0.40</structured-logging.version>
     </properties>
 
     <dependencyManagement>
@@ -56,12 +58,19 @@
                 <type>pom</type>
                 <scope>import</scope>
             </dependency>
+
+            <!-- CVE-2025-48924 -->
             <dependency>
-                <groupId>org.testcontainers</groupId>
-                <artifactId>testcontainers-bom</artifactId>
-                <version>${test-containers.version}</version>
-                <type>pom</type>
-                <scope>import</scope>
+                <groupId>org.apache.commons</groupId>
+                <artifactId>commons-lang3</artifactId>
+                <version>${commons-lang3.version}</version> <!-- Use the latest available version -->
+            </dependency>
+
+            <!-- CVE-2024-11407 & CVE-2024-7246 -->
+            <dependency>
+                <groupId>io.grpc</groupId>
+                <artifactId>grpc-context</artifactId>
+                <version>${grpc-context.version}</version> <!-- Use the latest available version -->
             </dependency>
         </dependencies>
     </dependencyManagement>
@@ -128,6 +137,12 @@
                 <exclusion>
                     <groupId>org.slf4j</groupId>
                     <artifactId>slf4j-simple</artifactId>
+                </exclusion>
+
+                <!-- CVE-2025-48924 -->
+                <exclusion>
+                    <groupId>commons-lang</groupId>
+                    <artifactId>commons-lang</artifactId>
                 </exclusion>
             </exclusions>
         </dependency>
