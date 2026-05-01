@@ -1,5 +1,6 @@
 package uk.gov.companieshouse.exemptions.delta.config;
 
+import io.cucumber.java.BeforeAll;
 import io.cucumber.spring.CucumberContextConfiguration;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -17,6 +18,11 @@ import uk.gov.companieshouse.exemptions.delta.kafka.TestKafkaConfig;
 @Import(TestKafkaConfig.class)
 @ActiveProfiles("integration_tests")
 public class Configuration {
+
+    @BeforeAll
+    public static void beforeAll() {
+        System.setProperty("api.version", "1.44");
+    }
 
     public static final KafkaContainer kafkaContainer = new KafkaContainer(
             DockerImageName.parse("confluentinc/cp-kafka:5.0.0"));

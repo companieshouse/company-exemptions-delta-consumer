@@ -343,14 +343,6 @@
                 </executions>
                 <configuration>
                     <classesDirectory>${project.build.outputDirectory}</classesDirectory>
-                    <!-- 30/04/2026
-                        This is a temporary fix for the Docker version issue with TestContainers.
-                        This will need to be removed once TestContainers has been updated to a version that supports Docker 24.0.5, which is expected to be released in the next few months.
-                      -->
-                    <systemPropertyVariables>
-                        <api.version>1.44</api.version>
-                    </systemPropertyVariables>
-                    <!-- END of temporary fix -->
                     <properties>
                         <configurationParameters>
                             cucumber.junit-platform.naming-strategy=long
