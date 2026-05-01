@@ -25,11 +25,10 @@
         <build-helper-maven-plugin.version>3.6.0</build-helper-maven-plugin.version>
         <jib-maven-plugin.version>3.4.4</jib-maven-plugin.version>
 
-        <spring.boot.version>3.5.7</spring.boot.version>
+        <spring.boot.version>3.5.14</spring.boot.version>
         <cucumber.version>7.20.1</cucumber.version>
         <mapstruct.version>1.6.3</mapstruct.version>
         <avro.version>1.12.0</avro.version>
-        <test-containers.version>1.20.4</test-containers.version>
         <wiremock.version>3.10.0</wiremock.version>
         <junit-platform-suite.version>1.11.4</junit-platform-suite.version>
         <commons-lang3.version>3.18.0</commons-lang3.version>
@@ -40,11 +39,20 @@
         <api-sdk-java.version>6.0.37</api-sdk-java.version>
         <kafka-models.version>3.0.10</kafka-models.version>
         <structured-logging.version>3.0.40</structured-logging.version>
-      <commons-beanutils.version>1.11.0</commons-beanutils.version>
-      <scala-library.version>2.13.9</scala-library.version>
-      <commons-compress.version>1.26.0</commons-compress.version>
-      <guava.version>32.0.1-android</guava.version>
-      <commons-io.version>2.14.0</commons-io.version>
+        <commons-beanutils.version>1.11.0</commons-beanutils.version>
+        <scala-library.version>2.13.9</scala-library.version>
+        <commons-compress.version>1.26.0</commons-compress.version>
+        <guava.version>32.0.1-android</guava.version>
+        <commons-io.version>2.14.0</commons-io.version>
+
+        <!-- sonar config -->
+        <sonar-maven-plugin.version>4.0.0.4121</sonar-maven-plugin.version>
+        <sonar.java.binaries>${project.basedir}/target,${project.basedir}/target/*</sonar.java.binaries>
+        <sonar.token>${CODE_ANALYSIS_TOKEN}</sonar.token>
+        <sonar.login></sonar.login>
+        <sonar.password></sonar.password>
+        <sonar.projectKey>uk.gov.companieshouse:company-exemptions-delta-consumer</sonar.projectKey>
+        <sonar.projectName>company-exemptions-delta-consumer</sonar.projectName>
     </properties>
 
     <dependencyManagement>
@@ -255,7 +263,6 @@
         <dependency>
             <groupId>org.testcontainers</groupId>
             <artifactId>kafka</artifactId>
-            <version>${test-containers.version}</version>
             <scope>test</scope>
         </dependency>
         <dependency>
@@ -267,7 +274,6 @@
         <dependency>
             <groupId>org.testcontainers</groupId>
             <artifactId>junit-jupiter</artifactId>
-            <version>${test-containers.version}</version>
             <scope>test</scope>
         </dependency>
         <dependency>
