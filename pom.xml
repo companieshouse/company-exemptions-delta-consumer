@@ -5,7 +5,7 @@
     <parent>
         <groupId>uk.gov.companieshouse</groupId>
         <artifactId>companies-house-parent</artifactId>
-        <version>2.1.12</version>
+        <version>2.1.14</version>
         <relativePath/>
     </parent>
 
@@ -25,7 +25,7 @@
         <build-helper-maven-plugin.version>3.6.0</build-helper-maven-plugin.version>
         <jib-maven-plugin.version>3.4.4</jib-maven-plugin.version>
 
-        <spring.boot.version>3.5.7</spring.boot.version>
+        <spring.boot.version>4.0.6</spring.boot.version>
         <cucumber.version>7.20.1</cucumber.version>
         <mapstruct.version>1.6.3</mapstruct.version>
         <avro.version>1.12.0</avro.version>
@@ -39,16 +39,33 @@
         <private-api-sdk-java.version>4.0.270</private-api-sdk-java.version>
         <api-sdk-java.version>6.0.37</api-sdk-java.version>
         <kafka-models.version>3.0.10</kafka-models.version>
-        <structured-logging.version>3.0.40</structured-logging.version>
+        <structured-logging.version>3.0.57</structured-logging.version>
       <commons-beanutils.version>1.11.0</commons-beanutils.version>
       <scala-library.version>2.13.9</scala-library.version>
       <commons-compress.version>1.26.0</commons-compress.version>
       <guava.version>32.0.1-android</guava.version>
       <commons-io.version>2.14.0</commons-io.version>
+
+        <ch-boms.version>0.1.5</ch-boms.version>
     </properties>
 
     <dependencyManagement>
         <dependencies>
+            <dependency>
+                <groupId>uk.gov.companieshouse</groupId>
+                <artifactId>ch-core-bom</artifactId>
+                <version>${ch-boms.version}</version>
+                <type>pom</type>
+                <scope>import</scope>
+            </dependency>
+
+            <dependency>
+                <groupId>uk.gov.companieshouse</groupId>
+                <artifactId>ch-test-bom</artifactId>
+                <version>${ch-boms.version}</version>
+                <type>pom</type>
+                <scope>import</scope>
+            </dependency>
             <dependency>
                 <groupId>org.springframework.boot</groupId>
                 <artifactId>spring-boot-dependencies</artifactId>
@@ -197,7 +214,7 @@
         </dependency>
         <dependency>
             <groupId>org.springframework.boot</groupId>
-            <artifactId>spring-boot-starter-aop</artifactId>
+            <artifactId>spring-boot-starter-aspectj</artifactId>
         </dependency>
         <dependency>
             <groupId>org.springframework.boot</groupId>
