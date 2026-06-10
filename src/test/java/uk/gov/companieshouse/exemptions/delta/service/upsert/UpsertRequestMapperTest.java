@@ -2,13 +2,13 @@ package uk.gov.companieshouse.exemptions.delta.service.upsert;
 
 import static org.skyscreamer.jsonassert.JSONAssert.assertEquals;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fasterxml.jackson.databind.introspect.JacksonAnnotationIntrospector;
-import com.fasterxml.jackson.databind.util.StdDateFormat;
-import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
 import java.util.stream.Stream;
+
+import com.fasterxml.jackson.databind.json.JsonMapper;
+import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
+
 import org.apache.commons.io.IOUtils;
 import org.json.JSONException;
 import org.junit.jupiter.api.DisplayName;
@@ -17,11 +17,12 @@ import org.junit.jupiter.params.provider.Arguments;
 import org.junit.jupiter.params.provider.MethodSource;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
+import tools.jackson.databind.util.StdDateFormat;
 import uk.gov.companieshouse.api.delta.PscExemptionDelta;
 
 @SpringBootTest(classes = UpsertRequestMapperImpl.class)
 @DisplayName("Upsert request mapper")
-public class UpsertRequestMapperTest {
+class UpsertRequestMapperTest {
 
     @Autowired
     private UpsertRequestMapper requestMapper;
@@ -33,10 +34,12 @@ public class UpsertRequestMapperTest {
         // given
         String input = IOUtils.resourceToString("/examples/" + feature + "/input.json", StandardCharsets.UTF_8);
         String expected = IOUtils.resourceToString("/examples/" + feature + "/output.json", StandardCharsets.UTF_8);
-        ObjectMapper mapper = new ObjectMapper()
-                .setAnnotationIntrospector(new JacksonAnnotationIntrospector())
-                .registerModule(new JavaTimeModule())
-                .setDateFormat(new StdDateFormat());
+        final var mapper =
+                JsonMapper
+                        .builder()
+                        .defaultDateFormat(new StdDateFormat())
+                        .addModule(new JavaTimeModule())
+                        .build();
         PscExemptionDelta delta = mapper.readValue(input, PscExemptionDelta.class);
 
         // when

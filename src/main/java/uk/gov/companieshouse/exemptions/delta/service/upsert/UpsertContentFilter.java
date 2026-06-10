@@ -1,8 +1,8 @@
 package uk.gov.companieshouse.exemptions.delta.service.upsert;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.databind.ObjectMapper;
 import org.springframework.stereotype.Component;
+import tools.jackson.core.JacksonException;
+import tools.jackson.databind.ObjectMapper;
 import uk.gov.companieshouse.api.delta.PscExemptionDelta;
 import uk.gov.companieshouse.delta.ChsDelta;
 import uk.gov.companieshouse.exemptions.delta.exception.NonRetryableException;
@@ -28,7 +28,7 @@ class UpsertContentFilter {
     PscExemptionDelta filter(ChsDelta delta) {
         try {
             return mapper.readValue(delta.getData(), PscExemptionDelta.class);
-        } catch (JsonProcessingException e) {
+        } catch (JacksonException e) {
             throw new NonRetryableException("Error extracting exemption delta", e);
         }
     }
