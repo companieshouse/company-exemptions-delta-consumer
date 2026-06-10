@@ -6,22 +6,22 @@ import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.databind.ObjectMapper;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.function.Executable;
+import tools.jackson.core.JacksonException;
+import tools.jackson.databind.ObjectMapper;
 import uk.gov.companieshouse.api.delta.PscExemptionDeleteDelta;
 import uk.gov.companieshouse.delta.ChsDelta;
 import uk.gov.companieshouse.exemptions.delta.exception.NonRetryableException;
 
-public class DeleteContentFilterTest {
+class DeleteContentFilterTest {
 
     @Test
     void testExtractPscExemptionDeleteDeltaFromChsDelta() {
         // given
-        ChsDelta delta = new ChsDelta("{\"action\": \"DELETE\", \"company_number\": \"12345678\"}",
+        final var delta = new ChsDelta("{\"action\": \"DELETE\", \"company_number\": \"12345678\"}",
                 0, "context_id", true);
-        DeleteContentFilter filter = new DeleteContentFilter(new ObjectMapper());
+        final var filter = new DeleteContentFilter(new ObjectMapper());
 
         // when
         PscExemptionDeleteDelta data = filter.filter(delta);
@@ -33,21 +33,21 @@ public class DeleteContentFilterTest {
     @Test
     void testThrowNonRetryableExceptionIfJsonMalformed() {
         // given
-        ChsDelta delta = new ChsDelta("{[",
+        final var delta = new ChsDelta("{[",
                 0, "context_id", true);
-        DeleteContentFilter filter = new DeleteContentFilter(new ObjectMapper());
+        final var filter = new DeleteContentFilter(new ObjectMapper());
 
         // when
-        Executable actual = () -> filter.filter(delta);
+        final Executable actual = () -> filter.filter(delta);
 
         // then
-        NonRetryableException exception = assertThrows(NonRetryableException.class, actual);
+        final var exception = assertThrows(NonRetryableException.class, actual);
         assertThat(exception.getMessage(), is(equalTo("Error extracting exemption delete delta")));
-        assertThat(exception.getCause(), is(instanceOf(JsonProcessingException.class)));
+        assertThat(exception.getCause(), is(instanceOf(JacksonException.class)));
     }
 
     private PscExemptionDeleteDelta expectedExemptionDeleteDelta() {
-        PscExemptionDeleteDelta result = new PscExemptionDeleteDelta();
+        final var result = new PscExemptionDeleteDelta();
         result.setAction(PscExemptionDeleteDelta.ActionEnum.DELETE);
         result.setCompanyNumber("12345678");
         return result;

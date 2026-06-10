@@ -1,13 +1,13 @@
 package uk.gov.companieshouse.exemptions.delta.config;
 
 import io.cucumber.spring.CucumberContextConfiguration;
-import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.boot.webmvc.test.autoconfigure.AutoConfigureMockMvc;
 import org.springframework.context.annotation.Import;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.DynamicPropertyRegistry;
 import org.springframework.test.context.DynamicPropertySource;
-import org.testcontainers.containers.KafkaContainer;
+import org.testcontainers.kafka.ConfluentKafkaContainer;
 import org.testcontainers.utility.DockerImageName;
 import uk.gov.companieshouse.exemptions.delta.kafka.TestKafkaConfig;
 
@@ -18,8 +18,8 @@ import uk.gov.companieshouse.exemptions.delta.kafka.TestKafkaConfig;
 @ActiveProfiles("integration_tests")
 public class Configuration {
 
-    public static final KafkaContainer kafkaContainer = new KafkaContainer(
-            DockerImageName.parse("confluentinc/cp-kafka:5.0.0"));
+    public static final ConfluentKafkaContainer kafkaContainer = new ConfluentKafkaContainer(
+            DockerImageName.parse("confluentinc/cp-kafka:7.8.0"));
 
 
     @DynamicPropertySource

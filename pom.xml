@@ -28,25 +28,39 @@
         <spring.boot.version>4.0.6</spring.boot.version>
         <cucumber.version>7.20.1</cucumber.version>
         <mapstruct.version>1.6.3</mapstruct.version>
-        <avro.version>1.12.0</avro.version>
-        <test-containers.version>1.20.4</test-containers.version>
+        <avro.version>1.12.1</avro.version>
+        <test-containers.version>2.0.4</test-containers.version>
         <wiremock.version>3.10.0</wiremock.version>
         <junit-platform-suite.version>1.11.4</junit-platform-suite.version>
         <commons-lang3.version>3.18.0</commons-lang3.version>
         <grpc-context.version>1.75.0</grpc-context.version>
 
         <!-- internal dependencies -->
-        <private-api-sdk-java.version>4.0.270</private-api-sdk-java.version>
-        <api-sdk-java.version>6.0.37</api-sdk-java.version>
+        <private-api-sdk-java.version>6.0.23</private-api-sdk-java.version>
+        <api-sdk-java.version>6.6.23</api-sdk-java.version>
         <kafka-models.version>3.0.10</kafka-models.version>
         <structured-logging.version>3.0.57</structured-logging.version>
-      <commons-beanutils.version>1.11.0</commons-beanutils.version>
-      <scala-library.version>2.13.9</scala-library.version>
-      <commons-compress.version>1.26.0</commons-compress.version>
-      <guava.version>32.0.1-android</guava.version>
-      <commons-io.version>2.14.0</commons-io.version>
+        <commons-beanutils.version>1.11.0</commons-beanutils.version>
+        <scala-library.version>2.13.9</scala-library.version>
+        <commons-compress.version>1.26.0</commons-compress.version>
+        <guava.version>32.0.1-android</guava.version>
+        <commons-io.version>2.14.0</commons-io.version>
 
         <ch-boms.version>0.1.5</ch-boms.version>
+
+        <!-- sonar config -->
+        <sonar-maven-plugin.version>4.0.0.4121</sonar-maven-plugin.version>
+        <sonar.java.binaries>${project.basedir}/target,${project.basedir}/target/*</sonar.java.binaries>
+        <sonar.token>${CODE_ANALYSIS_TOKEN}</sonar.token>
+        <sonar.login></sonar.login>
+        <sonar.password></sonar.password>
+        <sonar.projectKey>uk.gov.companieshouse:company-exemptions-delta-consumer</sonar.projectKey>
+        <sonar.projectName>company-exemptions-delta-consumer</sonar.projectName>
+
+        <opentelemetry.version>2.28.1</opentelemetry.version>
+
+        <kotlin-stdlin-override.version>2.3.21</kotlin-stdlin-override.version>
+        <jackson-bom.version>3.2.0</jackson-bom.version>
     </properties>
 
     <dependencyManagement>
@@ -66,13 +80,29 @@
                 <type>pom</type>
                 <scope>import</scope>
             </dependency>
+
             <dependency>
-                <groupId>org.springframework.boot</groupId>
-                <artifactId>spring-boot-dependencies</artifactId>
-                <version>${spring.boot.version}</version>
+                <groupId>tools.jackson</groupId>
+                <artifactId>jackson-bom</artifactId>
+                <version>${jackson-bom.version}</version>
                 <type>pom</type>
                 <scope>import</scope>
             </dependency>
+
+            <dependency>
+                <groupId>io.opentelemetry.instrumentation</groupId>
+                <artifactId>opentelemetry-instrumentation-bom</artifactId>
+                <version>${opentelemetry.version}</version>
+                <type>pom</type>
+                <exclusions>
+                    <exclusion>
+                        <groupId>com.fasterxml.jackson.core</groupId>
+                        <artifactId>jackson-core</artifactId>
+                    </exclusion>
+                </exclusions>
+                <scope>import</scope>
+            </dependency>
+
             <dependency>
                 <groupId>io.cucumber</groupId>
                 <artifactId>cucumber-bom</artifactId>
@@ -81,66 +111,80 @@
                 <scope>import</scope>
             </dependency>
 
-            <!-- CVE-2025-48924 -->
             <dependency>
-                <groupId>org.apache.commons</groupId>
-                <artifactId>commons-lang3</artifactId>
-                <version>${commons-lang3.version}</version> <!-- Use the latest available version -->
+                <groupId>org.springframework.boot</groupId>
+                <artifactId>spring-boot-dependencies</artifactId>
+                <version>${spring.boot.version}</version>
+                <type>pom</type>
+                <scope>import</scope>
             </dependency>
-
-            <!-- CVE-2024-11407 & CVE-2024-7246 -->
-            <dependency>
-                <groupId>io.grpc</groupId>
-                <artifactId>grpc-context</artifactId>
-                <version>${grpc-context.version}</version> <!-- Use the latest available version -->
-            </dependency>
-
-          <!-- CVE-2025-48734(8.8) -->
-          <dependency>
-            <groupId>commons-beanutils</groupId>
-            <artifactId>commons-beanutils</artifactId>
-            <version>${commons-beanutils.version}</version>
-          </dependency>
-
-          <!-- CVE-2022-36944 (9.8) -->
-          <dependency>
-            <groupId>org.scala-lang</groupId>
-            <artifactId>scala-library</artifactId>
-            <version>${scala-library.version}</version>
-          </dependency>
-
-          <!-- CVE-2024-25710(8.1) -->
-          <dependency>
-            <groupId>org.apache.commons</groupId>
-            <artifactId>commons-compress</artifactId>
-            <version>${commons-compress.version}</version>
-          </dependency>
-
-          <!-- CVE-2023-2976(5.5) -->
-          <dependency>
-            <groupId>com.google.guava</groupId>
-            <artifactId>guava</artifactId>
-            <version>${guava.version}</version>
-          </dependency>
-
-          <!-- CVE-2024-47554(4.3) -->
-          <dependency>
-            <groupId>commons-io</groupId>
-            <artifactId>commons-io</artifactId>
-            <version>${commons-io.version}</version>
-          </dependency>
         </dependencies>
     </dependencyManagement>
+
     <dependencies>
+        <dependency>
+            <groupId>com.fasterxml.jackson.core</groupId>
+            <artifactId>jackson-annotations</artifactId>
+            <version>2.22</version>
+        </dependency>
+
+        <dependency>
+            <groupId>org.jetbrains.kotlin</groupId>
+            <artifactId>kotlin-stdlib</artifactId>
+            <version>${kotlin-stdlin-override.version}</version>
+            <scope>compile</scope>
+        </dependency>
+
+        <dependency>
+            <groupId>io.opentelemetry.instrumentation</groupId>
+            <artifactId>opentelemetry-spring-boot-starter</artifactId>
+            <exclusions>
+                <exclusion>
+                    <groupId>org.jetbrains.kotlin</groupId>
+                    <artifactId>kotlin-stdlib</artifactId>
+                </exclusion>
+                <!-- SB4, Jackson 3 -->
+                <exclusion>
+                    <groupId>com.fasterxml.jackson.core</groupId>
+                    <artifactId>jackson-core</artifactId>
+                </exclusion>
+                <exclusion>
+                    <groupId>com.fasterxml.jackson.core</groupId>
+                    <artifactId>jackson-databind</artifactId>
+                </exclusion>
+            </exclusions>
+        </dependency>
+
+
         <dependency>
             <groupId>uk.gov.companieshouse</groupId>
             <artifactId>api-sdk-java</artifactId>
             <version>${api-sdk-java.version}</version>
+            <exclusions>
+                <exclusion>
+                    <groupId>com.fasterxml.jackson.core</groupId>
+                    <artifactId>jackson-core</artifactId>
+                </exclusion>
+                <exclusion>
+                    <groupId>com.fasterxml.jackson.core</groupId>
+                    <artifactId>jackson-datatype-jsr310</artifactId>
+                </exclusion>
+                <exclusion>
+                    <groupId>com.fasterxml.jackson.core</groupId>
+                    <artifactId>jackson-databind</artifactId>
+                </exclusion>
+            </exclusions>
         </dependency>
         <dependency>
             <groupId>uk.gov.companieshouse</groupId>
             <artifactId>private-api-sdk-java</artifactId>
             <version>${private-api-sdk-java.version}</version>
+            <exclusions>
+                <exclusion>
+                    <groupId>com.fasterxml.jackson.dataformat</groupId>
+                    <artifactId>jackson-dataformat-yaml</artifactId>
+                </exclusion>
+            </exclusions>
         </dependency>
         <dependency>
             <groupId>uk.gov.companieshouse</groupId>
@@ -189,19 +233,6 @@
             <groupId>uk.gov.companieshouse</groupId>
             <artifactId>structured-logging</artifactId>
             <version>${structured-logging.version}</version>
-            <!-- Seems to be required for tests to pass with certain spring boot version -->
-            <exclusions>
-                <exclusion>
-                    <groupId>org.slf4j</groupId>
-                    <artifactId>slf4j-simple</artifactId>
-                </exclusion>
-
-                <!-- CVE-2025-48924 -->
-                <exclusion>
-                    <groupId>commons-lang</groupId>
-                    <artifactId>commons-lang</artifactId>
-                </exclusion>
-            </exclusions>
         </dependency>
         <dependency>
             <groupId>org.mapstruct</groupId>
@@ -222,11 +253,19 @@
         </dependency>
         <dependency>
             <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-webmvc</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-actuator</artifactId>
         </dependency>
         <dependency>
-            <groupId>org.springframework.kafka</groupId>
-            <artifactId>spring-kafka</artifactId>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-jackson</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-kafka</artifactId>
         </dependency>
         <dependency>
             <groupId>org.springframework.boot</groupId>
@@ -236,6 +275,14 @@
                 <exclusion>
                     <groupId>net.minidev</groupId>
                     <artifactId>json-smart</artifactId>
+                </exclusion>
+                <exclusion>
+                    <groupId>com.fasterxml.jackson.core</groupId>
+                    <artifactId>jackson-core</artifactId>
+                </exclusion>
+                <exclusion>
+                    <groupId>com.fasterxml.jackson.core</groupId>
+                    <artifactId>jackson-databind</artifactId>
                 </exclusion>
             </exclusions>
         </dependency>
@@ -251,8 +298,50 @@
                     <groupId>io.netty</groupId>
                     <artifactId>netty-handler</artifactId>
                 </exclusion>
+                <exclusion>
+                    <groupId>com.fasterxml.jackson.dataformat</groupId>
+                    <artifactId>jackson-dataformat-csv</artifactId>
+                </exclusion>
+                <exclusion>
+                    <groupId>com.fasterxml.jackson.datatype</groupId>
+                    <artifactId>jackson-dataformat-jdk8</artifactId>
+                </exclusion>
             </exclusions>
             <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-testcontainers</artifactId>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-jackson</artifactId>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-jackson-test</artifactId>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-test-autoconfigure</artifactId>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-webmvc-test</artifactId>
+            <exclusions>
+                <exclusion>
+                    <groupId>com.fasterxml.jackson.core</groupId>
+                    <artifactId>jackson-code</artifactId>
+                </exclusion>
+                <exclusion>
+                    <groupId>com.fasterxml.jackson.core</groupId>
+                    <artifactId>jackson-databind</artifactId>
+                </exclusion>
+            </exclusions>
         </dependency>
         <dependency>
             <groupId>io.cucumber</groupId>
@@ -271,8 +360,7 @@
         </dependency>
         <dependency>
             <groupId>org.testcontainers</groupId>
-            <artifactId>kafka</artifactId>
-            <version>${test-containers.version}</version>
+            <artifactId>testcontainers-kafka</artifactId>
             <scope>test</scope>
         </dependency>
         <dependency>
@@ -283,9 +371,8 @@
         </dependency>
         <dependency>
             <groupId>org.testcontainers</groupId>
-            <artifactId>junit-jupiter</artifactId>
-            <version>${test-containers.version}</version>
-            <scope>test</scope>
+            <artifactId>testcontainers-junit-jupiter</artifactId>
+           <scope>test</scope>
         </dependency>
         <dependency>
             <groupId>org.wiremock</groupId>
@@ -298,7 +385,24 @@
             <artifactId>spring-test</artifactId>
             <scope>test</scope>
         </dependency>
+        <dependency>
+            <groupId>org.assertj</groupId>
+            <artifactId>assertj-core</artifactId>
+            <exclusions>
+                <exclusion>
+                    <groupId>com.fasterxml.jackson.datatype</groupId>
+                    <artifactId>jackson-datatype-jsr310</artifactId>
+                </exclusion>
+            </exclusions>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>com.fasterxml.jackson.datatype</groupId>
+            <artifactId>jackson-datatype-jsr310</artifactId>
+            <version>2.22.0</version>
+        </dependency>
     </dependencies>
+
     <build>
         <plugins>
             <plugin>
@@ -334,10 +438,6 @@
                 <version>${maven-surefire-plugin.version}</version>
                 <configuration>
                     <skipTests>${skip.unit.tests}</skipTests>
-                    <excludes>
-                        <exclude>**/Runner.java</exclude>
-                    </excludes>
-                    <argLine>@{argLine} -javaagent:${org.mockito:mockito-core:jar}</argLine>
                 </configuration>
             </plugin>
             <plugin>
@@ -360,9 +460,6 @@
                         </configurationParameters>
                     </properties>
                     <skipITs>${skip.integration.tests}</skipITs>
-                    <includes>
-                        <include>**/Runner.java</include>
-                    </includes>
                 </configuration>
             </plugin>
             <plugin>

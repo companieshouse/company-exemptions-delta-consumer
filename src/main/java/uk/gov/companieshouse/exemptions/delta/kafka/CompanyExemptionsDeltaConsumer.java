@@ -1,12 +1,12 @@
 package uk.gov.companieshouse.exemptions.delta.kafka;
 
+import org.springframework.kafka.annotation.BackOff;
 import org.springframework.kafka.annotation.KafkaListener;
 import org.springframework.kafka.annotation.RetryableTopic;
 import org.springframework.kafka.listener.ConsumerSeekAware;
 import org.springframework.kafka.retrytopic.DltStrategy;
 import org.springframework.kafka.retrytopic.SameIntervalTopicReuseStrategy;
 import org.springframework.messaging.Message;
-import org.springframework.retry.annotation.Backoff;
 import org.springframework.stereotype.Component;
 import uk.gov.companieshouse.delta.ChsDelta;
 import uk.gov.companieshouse.exemptions.delta.exception.RetryableException;
@@ -42,7 +42,7 @@ public class CompanyExemptionsDeltaConsumer implements ConsumerSeekAware {
     @RetryableTopic(
             attempts = "${consumer.max_attempts}",
             autoCreateTopics = "false",
-            backoff = @Backoff(delayExpression = "${consumer.backoff_delay}"),
+            backOff = @BackOff(delayString = "${consumer.backoff_delay}"),
             retryTopicSuffix = "-${consumer.group_id}-retry",
             dltTopicSuffix = "-${consumer.group_id}-error",
             dltStrategy = DltStrategy.FAIL_ON_ERROR,
