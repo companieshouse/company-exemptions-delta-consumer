@@ -28,5 +28,5 @@ wiremock:
 
 api:
   api-url: http://localhost:8888
-  api-key: g9yZIA81Zo9J46Kzp3JPbfld6kOqxR47EAYqXbRV
+  api-key: ec06d488-eb10-487b-8383-e61c00ff9af1
   payments-url: http://localhost:8888
