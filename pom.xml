@@ -39,7 +39,7 @@
         <private-api-sdk-java.version>6.0.23</private-api-sdk-java.version>
         <api-sdk-java.version>6.6.23</api-sdk-java.version>
         <kafka-models.version>3.0.10</kafka-models.version>
-        <structured-logging.version>3.0.57</structured-logging.version>
+        <structured-logging.version>4.0.4</structured-logging.version>
         <commons-beanutils.version>1.11.0</commons-beanutils.version>
         <scala-library.version>2.13.9</scala-library.version>
         <commons-compress.version>1.26.0</commons-compress.version>
