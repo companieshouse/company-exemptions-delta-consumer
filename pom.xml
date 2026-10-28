@@ -38,15 +38,13 @@
         <!-- internal dependencies -->
         <private-api-sdk-java.version>6.0.23</private-api-sdk-java.version>
         <api-sdk-java.version>6.6.23</api-sdk-java.version>
-        <kafka-models.version>3.0.10</kafka-models.version>
-        <structured-logging.version>4.0.4</structured-logging.version>
         <commons-beanutils.version>1.11.0</commons-beanutils.version>
         <scala-library.version>2.13.9</scala-library.version>
         <commons-compress.version>1.26.0</commons-compress.version>
         <guava.version>32.0.1-android</guava.version>
         <commons-io.version>2.14.0</commons-io.version>
 
-        <ch-boms.version>0.1.5</ch-boms.version>
+        <ch-boms.version>0.1.34</ch-boms.version>
 
         <!-- sonar config -->
         <sonar-maven-plugin.version>4.0.0.4121</sonar-maven-plugin.version>
@@ -55,18 +53,14 @@
         <sonar.projectKey>uk.gov.companieshouse:company-exemptions-delta-consumer</sonar.projectKey>
         <sonar.projectName>company-exemptions-delta-consumer</sonar.projectName>
 
-        <opentelemetry.version>2.31.1</opentelemetry.version>
-        <opentelemetry.logback.appender.version>2.31.1-alpha</opentelemetry.logback.appender.version>
-
-        <kotlin-stdlin-override.version>2.3.21</kotlin-stdlin-override.version>
-        <jackson-bom.version>3.2.0</jackson-bom.version>
     </properties>
 
     <dependencyManagement>
         <dependencies>
+            <!-- Must be imported before spring-boot-dependencies so its OpenTelemetry, Tomcat and CVE pins take precedence -->
             <dependency>
                 <groupId>uk.gov.companieshouse</groupId>
-                <artifactId>ch-core-bom</artifactId>
+                <artifactId>ch-dependency-bom</artifactId>
                 <version>${ch-boms.version}</version>
                 <type>pom</type>
                 <scope>import</scope>
@@ -77,28 +71,6 @@
                 <artifactId>ch-test-bom</artifactId>
                 <version>${ch-boms.version}</version>
                 <type>pom</type>
-                <scope>import</scope>
-            </dependency>
-
-            <dependency>
-                <groupId>tools.jackson</groupId>
-                <artifactId>jackson-bom</artifactId>
-                <version>${jackson-bom.version}</version>
-                <type>pom</type>
-                <scope>import</scope>
-            </dependency>
-
-            <dependency>
-                <groupId>io.opentelemetry.instrumentation</groupId>
-                <artifactId>opentelemetry-instrumentation-bom</artifactId>
-                <version>${opentelemetry.version}</version>
-                <type>pom</type>
-                <exclusions>
-                    <exclusion>
-                        <groupId>com.fasterxml.jackson.core</groupId>
-                        <artifactId>jackson-core</artifactId>
-                    </exclusion>
-                </exclusions>
                 <scope>import</scope>
             </dependency>
 
@@ -130,7 +102,6 @@
         <dependency>
             <groupId>org.jetbrains.kotlin</groupId>
             <artifactId>kotlin-stdlib</artifactId>
-            <version>${kotlin-stdlin-override.version}</version>
             <scope>compile</scope>
         </dependency>
 
@@ -142,7 +113,6 @@
         <dependency>
             <groupId>io.opentelemetry.instrumentation</groupId>
             <artifactId>opentelemetry-logback-appender-1.0</artifactId>
-            <version>${opentelemetry.logback.appender.version}</version>
             <scope>compile</scope>
         </dependency>
 
@@ -212,7 +182,6 @@
                     <artifactId>commons-fileupload</artifactId>
                 </exclusion>
             </exclusions>
-            <version>${kafka-models.version}</version>
         </dependency>
 
         <dependency>
@@ -223,7 +192,6 @@
         <dependency>
             <groupId>uk.gov.companieshouse</groupId>
             <artifactId>structured-logging</artifactId>
-            <version>${structured-logging.version}</version>
         </dependency>
         <dependency>
             <groupId>org.mapstruct</groupId>
