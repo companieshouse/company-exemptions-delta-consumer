@@ -4,6 +4,10 @@ server:
 spring:
   kafka:
     bootstrap-servers: ${BOOTSTRAP_SERVER_URL:localhost:9092}
+    listener:
+      observation-enabled: true
+    template:
+      observation-enabled: true
 
 consumer:
   topic: ${TOPIC:company-exemptions-delta}
@@ -30,6 +34,8 @@ management:
       show-details: never
       enabled: true
   opentelemetry:
+    resource-attributes:
+      service.name: company-exemptions-delta-consumer
     enabled: ${OTEL_LOG_ENABLED:false}
     logging:
       export:

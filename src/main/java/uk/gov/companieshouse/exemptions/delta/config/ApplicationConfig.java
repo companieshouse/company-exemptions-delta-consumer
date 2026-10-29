@@ -62,7 +62,9 @@ public class ApplicationConfig {
 
     @Bean
     public KafkaTemplate<String, ChsDelta> kafkaTemplate(ProducerFactory<String, ChsDelta> producerFactory) {
-        return new KafkaTemplate<>(producerFactory);
+        KafkaTemplate<String, ChsDelta> template = new KafkaTemplate<>(producerFactory);
+        template.setObservationEnabled(true);
+        return template;
     }
 
     @Bean
@@ -73,6 +75,7 @@ public class ApplicationConfig {
         factory.setConsumerFactory(consumerFactory);
         factory.setConcurrency(concurrency);
         factory.getContainerProperties().setAckMode(ContainerProperties.AckMode.RECORD);
+        factory.getContainerProperties().setObservationEnabled(true);
         return factory;
     }
 
